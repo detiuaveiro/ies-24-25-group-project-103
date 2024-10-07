@@ -17,4 +17,5 @@ MediSync is a multi-layered service that helps with hospital management by integ
 |-- minutes/  
 |-- presentations/  
 |-- reports/  
+|-- resources/
 |-- README.md  
