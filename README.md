@@ -13,7 +13,8 @@ Repository for the IES course project.
 MediSync is a multi-layered service that helps with hospital management by integrating various functionalities that help with room/patient management and provide real-time patient information to help nurses deliver optimal care.
 
 # Structure
--- minutes/
--- presentations/
--- reports/
-README.md 
+.  
+|-- minutes/  
+|-- presentations/  
+|-- reports/  
+|-- README.md  
