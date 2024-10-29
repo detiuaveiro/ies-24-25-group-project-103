@@ -1,0 +1,1 @@
+This directory contains all models to be used in the databases
