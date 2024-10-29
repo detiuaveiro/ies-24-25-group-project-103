@@ -1,0 +1,1 @@
+This directory contains all database-related classes in the project
