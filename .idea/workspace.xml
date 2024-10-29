@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
   <component name="ChangeListManager">
     <list default="true" id="b97c8f04-407e-4897-9cfe-82955c479494" name="Changes" comment="" />
     <option name="SHOW_DIALOG" value="false" />
@@ -10,9 +13,9 @@
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
-  <component name="ProjectColorInfo"><![CDATA[{
-  "associatedIndex": 4
-}]]></component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 4
+}</component>
   <component name="ProjectId" id="2o7arPgN8Nk3yT6mooMIs9YUYii" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
@@ -21,9 +24,10 @@
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
     "RunOnceActivity.ShowReadmeOnStart": "true",
-    "git-widget-placeholder": "master",
+    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
+    "git-widget-placeholder": "new/auxiliary__folders__101",
     "kotlin-language-version-configured": "true",
-    "last_opened_file_path": "/home/alof/Desktop/ies-24-25-group-project-103",
+    "last_opened_file_path": "/home/alof/Desktop/ies-24-25-group-project-103/MediSync/src/main/java/org/ies/deti/ua/medisync/service",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
@@ -49,6 +53,7 @@
       <option name="presentableId" value="Default" />
       <updated>1730223266186</updated>
       <workItem from="1730223267306" duration="309000" />
+      <workItem from="1730224088886" duration="748000" />
     </task>
     <servers />
   </component>
