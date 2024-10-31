@@ -1,29 +1,50 @@
 package org.ies.deti.ua.medisync.model;
 
-import org.springframework.data.annotation.Id;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
-import org.springframework.data.mongodb.core.mapping.DBRef;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Column;
+import jakarta.persistence.Table;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.JoinColumn;
 
-import java.util.ArrayList;
-import java.util.List;
-
-@Document(collection = "medicine")
+@Entity
+@Table(name = "schedule_entry")
 public class ScheduleEntry {
 
-    private String timeSlot;          // E.g., "3pm-5pm"
-    private boolean isInterval;       // True if this entry is an interval with no rooms
-    @DBRef
-    private List<Room> rooms;         // List of rooms assigned for this time slot
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column(name = "time_slot", nullable = false, length = 20)
+    private String timeSlot;
+
+    @Column(name = "is_interval", nullable = false)
+    private boolean isInterval;
+
+    @ManyToOne
+    @JoinColumn(name = "nurse_id", nullable = false)
+    private Nurse nurse;
 
     // Constructors
-    public ScheduleEntry(String timeSlot, boolean isInterval, List<Room> rooms) {
+    public ScheduleEntry() {}
+
+    public ScheduleEntry(String timeSlot, boolean isInterval, Nurse nurse) {
         this.timeSlot = timeSlot;
         this.isInterval = isInterval;
-        this.rooms = isInterval ? new ArrayList<Room>() : rooms; // No rooms if interval
+        this.nurse = nurse;
     }
 
     // Getters and Setters
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
     public String getTimeSlot() {
         return timeSlot;
     }
@@ -36,15 +57,15 @@ public class ScheduleEntry {
         return isInterval;
     }
 
-    public void setInterval(boolean interval) {
-        isInterval = interval;
+    public void setInterval(boolean isInterval) {
+        this.isInterval = isInterval;
     }
 
-    public List<Room> getRooms() {
-        return rooms;
+    public Nurse getNurse() {
+        return nurse;
     }
 
-    public void setRooms(List<Room> rooms) {
-        this.rooms = rooms;
+    public void setNurse(Nurse nurse) {
+        this.nurse = nurse;
     }
 }

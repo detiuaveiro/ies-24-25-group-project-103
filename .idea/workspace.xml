@@ -4,7 +4,20 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="b97c8f04-407e-4897-9cfe-82955c479494" name="Changes" comment="" />
+    <list default="true" id="b97c8f04-407e-4897-9cfe-82955c479494" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/MediSync/src/main/java/org/ies/deti/ua/medisync/model/Bed.java" beforeDir="false" afterPath="$PROJECT_DIR$/MediSync/src/main/java/org/ies/deti/ua/medisync/model/Bed.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/MediSync/src/main/java/org/ies/deti/ua/medisync/model/Doctor.java" beforeDir="false" afterPath="$PROJECT_DIR$/MediSync/src/main/java/org/ies/deti/ua/medisync/model/Doctor.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/MediSync/src/main/java/org/ies/deti/ua/medisync/model/HospitalManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/MediSync/src/main/java/org/ies/deti/ua/medisync/model/HospitalManager.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/MediSync/src/main/java/org/ies/deti/ua/medisync/model/Medication.java" beforeDir="false" afterPath="$PROJECT_DIR$/MediSync/src/main/java/org/ies/deti/ua/medisync/model/Medication.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/MediSync/src/main/java/org/ies/deti/ua/medisync/model/Nurse.java" beforeDir="false" afterPath="$PROJECT_DIR$/MediSync/src/main/java/org/ies/deti/ua/medisync/model/Nurse.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/MediSync/src/main/java/org/ies/deti/ua/medisync/model/Patient.java" beforeDir="false" afterPath="$PROJECT_DIR$/MediSync/src/main/java/org/ies/deti/ua/medisync/model/Patient.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/MediSync/src/main/java/org/ies/deti/ua/medisync/model/Room.java" beforeDir="false" afterPath="$PROJECT_DIR$/MediSync/src/main/java/org/ies/deti/ua/medisync/model/Room.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/MediSync/src/main/java/org/ies/deti/ua/medisync/model/ScheduleEntry.java" beforeDir="false" afterPath="$PROJECT_DIR$/MediSync/src/main/java/org/ies/deti/ua/medisync/model/ScheduleEntry.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/MediSync/src/main/java/org/ies/deti/ua/medisync/model/User.java" beforeDir="false" afterPath="$PROJECT_DIR$/MediSync/src/main/java/org/ies/deti/ua/medisync/model/User.java" afterDir="false" />
+    </list>
+    <list id="d916fdbb-c1d0-4875-bcd3-36baae40ee60" name="Changes by joaoneto" comment="" />
+    <list id="735ad2e9-9f70-49b8-bd17-070302a209cb" name="Changes by ponte" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -25,17 +38,43 @@
   "keyToString": {
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "SHARE_PROJECT_CONFIGURATION_FILES": "true",
-    "git-widget-placeholder": "new/auxiliary__folders__101",
+    "git-widget-placeholder": "new/define__models__relational__45",
     "kotlin-language-version-configured": "true",
-    "last_opened_file_path": "/home/alof/Desktop/ies-24-25-group-project-103/MediSync/src/main/java/org/ies/deti/ua/medisync/service",
+    "last_opened_file_path": "/home/alof/Desktop/ies-24-25-group-project-103",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
     "node.js.selected.package.tslint": "(autodetect)",
     "nodejs_package_manager_path": "npm",
+    "project.structure.last.edited": "Project",
+    "project.structure.proportion": "0.15",
+    "project.structure.side.proportion": "0.0",
+    "settings.editor.selected.configurable": "CodeWithMe",
     "vue.rearranger.settings.migration": "true"
   }
 }]]></component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/MediSync/src/main/java/org/ies/deti/ua/medisync/service" />
+      <recent name="$PROJECT_DIR$/MediSync/src/main/java/org/ies/deti/ua/medisync/model" />
+      <recent name="$PROJECT_DIR$/MediSync/src/main/java/org/ies/deti/ua/medisync/dao" />
+    </key>
+  </component>
+  <component name="RunManager">
+    <configuration default="true" type="JetRunConfigurationType">
+      <module name="ies-24-25-group-project-103" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration default="true" type="KotlinStandaloneScriptRunConfigurationType">
+      <module name="ies-24-25-group-project-103" />
+      <option name="filePath" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+  </component>
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
@@ -53,11 +92,16 @@
       <option name="presentableId" value="Default" />
       <updated>1730223266186</updated>
       <workItem from="1730223267306" duration="309000" />
-      <workItem from="1730224088886" duration="748000" />
+      <workItem from="1730224088886" duration="1449000" />
+      <workItem from="1730374967888" duration="5207000" />
     </task>
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
+  </component>
+  <component name="XSLT-Support.FileAssociations.UIState">
+    <expand />
+    <select />
   </component>
 </project>

@@ -1,22 +1,29 @@
 package org.ies.deti.ua.medisync.model;
 
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
-import org.springframework.data.mongodb.core.mapping.DBRef;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Column;
+import jakarta.persistence.Table;
+import jakarta.persistence.OneToMany;
 import java.util.ArrayList;
 import java.util.List;
 
-@Document(collection = "medicine")
+@Entity
+@Table(name = "room")
 public class Room {
 
     @Id
-    private String id;
-    private String roomNumber;           // E.g., "Room 101"
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-    @DBRef
-    private List<Bed> beds;              // List of beds in the room
+    @Column(name = "room_number", nullable = false, length = 20)
+    private String roomNumber;
 
-    // Constructor
+    @OneToMany(mappedBy = "room")  // Links to 'room' in Bed entity
+    private List<Bed> beds = new ArrayList<>();
+
     public Room() {}
 
     public Room(String roomNumber, List<Bed> beds) {
@@ -24,12 +31,11 @@ public class Room {
         this.beds = beds;
     }
 
-    // Getters and Setters
-    public String getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -49,4 +55,3 @@ public class Room {
         this.beds = beds;
     }
 }
-
