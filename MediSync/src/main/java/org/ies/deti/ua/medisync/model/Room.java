@@ -1,35 +1,40 @@
 package org.ies.deti.ua.medisync.model;
 
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
-import org.springframework.data.mongodb.core.mapping.DBRef;
-import java.util.ArrayList;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Column;
+import jakarta.persistence.Table;
+import jakarta.persistence.OneToMany;
 import java.util.List;
 
-@Document(collection = "medicine")
+@Entity
+@Table(name = "room")
 public class Room {
 
     @Id
-    private String id;
-    private String roomNumber;           // E.g., "Room 101"
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-    @DBRef
-    private List<Bed> beds;              // List of beds in the room
+    @Column(name = "room_number", nullable = false, length = 10)
+    private String roomNumber;
 
-    // Constructor
+    @OneToMany(mappedBy = "room")
+    private List<ScheduleEntry> scheduleEntries;
+
     public Room() {}
 
-    public Room(String roomNumber, List<Bed> beds) {
+    public Room(String roomNumber, List<ScheduleEntry> scheduleEntries) {
         this.roomNumber = roomNumber;
-        this.beds = beds;
+        this.scheduleEntries = scheduleEntries;
     }
 
-    // Getters and Setters
-    public String getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -41,12 +46,11 @@ public class Room {
         this.roomNumber = roomNumber;
     }
 
-    public List<Bed> getBeds() {
-        return beds;
+    public List<ScheduleEntry> getScheduleEntries() {
+        return scheduleEntries;
     }
 
-    public void setBeds(List<Bed> beds) {
-        this.beds = beds;
+    public void setScheduleEntries(List<ScheduleEntry> scheduleEntries) {
+        this.scheduleEntries = scheduleEntries;
     }
 }
-

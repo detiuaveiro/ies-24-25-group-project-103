@@ -1,30 +1,19 @@
 package org.ies.deti.ua.medisync.model;
 
-// Easter egg: a mae do ricardo é uma badalhoca #NoCommitChallenge
-
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
+import jakarta.persistence.Table;
+import jakarta.persistence.Column;
 
-@Document(collection = "hospitalmanager")
-public class HospitalManager {
+@Entity
+@Table(name = "hospital_manager")
+public class HospitalManager extends User {
 
-    @Id
-    private String id;
+    public HospitalManager() {}
 
-    private String name;
-    
-    
-    //Constructors
-    public HospitalManager(){}
-
-    public HospitalManager(String name){
-        this.name = name;
+    public HospitalManager(String username, String email, String password, UserType userType, String name) {
+        super(username, email, password, userType,name);
     }
-
-    // Getters and Setters
-    public String getName(){
-        return name;
-    }
-    public void setName(String name){this.name = name;}
-
 }

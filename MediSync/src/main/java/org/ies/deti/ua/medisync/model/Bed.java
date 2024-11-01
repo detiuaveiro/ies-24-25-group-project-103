@@ -1,48 +1,64 @@
+
 package org.ies.deti.ua.medisync.model;
 
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.DBRef;
-import org.springframework.data.mongodb.core.mapping.Document;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Column;
+import jakarta.persistence.Table;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.JoinColumn;
 
-@Document(collection = "bed")
+@Entity
+@Table(name = "bed")
 public class Bed {
 
     @Id
-    private String id;
-    private int bedNumber;          // Bed number within a room
-    @DBRef
-    private Patient assignedPatient; // Reference to a Patient entity (nullable if empty)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-    // Constructors
+    @Column(name = "bed_number", nullable = false, length = 5)
+    private String bedNumber;
+
+    @ManyToOne
+    @JoinColumn(name = "room_id", nullable = false)
+    private Room room;
+
+    @OneToOne
+    @JoinColumn(name = "patient_id", nullable = true)
+    private Patient assignedPatient;
+
     public Bed() {}
 
-    public Bed(int bedNumber) {
+    public Bed(String bedNumber, Room room, Patient assignedPatient) {
         this.bedNumber = bedNumber;
-        this.assignedPatient = null; // Initially empty
+        this.room = room;
+        this.assignedPatient = assignedPatient;
     }
 
     // Getters and Setters
-    public String getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
-    public int getBedNumber() {
+    public String getBedNumber() {
         return bedNumber;
     }
 
-    public void setBedNumber(int bedNumber) {
+    public void setBedNumber(String bedNumber) {
         this.bedNumber = bedNumber;
     }
 
-    public Patient getAssignedPatient() {
-        return assignedPatient;
+    public Room getRoom() {
+        return room;
     }
 
-    public void setAssignedPatient(Patient assignedPatient) {
-        this.assignedPatient = assignedPatient;
+    public void setRoom(Room room) {
+        this.room = room;
     }
 }

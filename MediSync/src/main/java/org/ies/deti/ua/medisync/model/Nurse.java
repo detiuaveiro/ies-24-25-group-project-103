@@ -1,43 +1,28 @@
 package org.ies.deti.ua.medisync.model;
 
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
-
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+import jakarta.persistence.Column;
+import jakarta.persistence.OneToMany;
 import java.util.ArrayList;
 import java.util.List;
 
-@Document(collection = "medicine")
-public class Nurse {
+@Entity
+@Table(name = "nurse")
+public class Nurse extends User {
 
-    @Id
-    private String id;
-    private String name;
-    private List<ScheduleEntry> schedule;
 
-    public Nurse() {
-        this.schedule = new ArrayList<ScheduleEntry>();
-    }
+    @OneToMany(mappedBy = "nurse")
+    private List<ScheduleEntry> schedule = new ArrayList<>();
 
-    public Nurse(String name, List<ScheduleEntry> schedule) {
-        this.name = name;
+    public Nurse() {}
+
+    public Nurse(String username, String email, String password, UserType userType, String name, List<ScheduleEntry> schedule) {
+        super(username, email, password, userType, name);
         this.schedule = schedule;
-    }
-
-    // Getters and Setters
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
     }
 
     public List<ScheduleEntry> getSchedule() {
@@ -48,7 +33,6 @@ public class Nurse {
         this.schedule = schedule;
     }
 
-    // Method to add a time slot or interval to the schedule
     public void addScheduleEntry(ScheduleEntry entry) {
         this.schedule.add(entry);
     }
