@@ -16,11 +16,11 @@ public class ScheduleEntry {
     private Long id;
 
     @Temporal(TemporalType.DATE)
-    @Column(name = "start_time", nullable = false, length = 20)
+    @Column(name = "start_time", nullable = false)
     private Date start_time;
 
     @Temporal(TemporalType.DATE)
-    @Column(name = "end_time", nullable = false, length = 20)
+    @Column(name = "end_time", nullable = false)
     private Date end_time;
 
     @Column(name = "is_interval", nullable = false)
@@ -92,11 +92,11 @@ public class ScheduleEntry {
 
     public void addNurse(Nurse nurse) {
         nurses.add(nurse);
-        nurse.getSchedule().add(this); // Ensure bidirectional relationship is established
+        nurse.getSchedule().add(this);
     }
 
     public void removeNurse(Nurse nurse) {
         nurses.remove(nurse);
-        nurse.getSchedule().remove(this); // Ensure bidirectional relationship is broken
+        nurse.getSchedule().remove(this);
     }
 }

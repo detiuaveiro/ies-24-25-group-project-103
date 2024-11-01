@@ -31,16 +31,15 @@ public class Nurse extends User {
 
     public void addScheduleEntry(ScheduleEntry entry) {
         this.schedule.add(entry);
-        entry.getNurses().add(this); // Establish the relationship
+        entry.getNurses().add(this);
     }
 
     public void removeScheduleEntry(ScheduleEntry entry) {
         this.schedule.remove(entry);
-        entry.getNurses().remove(this); // Break the relationship
+        entry.getNurses().remove(this);
     }
 
     public void cleanupUnassociatedScheduleEntries() {
-        // Remove ScheduleEntries not linked to any Nurse
         schedule.removeIf(entry -> entry.getNurses().isEmpty());
     }
 }

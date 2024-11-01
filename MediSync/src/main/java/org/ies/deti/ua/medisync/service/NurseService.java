@@ -19,29 +19,27 @@ public class NurseService {
         this.nurseRepository = nurseRepository;
     }
 
-    // Retorna todos os enfermeiros
     public List<Nurse> getAllNurses() {
         return nurseRepository.findAll();
     }
 
-    // Busca um enfermeiro pelo ID
     public Optional<Nurse> getNurseById(Long nurseId) {
         return nurseRepository.findById(nurseId);
     }
 
-    // Adiciona uma nova entrada de agendamento ao enfermeiro
     public Nurse addScheduleEntryToNurse(Long nurseId, ScheduleEntry newEntry) {
+        //Optional<Nurse>: Para evitar o uso de null e os problemas que isso pode causar (como NullPointerException), o Spring Data JPA e outras bibliotecas Java usam a classe Optional. Um Optional é um contêiner que pode ou não conter um valor.
+        //nurseOpt.isPresent(): Este método verifica se o Optional contém um valor. Se o Nurse foi encontrado, isPresent() retorna true; caso contrário, retorna false.
         Optional<Nurse> nurseOpt = nurseRepository.findById(nurseId);
         if (nurseOpt.isPresent()) {
             Nurse nurse = nurseOpt.get();
             nurse.addScheduleEntry(newEntry);
             return nurseRepository.save(nurse);
         } else {
-            throw new IllegalArgumentException("Nurse not found with ID: " + nurseId);
+            return null;
         }
     }
 
-    // Remove uma entrada de agendamento de um enfermeiro
     public Nurse removeScheduleEntryFromNurse(Long nurseId, Long entryId) {
         Optional<Nurse> nurseOpt = nurseRepository.findById(nurseId);
         if (nurseOpt.isPresent()) {
@@ -49,19 +47,16 @@ public class NurseService {
             nurse.getSchedule().removeIf(entry -> entry.getId().equals(entryId));
             return nurseRepository.save(nurse);
         } else {
-            throw new IllegalArgumentException("Nurse not found with ID: " + nurseId);
+            return null;
         }
     }
 
-    // Deleta um enfermeiro pelo ID
     public void deleteNurse(Long nurseId) {
         Nurse nurse = nurseRepository.findById(nurseId)
                 .orElseThrow(() -> new RuntimeException("Nurse not found"));
 
-        // Cleanup unassociated ScheduleEntry entities before removing the nurse
         nurse.cleanupUnassociatedScheduleEntries();
 
-        // Remove the nurse
         nurseRepository.delete(nurse);
     }
 }
