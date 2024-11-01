@@ -15,8 +15,8 @@ import jakarta.persistence.JoinColumn;
 public class Bed {
 
     @Id
-    @Column(name = "bed_number", nullable = false, length = 5)
-    private long bedNumber;
+    @Column(name = "id", nullable = false)
+    private Long id;
 
     @ManyToOne
     @JoinColumn(name = "room_number", nullable = false)

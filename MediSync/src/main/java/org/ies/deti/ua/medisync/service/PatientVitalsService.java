@@ -33,38 +33,31 @@ public class PatientVitalsService {
         influxDBClient = InfluxDBClientFactory.create(URL, TOKEN.toCharArray());
     }
 
-    public void writeVitals(Map<String, Map<String, Object>> vitalData) {
+    public void writeVitals(String bedId, Map<String, Object> vitals) {
         long currentTimestamp = System.currentTimeMillis();
 
         try (WriteApi writeApi = influxDBClient.getWriteApi()) {
-            for (Map.Entry<String, Map<String, Object>> bedEntry : vitalData.entrySet()) {  // iterar pelas camas
-                String bedId = bedEntry.getKey(); // id da cama
-                Map<String, Object> vitals = bedEntry.getValue(); // valores dos vitais
+            Integer heartbeat = (Integer) vitals.get("heartbeat");
+            Integer o2 = (Integer) vitals.get("o2");
+            List<Integer> bloodPressure = (List<Integer>) vitals.get("bloodPressure");
+            Double temperature = (Double) vitals.get("temperature");
 
-                Integer heartbeat = (Integer) vitals.get("heartbeat");
-                Integer o2 = (Integer) vitals.get("o2");
-                List<Integer> bloodPressure = (List<Integer>) vitals.get("bloodPressure");
-                Double temperature = (Double) vitals.get("temperature");
+            Point point = Point.measurement("vitals")
+                    .time(currentTimestamp, TimeUnit.MILLISECONDS)
+                    .tag("bedId", bedId)
+                    .addField("heartbeat", heartbeat)
+                    .addField("o2", o2)
+                    .addField("bloodPressure_systolic", bloodPressure.get(0))
+                    .addField("bloodPressure_diastolic", bloodPressure.get(1))
+                    .addField("temperature", temperature)
+                    .build();
 
-                // add the data point
-                Point point = Point.measurement("vitals")
-                        .time(currentTimestamp, TimeUnit.MILLISECONDS) // o tempo em que os dados foram recolhidos
-                        .tag("bedId", bedId)
-                        .addField("heartbeat", heartbeat)
-                        .addField("o2", o2)
-                        .addField("bloodPressure_systolic", bloodPressure.get(0))
-                        .addField("bloodPressure_diastolic", bloodPressure.get(1))
-                        .addField("temperature", temperature)
-                        .build();
-
-                writeApi.writePoint(BUCKET, ORGANIZATION, point);
-            }
+            writeApi.writePoint(BUCKET, ORGANIZATION, point);
         } catch (Exception e) {
             e.printStackTrace();
-            System.out.println("Error writing vitals to InfluxDB.");
+            System.out.println("Error writing vitals to InfluxDB for bed ID: " + bedId);
         }
     }
-
 
     public List<FluxTable> getPatientVitals(String bedId, String startTime, String endTime) {
         String fluxQuery = String.format(

@@ -6,7 +6,8 @@
   <component name="ChangeListManager">
     <list default="true" id="b97c8f04-407e-4897-9cfe-82955c479494" name="Changes" comment=".">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/MediSync/src/main/java/org/ies/deti/ua/medisync/model/Medication.java" beforeDir="false" afterPath="$PROJECT_DIR$/MediSync/src/main/java/org/ies/deti/ua/medisync/model/Medication.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/MediSync/src/main/java/org/ies/deti/ua/medisync/model/Bed.java" beforeDir="false" afterPath="$PROJECT_DIR$/MediSync/src/main/java/org/ies/deti/ua/medisync/model/Bed.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/MediSync/src/main/java/org/ies/deti/ua/medisync/service/PatientVitalsService.java" beforeDir="false" afterPath="$PROJECT_DIR$/MediSync/src/main/java/org/ies/deti/ua/medisync/service/PatientVitalsService.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
