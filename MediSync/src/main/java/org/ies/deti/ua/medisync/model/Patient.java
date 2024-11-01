@@ -10,8 +10,11 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.ElementCollection;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
+import jakarta.persistence.JoinColumn;
 
 import java.util.Date;
 import java.util.List;
@@ -50,9 +53,6 @@ public class Patient {
     @Column(name = "height")
     private Float height;
 
-    @Column(name = "bmi")
-    private Float bmi;
-
     @ElementCollection
     @Column(name = "conditions")
     private List<String> conditions;
@@ -63,20 +63,28 @@ public class Patient {
 
     @OneToMany(mappedBy = "patient")
     private List<Medication> medicationList;
-    // Constructors
+
+    @OneToOne(mappedBy = "assignedPatient")
+    private Bed bed;
+
+    @ManyToOne
+    @JoinColumn(name = "doctor_id")
+    private Doctor assignedDoctor;
+
     public Patient() {}
 
-    public Patient(String name, Gender gender, Date birthDate, Date estimatedDischargeDate, Float weight, Float height, Float bmi, List<String> conditions, List<String> observations, List<Medication> medicationList) {
+    public Patient(String name, Gender gender, Date birthDate, Date estimatedDischargeDate, Float weight, Float height, List<String> conditions, List<String> observations, List<Medication> medicationList, Bed bed, Doctor assignedDoctor) {
         this.name = name;
         this.gender = gender;
         this.birthDate = birthDate;
         this.estimatedDischargeDate = estimatedDischargeDate;
         this.weight = weight;
         this.height = height;
-        this.bmi = bmi;
         this.conditions = conditions;
         this.observations = observations;
         this.medicationList = medicationList;
+        this.bed = bed;
+        this.assignedDoctor = assignedDoctor;
     }
 
     // Getters and Setters
@@ -120,14 +128,6 @@ public class Patient {
         this.height = height;
     }
 
-    public Float getBmi() {
-        return bmi;
-    }
-
-    public void setBmi(Float bmi) {
-        this.bmi = bmi;
-    }
-
     public Date getBirthDate() {
         return birthDate;
     }
@@ -166,5 +166,21 @@ public class Patient {
 
     public void setMedicationList(List<Medication> medicationList) {
         this.medicationList = medicationList;
+    }
+
+    public Bed getBed() {
+        return bed;
+    }
+
+    public void setBed(Bed bed) {
+        this.bed = bed;
+    }
+
+    public Doctor getAssignedDoctor() {
+        return assignedDoctor;
+    }
+
+    public void setAssignedDoctor(Doctor assignedDoctor) {
+        this.assignedDoctor = assignedDoctor;
     }
 }

@@ -14,7 +14,6 @@ import java.util.List;
 @Table(name = "nurse")
 public class Nurse extends User {
 
-
     @OneToMany(mappedBy = "nurse")
     private List<ScheduleEntry> schedule = new ArrayList<>();
 

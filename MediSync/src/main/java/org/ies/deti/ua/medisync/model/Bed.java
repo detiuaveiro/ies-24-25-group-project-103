@@ -15,14 +15,11 @@ import jakarta.persistence.JoinColumn;
 public class Bed {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id", nullable = false)
     private Long id;
 
-    @Column(name = "bed_number", nullable = false, length = 5)
-    private String bedNumber;
-
     @ManyToOne
-    @JoinColumn(name = "room_id", nullable = false)
+    @JoinColumn(name = "room_number", nullable = false)
     private Room room;
 
     @OneToOne
@@ -37,7 +34,6 @@ public class Bed {
         this.assignedPatient = assignedPatient;
     }
 
-    // Getters and Setters
     public Long getId() {
         return id;
     }
