@@ -27,13 +27,18 @@ public class ScheduleEntry {
     @JoinColumn(name = "nurse_id", nullable = false)
     private Nurse nurse;
 
+    @ManyToOne
+    @JoinColumn(name = "room_id", nullable = true)
+    private Room room;
+
     // Constructors
     public ScheduleEntry() {}
 
-    public ScheduleEntry(String timeSlot, boolean isInterval, Nurse nurse) {
+    public ScheduleEntry(String timeSlot, boolean isInterval, Nurse nurse, Room room) {
         this.timeSlot = timeSlot;
         this.isInterval = isInterval;
         this.nurse = nurse;
+        this.room = room;
     }
 
     // Getters and Setters
@@ -67,5 +72,13 @@ public class ScheduleEntry {
 
     public void setNurse(Nurse nurse) {
         this.nurse = nurse;
+    }
+
+    public Room getRoom() {
+        return room;
+    }
+
+    public void setRoom(Room room) {
+        this.room = room;
     }
 }
