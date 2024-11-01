@@ -1,26 +1,19 @@
+package org.ies.deti.ua.medisync.service;
+
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
+import java.util.List;
+import java.util.Map;
+
 import com.influxdb.client.InfluxDBClient;
 import com.influxdb.client.InfluxDBClientFactory;
 import com.influxdb.client.QueryApi;
-import com.influxdb.client.query.FluxTable;
-import com.influxdb.client.query.FluxRecord;
+import com.influxdb.client.domain.WritePrecision;
 import com.influxdb.client.write.Point;
-import java.util.concurrent.TimeUnit;
-import com.influxdb.client.WriteApi;
-import org.jfree.chart.ChartFactory;
-import org.jfree.chart.ChartUtils;
-import org.jfree.chart.JFreeChart;
-import org.jfree.data.time.Second;
-import org.jfree.data.time.TimeSeries;
-import org.jfree.data.time.TimeSeriesCollection;
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
+import com.influxdb.query.FluxRecord;
+import com.influxdb.query.FluxTable;
 
-
-import java.io.File;
-import java.io.IOException;
-import java.util.List;
-
-public class PatientVitalsService {
+public class PatientService  {
 
     private static final String TOKEN = "your-influxdb-token";
     private static final String ORGANIZATION = "your-organization";
@@ -29,30 +22,29 @@ public class PatientVitalsService {
 
     private final InfluxDBClient influxDBClient;
 
-    public PatientVitalsService() {
+    public PatientService() {
         influxDBClient = InfluxDBClientFactory.create(URL, TOKEN.toCharArray());
     }
 
     public void writeVitals(String bedId, Map<String, Object> vitals) {
         long currentTimestamp = System.currentTimeMillis();
-
-        try (WriteApi writeApi = influxDBClient.getWriteApi()) {
+    
+        try {
             Integer heartbeat = (Integer) vitals.get("heartbeat");
             Integer o2 = (Integer) vitals.get("o2");
             List<Integer> bloodPressure = (List<Integer>) vitals.get("bloodPressure");
             Double temperature = (Double) vitals.get("temperature");
-
+    
             Point point = Point.measurement("vitals")
-                    .time(currentTimestamp, TimeUnit.MILLISECONDS)
-                    .tag("bedId", bedId)
+                    .time(currentTimestamp, WritePrecision.MS)
+                    .addTag("bedId", bedId)
                     .addField("heartbeat", heartbeat)
                     .addField("o2", o2)
                     .addField("bloodPressure_systolic", bloodPressure.get(0))
                     .addField("bloodPressure_diastolic", bloodPressure.get(1))
-                    .addField("temperature", temperature)
-                    .build();
-
-            writeApi.writePoint(BUCKET, ORGANIZATION, point);
+                    .addField("temperature", temperature);
+    
+            influxDBClient.getWriteApiBlocking().writePoint(BUCKET, ORGANIZATION, point);
         } catch (Exception e) {
             e.printStackTrace();
             System.out.println("Error writing vitals to InfluxDB for bed ID: " + bedId);
