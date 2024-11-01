@@ -1,13 +1,11 @@
 package org.ies.deti.ua.medisync.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Column;
-import jakarta.persistence.Table;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.JoinColumn;
+import jakarta.persistence.*;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "schedule_entry")
@@ -17,27 +15,33 @@ public class ScheduleEntry {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "time_slot", nullable = false, length = 20)
-    private String timeSlot;
+    @Temporal(TemporalType.DATE)
+    @Column(name = "start_time", nullable = false)
+    private Date start_time;
+
+    @Temporal(TemporalType.DATE)
+    @Column(name = "end_time", nullable = false)
+    private Date end_time;
 
     @Column(name = "is_interval", nullable = false)
     private boolean isInterval;
 
     @ManyToOne
-    @JoinColumn(name = "nurse_id", nullable = false)
-    private Nurse nurse;
-
-    @ManyToOne
     @JoinColumn(name = "room_id", nullable = true)
     private Room room;
+
+    @ManyToMany(mappedBy = "schedules")
+    private Set<Nurse> nurses;
+
+
 
     // Constructors
     public ScheduleEntry() {}
 
-    public ScheduleEntry(String timeSlot, boolean isInterval, Nurse nurse, Room room) {
-        this.timeSlot = timeSlot;
+    public ScheduleEntry(String timeSlot, boolean isInterval, Room room, Date startTime, Date endTime) {
+        this.start_time = startTime;
+        this.end_time = endTime;
         this.isInterval = isInterval;
-        this.nurse = nurse;
         this.room = room;
     }
 
@@ -50,12 +54,23 @@ public class ScheduleEntry {
         this.id = id;
     }
 
-    public String getTimeSlot() {
-        return timeSlot;
+    public Date getStart_time() {
+        return start_time;
     }
-
-    public void setTimeSlot(String timeSlot) {
-        this.timeSlot = timeSlot;
+    public void setStart_time(Date start_time) {
+        this.start_time = start_time;
+    }
+    public Date getEnd_time() {
+        return end_time;
+    }
+    public void setEnd_time(Date end_time) {
+        this.end_time = end_time;
+    }
+    public void setNurses(Set<Nurse> nurses) {
+        this.nurses = nurses;
+    }
+    public Set<Nurse> getNurses() {
+        return nurses;
     }
 
     public boolean isInterval() {
@@ -66,13 +81,6 @@ public class ScheduleEntry {
         this.isInterval = isInterval;
     }
 
-    public Nurse getNurse() {
-        return nurse;
-    }
-
-    public void setNurse(Nurse nurse) {
-        this.nurse = nurse;
-    }
 
     public Room getRoom() {
         return room;
@@ -80,5 +88,15 @@ public class ScheduleEntry {
 
     public void setRoom(Room room) {
         this.room = room;
+    }
+
+    public void addNurse(Nurse nurse) {
+        nurses.add(nurse);
+        nurse.getSchedule().add(this);
+    }
+
+    public void removeNurse(Nurse nurse) {
+        nurses.remove(nurse);
+        nurse.getSchedule().remove(this);
     }
 }
