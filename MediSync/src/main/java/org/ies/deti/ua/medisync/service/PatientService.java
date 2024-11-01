@@ -2,8 +2,17 @@ package org.ies.deti.ua.medisync.service;
 
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+
+import org.ies.deti.ua.medisync.model.Patient;
+import org.ies.deti.ua.medisync.model.PatientWithVitals;
+import org.ies.deti.ua.medisync.model.Vitals;
+import org.ies.deti.ua.medisync.repository.PatientRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import com.influxdb.client.InfluxDBClient;
 import com.influxdb.client.InfluxDBClientFactory;
@@ -13,7 +22,10 @@ import com.influxdb.client.write.Point;
 import com.influxdb.query.FluxRecord;
 import com.influxdb.query.FluxTable;
 
-public class PatientService  {
+@Service
+public class PatientService {
+
+    private final PatientRepository patientRepository;
 
     private static final String TOKEN = "your-influxdb-token";
     private static final String ORGANIZATION = "your-organization";
@@ -22,19 +34,75 @@ public class PatientService  {
 
     private final InfluxDBClient influxDBClient;
 
-    public PatientService() {
+    @Autowired
+    public PatientService(PatientRepository patientRepository) {
+        this.patientRepository = patientRepository;
         influxDBClient = InfluxDBClientFactory.create(URL, TOKEN.toCharArray());
     }
 
+
+    public Patient createPatient(Patient patient) {
+        return patientRepository.save(patient);
+    }
+
+    public Optional<Patient> getPatientById(Long id) {
+        return patientRepository.findById(id);
+    }
+
+    public Optional<PatientWithVitals> getPatientWithVitalsById(Long id){
+        Optional<Patient> patientOptional = this.getPatientById(id);
+        if (patientOptional.isPresent()) {
+            Patient patient = patientOptional.get();
+            Long bedId = patient.getBed().getId();
+            Map<String, Object> lastVitals = this.getLastVitals(bedId.toString());
+            Long HeartRate = (Long) lastVitals.get("heartbeat");
+            Long o2 = (Long) lastVitals.get("o2");
+            Long temperature = (Long) lastVitals.get("temperature");
+            Long bloodPressure_systolic = (Long) lastVitals.get("bloodPressure_systolic");
+            Long bloodPressure_diastolic = (Long) lastVitals.get("bloodPressure_diastolic");
+            Vitals vitals = new Vitals(HeartRate, bloodPressure_diastolic, bloodPressure_systolic, o2, temperature);
+            PatientWithVitals patientWithVitals = new PatientWithVitals(patient, vitals);
+            return Optional.of(patientWithVitals);
+        } else {
+            return Optional.empty();
+        }
+    }
+
+    public List<Patient> getAllPatients() {
+        return patientRepository.findAll();
+    }
+
+    public Patient updatePatient(Long id, Patient updatedPatient) {
+        return patientRepository.findById(id).map(existingPatient -> {
+            existingPatient.setName(updatedPatient.getName());
+            existingPatient.setGender(updatedPatient.getGender());
+            existingPatient.setBirthDate(updatedPatient.getBirthDate());
+            existingPatient.setEstimatedDischargeDate(updatedPatient.getEstimatedDischargeDate());
+            existingPatient.setWeight(updatedPatient.getWeight());
+            existingPatient.setHeight(updatedPatient.getHeight());
+            existingPatient.setConditions(updatedPatient.getConditions());
+            existingPatient.setObservations(updatedPatient.getObservations());
+            existingPatient.setMedicationList(updatedPatient.getMedicationList());
+            existingPatient.setBed(updatedPatient.getBed());
+            existingPatient.setAssignedDoctor(updatedPatient.getAssignedDoctor());
+            return patientRepository.save(existingPatient);
+        }).orElseThrow(() -> new RuntimeException("Patient not found with id: " + id));
+    }
+
+    public void dischargePatient(Long id) {
+        patientRepository.deleteById(id);
+    }
+
+
     public void writeVitals(String bedId, Map<String, Object> vitals) {
         long currentTimestamp = System.currentTimeMillis();
-    
+
         try {
             Integer heartbeat = (Integer) vitals.get("heartbeat");
             Integer o2 = (Integer) vitals.get("o2");
             List<Integer> bloodPressure = (List<Integer>) vitals.get("bloodPressure");
             Double temperature = (Double) vitals.get("temperature");
-    
+
             Point point = Point.measurement("vitals")
                     .time(currentTimestamp, WritePrecision.MS)
                     .addTag("bedId", bedId)
@@ -43,7 +111,7 @@ public class PatientService  {
                     .addField("bloodPressure_systolic", bloodPressure.get(0))
                     .addField("bloodPressure_diastolic", bloodPressure.get(1))
                     .addField("temperature", temperature);
-    
+
             influxDBClient.getWriteApiBlocking().writePoint(BUCKET, ORGANIZATION, point);
         } catch (Exception e) {
             e.printStackTrace();
@@ -102,8 +170,35 @@ public class PatientService  {
         return "https://quickchart.io/chart?c=" + encodedChart;
     }
 
+    public Map<String, Object> getLastVitals(String bedId) {
+        String fluxQuery = String.format(
+                "from(bucket: \"%s\") " +
+                "|> range(start: -1h) " + // Adjust the time range as needed
+                "|> filter(fn: (r) => r[\"bedId\"] == \"%s\") " +
+                "|> filter(fn: (r) => r[\"_measurement\"] == \"vitals\") " +
+                "|> last()",
+                BUCKET, bedId);
+
+        QueryApi queryApi = influxDBClient.getQueryApi();
+        List<FluxTable> tables = queryApi.query(fluxQuery);
+
+        Map<String, Object> latestVitals = new HashMap<>();
+        latestVitals.put("timestamp", null);
+
+        for (FluxTable table : tables) {
+            for (FluxRecord record : table.getRecords()) {
+                latestVitals.put("timestamp", record.getTime());             
+                String field = (String) record.getValueByKey("_field");
+                Long value = (Long) record.getValue();
+                latestVitals.put(field, value);
+            }
+        }
+        
+        return latestVitals;
+    }
+
+
     public void close() {
         influxDBClient.close();
     }
-
 }

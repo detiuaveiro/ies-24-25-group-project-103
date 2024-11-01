@@ -1,23 +1,23 @@
 package org.ies.deti.ua.medisync.model;
 
+import java.util.Date;
+import java.util.List;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.Column;
-import jakarta.persistence.Table;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.ElementCollection;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
-import jakarta.persistence.JoinColumn;
-
-import java.util.Date;
-import java.util.List;
 
 @Entity
 @Table(name = "patient")
@@ -64,7 +64,7 @@ public class Patient {
     @OneToMany(mappedBy = "patient")
     private List<Medication> medicationList;
 
-    @OneToOne(mappedBy = "assignedPatient")
+    @OneToOne(mappedBy = "assignedPatient", optional = false)
     private Bed bed;
 
     @ManyToOne
