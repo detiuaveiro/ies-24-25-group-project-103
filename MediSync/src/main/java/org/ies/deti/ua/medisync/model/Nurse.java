@@ -8,10 +8,9 @@ import java.util.List;
 import java.util.Set;
 
 @Entity
-@Table(name = "nurse")
 public class Nurse extends User {
 
-    @ManyToMany(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @ManyToMany(mappedBy = "nurses")
     private Set<ScheduleEntry> schedule = new HashSet<>();
 
     public Nurse() {}

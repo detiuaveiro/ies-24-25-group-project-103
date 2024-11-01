@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -30,10 +31,13 @@ public class ScheduleEntry {
     @JoinColumn(name = "room_id", nullable = true)
     private Room room;
 
-    @ManyToMany(mappedBy = "schedules")
-    private Set<Nurse> nurses;
-
-
+    @ManyToMany
+    @JoinTable(
+        name = "schedule_nurse",
+        joinColumns = @JoinColumn(name = "schedule_id"),
+        inverseJoinColumns = @JoinColumn(name = "nurse_id")
+    )
+    private Set<Nurse> nurses = new HashSet<>();
 
     // Constructors
     public ScheduleEntry() {}
