@@ -28,8 +28,8 @@ public class NurseService {
     }
 
     public Nurse addScheduleEntryToNurse(Long nurseId, ScheduleEntry newEntry) {
-        //Optional<Nurse>: Para evitar o uso de null e os problemas que isso pode causar (como NullPointerException), o Spring Data JPA e outras bibliotecas Java usam a classe Optional. Um Optional é um contêiner que pode ou não conter um valor.
-        //nurseOpt.isPresent(): Este método verifica se o Optional contém um valor. Se o Nurse foi encontrado, isPresent() retorna true; caso contrário, retorna false.
+        // Optional<Nurse>: To avoid the use of null and the problems it can cause (such as NullPointerException), Spring Data JPA and other Java libraries use the Optional class. An Optional is a container that can or cannot contain a value.
+        // nurseOpt.isPresent(): This method checks if the Optional contains a value. If the Nurse was found, isPresent() returns true; otherwise, it returns false.
         Optional<Nurse> nurseOpt = nurseRepository.findById(nurseId);
         if (nurseOpt.isPresent()) {
             Nurse nurse = nurseOpt.get();
