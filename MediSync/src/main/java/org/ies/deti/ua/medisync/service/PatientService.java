@@ -4,6 +4,12 @@ import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+
+import org.ies.deti.ua.medisync.model.Patient;
+import org.ies.deti.ua.medisync.repository.PatientRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import com.influxdb.client.InfluxDBClient;
 import com.influxdb.client.InfluxDBClientFactory;
@@ -13,7 +19,10 @@ import com.influxdb.client.write.Point;
 import com.influxdb.query.FluxRecord;
 import com.influxdb.query.FluxTable;
 
-public class PatientService  {
+@Service
+public class PatientService {
+
+    private final PatientRepository patientRepository;
 
     private static final String TOKEN = "your-influxdb-token";
     private static final String ORGANIZATION = "your-organization";
@@ -22,19 +31,56 @@ public class PatientService  {
 
     private final InfluxDBClient influxDBClient;
 
-    public PatientService() {
+    @Autowired
+    public PatientService(PatientRepository patientRepository) {
+        this.patientRepository = patientRepository;
         influxDBClient = InfluxDBClientFactory.create(URL, TOKEN.toCharArray());
     }
 
+
+    public Patient createPatient(Patient patient) {
+        return patientRepository.save(patient);
+    }
+
+    public Optional<Patient> getPatientById(Long id) {
+        return patientRepository.findById(id);
+    }
+
+    public List<Patient> getAllPatients() {
+        return patientRepository.findAll();
+    }
+
+    public Patient updatePatient(Long id, Patient updatedPatient) {
+        return patientRepository.findById(id).map(existingPatient -> {
+            existingPatient.setName(updatedPatient.getName());
+            existingPatient.setGender(updatedPatient.getGender());
+            existingPatient.setBirthDate(updatedPatient.getBirthDate());
+            existingPatient.setEstimatedDischargeDate(updatedPatient.getEstimatedDischargeDate());
+            existingPatient.setWeight(updatedPatient.getWeight());
+            existingPatient.setHeight(updatedPatient.getHeight());
+            existingPatient.setConditions(updatedPatient.getConditions());
+            existingPatient.setObservations(updatedPatient.getObservations());
+            existingPatient.setMedicationList(updatedPatient.getMedicationList());
+            existingPatient.setBed(updatedPatient.getBed());
+            existingPatient.setAssignedDoctor(updatedPatient.getAssignedDoctor());
+            return patientRepository.save(existingPatient);
+        }).orElseThrow(() -> new RuntimeException("Patient not found with id: " + id));
+    }
+
+    public void dischargePatient(Long id) {
+        patientRepository.deleteById(id);
+    }
+
+
     public void writeVitals(String bedId, Map<String, Object> vitals) {
         long currentTimestamp = System.currentTimeMillis();
-    
+
         try {
             Integer heartbeat = (Integer) vitals.get("heartbeat");
             Integer o2 = (Integer) vitals.get("o2");
             List<Integer> bloodPressure = (List<Integer>) vitals.get("bloodPressure");
             Double temperature = (Double) vitals.get("temperature");
-    
+
             Point point = Point.measurement("vitals")
                     .time(currentTimestamp, WritePrecision.MS)
                     .addTag("bedId", bedId)
@@ -43,7 +89,7 @@ public class PatientService  {
                     .addField("bloodPressure_systolic", bloodPressure.get(0))
                     .addField("bloodPressure_diastolic", bloodPressure.get(1))
                     .addField("temperature", temperature);
-    
+
             influxDBClient.getWriteApiBlocking().writePoint(BUCKET, ORGANIZATION, point);
         } catch (Exception e) {
             e.printStackTrace();
@@ -105,5 +151,4 @@ public class PatientService  {
     public void close() {
         influxDBClient.close();
     }
-
 }
