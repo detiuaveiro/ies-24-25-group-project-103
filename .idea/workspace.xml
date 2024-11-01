@@ -4,8 +4,15 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="b97c8f04-407e-4897-9cfe-82955c479494" name="Changes" comment="">
+    <list default="true" id="b97c8f04-407e-4897-9cfe-82955c479494" name="Changes" comment=".">
+      <change afterPath="$PROJECT_DIR$/MediSync/src/main/java/org/ies/deti/ua/medisync/repository/PatientRepository.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/MediSync/src/main/java/org/ies/deti/ua/medisync/service/PatientVitalsService.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/MediSync/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/MediSync/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/MediSync/src/main/java/org/ies/deti/ua/medisync/model/Bed.java" beforeDir="false" afterPath="$PROJECT_DIR$/MediSync/src/main/java/org/ies/deti/ua/medisync/model/Bed.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/MediSync/src/main/java/org/ies/deti/ua/medisync/model/Medication.java" beforeDir="false" afterPath="$PROJECT_DIR$/MediSync/src/main/java/org/ies/deti/ua/medisync/model/Medication.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/MediSync/src/main/java/org/ies/deti/ua/medisync/model/Patient.java" beforeDir="false" afterPath="$PROJECT_DIR$/MediSync/src/main/java/org/ies/deti/ua/medisync/model/Patient.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/MediSync/src/main/java/org/ies/deti/ua/medisync/model/Room.java" beforeDir="false" afterPath="$PROJECT_DIR$/MediSync/src/main/java/org/ies/deti/ua/medisync/model/Room.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -26,7 +33,7 @@
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
     "RunOnceActivity.ShowReadmeOnStart": "true",
-    "git-widget-placeholder": "develop",
+    "git-widget-placeholder": "new/develop__patient__service__115",
     "kotlin-language-version-configured": "true",
     "last_opened_file_path": "/home/alof/Desktop/ies-24-25-group-project-103",
     "node.js.detected.package.eslint": "true",
@@ -56,9 +63,22 @@
       <workItem from="1730223267306" duration="309000" />
       <workItem from="1730224088886" duration="345000" />
     </task>
+    <task id="LOCAL-00001" summary=".">
+      <option name="closed" value="true" />
+      <created>1730461435514</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1730461435514</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="." />
+    <option name="LAST_COMMIT_MESSAGE" value="." />
   </component>
 </project>

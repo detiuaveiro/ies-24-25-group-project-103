@@ -78,8 +78,12 @@
 			<artifactId>twilio</artifactId>
 			<version>10.6.2</version>
 		</dependency>
+		<dependency>
+			<groupId>com.influxdb</groupId>
+			<artifactId>influxdb-client-java</artifactId>
+			<version>6.9.0</version>
+		</dependency>
 	</dependencies>
-
 	<build>
 		<plugins>
 			<plugin>

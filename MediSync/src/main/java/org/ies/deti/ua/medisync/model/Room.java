@@ -14,9 +14,6 @@ import java.util.List;
 public class Room {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
     @Column(name = "room_number", nullable = false, length = 10)
     private String roomNumber;
 

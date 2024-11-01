@@ -26,6 +26,8 @@ public class Medication {
     @Column(name = "dosage", length = 255)
     private String dosage;
 
+    @Column(name = "")
+
     @ManyToOne
     @JoinColumn(name = "patient_id", nullable = false)
     private Patient patient;
