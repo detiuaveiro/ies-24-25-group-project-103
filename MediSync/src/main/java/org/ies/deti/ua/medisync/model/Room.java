@@ -7,7 +7,6 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Column;
 import jakarta.persistence.Table;
 import jakarta.persistence.OneToMany;
-import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -18,17 +17,17 @@ public class Room {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "room_number", nullable = false, length = 20)
+    @Column(name = "room_number", nullable = false, length = 10)
     private String roomNumber;
 
-    @OneToMany(mappedBy = "room")  // Links to 'room' in Bed entity
-    private List<Bed> beds = new ArrayList<>();
+    @OneToMany(mappedBy = "room")
+    private List<ScheduleEntry> scheduleEntries;
 
     public Room() {}
 
-    public Room(String roomNumber, List<Bed> beds) {
+    public Room(String roomNumber, List<ScheduleEntry> scheduleEntries) {
         this.roomNumber = roomNumber;
-        this.beds = beds;
+        this.scheduleEntries = scheduleEntries;
     }
 
     public Long getId() {
@@ -47,11 +46,11 @@ public class Room {
         this.roomNumber = roomNumber;
     }
 
-    public List<Bed> getBeds() {
-        return beds;
+    public List<ScheduleEntry> getScheduleEntries() {
+        return scheduleEntries;
     }
 
-    public void setBeds(List<Bed> beds) {
-        this.beds = beds;
+    public void setScheduleEntries(List<ScheduleEntry> scheduleEntries) {
+        this.scheduleEntries = scheduleEntries;
     }
 }

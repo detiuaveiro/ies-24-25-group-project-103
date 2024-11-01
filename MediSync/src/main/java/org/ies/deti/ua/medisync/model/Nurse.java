@@ -12,39 +12,17 @@ import java.util.List;
 
 @Entity
 @Table(name = "nurse")
-public class Nurse {
+public class Nurse extends User {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
-    @Column(name = "name", nullable = false, length = 100)
-    private String name;
 
     @OneToMany(mappedBy = "nurse")
     private List<ScheduleEntry> schedule = new ArrayList<>();
 
     public Nurse() {}
 
-    public Nurse(String name, List<ScheduleEntry> schedule) {
-        this.name = name;
+    public Nurse(String username, String email, String password, UserType userType, String name, List<ScheduleEntry> schedule) {
+        super(username, email, password, userType, name);
         this.schedule = schedule;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
     }
 
     public List<ScheduleEntry> getSchedule() {

@@ -13,14 +13,6 @@ import jakarta.persistence.Enumerated;
 @Table(name = "user")
 public class User {
 
-    // Enum for user roles
-    public enum UserType {
-        PATIENT,
-        DOCTOR,
-        NURSE,
-        ADMIN
-    }
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
