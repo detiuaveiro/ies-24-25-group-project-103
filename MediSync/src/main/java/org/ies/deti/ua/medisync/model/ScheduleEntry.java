@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "schedule_entry")
@@ -25,17 +26,12 @@ public class ScheduleEntry {
     @Column(name = "is_interval", nullable = false)
     private boolean isInterval;
 
-    @ManyToMany
-    @JoinTable(
-            name = "nurse_schedule",
-            joinColumns = @JoinColumn(name = "schedule_entry_id"),
-            inverseJoinColumns = @JoinColumn(name = "nurse_id")
-    )
-    private List<Nurse> nurses = new ArrayList<>();
-
     @ManyToOne
     @JoinColumn(name = "room_id", nullable = true)
     private Room room;
+
+    @ManyToMany(mappedBy = "schedules")
+    private Set<Nurse> nurses;
 
 
 
@@ -70,6 +66,12 @@ public class ScheduleEntry {
     public void setEnd_time(Date end_time) {
         this.end_time = end_time;
     }
+    public void setNurses(Set<Nurse> nurses) {
+        this.nurses = nurses;
+    }
+    public Set<Nurse> getNurses() {
+        return nurses;
+    }
 
     public boolean isInterval() {
         return isInterval;
@@ -79,13 +81,6 @@ public class ScheduleEntry {
         this.isInterval = isInterval;
     }
 
-    public List<Nurse> getNurses() {
-        return nurses;
-    }
-
-    public void setNurses(List<Nurse> nurses) {
-        this.nurses = nurses;
-    }
 
     public Room getRoom() {
         return room;
@@ -96,7 +91,12 @@ public class ScheduleEntry {
     }
 
     public void addNurse(Nurse nurse) {
-        this.nurses.add(nurse);
-        nurse.getSchedule().add(this);
+        nurses.add(nurse);
+        nurse.getSchedule().add(this); // Ensure bidirectional relationship is established
+    }
+
+    public void removeNurse(Nurse nurse) {
+        nurses.remove(nurse);
+        nurse.getSchedule().remove(this); // Ensure bidirectional relationship is broken
     }
 }

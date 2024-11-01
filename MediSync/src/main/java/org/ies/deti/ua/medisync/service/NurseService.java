@@ -55,6 +55,13 @@ public class NurseService {
 
     // Deleta um enfermeiro pelo ID
     public void deleteNurse(Long nurseId) {
-        nurseRepository.deleteById(nurseId);
+        Nurse nurse = nurseRepository.findById(nurseId)
+                .orElseThrow(() -> new RuntimeException("Nurse not found"));
+
+        // Cleanup unassociated ScheduleEntry entities before removing the nurse
+        nurse.cleanupUnassociatedScheduleEntries();
+
+        // Remove the nurse
+        nurseRepository.delete(nurse);
     }
 }
