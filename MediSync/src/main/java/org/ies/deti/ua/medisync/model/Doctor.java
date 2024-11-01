@@ -15,11 +15,10 @@ public class Doctor extends User {
     @OneToMany(mappedBy = "assignedDoctor")
     private List<Patient> patientsAssigned;
 
-    // Constructors
     public Doctor() {}
 
-    public Doctor(String username, String email, String password, UserType userType, String name, List<Patient> patientsAssigned) {
-        super(username, email, password, userType, name);
+    public Doctor(String username, String email, String password, String name, List<Patient> patientsAssigned) {
+        super(username, email, password, name);
         this.patientsAssigned = patientsAssigned;
     }
 

@@ -1,13 +1,11 @@
 package org.ies.deti.ua.medisync.model;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.Column;
 import jakarta.persistence.Table;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 
 @Entity
 @Table(name = "user")
@@ -29,17 +27,13 @@ public class User {
     @Column(name = "password", nullable = false, length = 255)
     private String password;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "usertype", nullable = false)
-    private UserType userType;
 
     public User() {}
 
-    public User(String username, String email, String password, UserType userType, String name) {
+    public User(String username, String email, String password, String name) {
         this.username = username;
         this.email = email;
         this.password = password;
-        this.userType = userType;
         this.name = name;
     }
 
@@ -84,13 +78,6 @@ public class User {
         this.password = password;
     }
 
-    public UserType getUserType() {
-        return userType;
-    }
-
-    public void setUserType(UserType userType) {
-        this.userType = userType;
-    }
 
     public boolean checkPassword(String password) {
         return this.password.equals(password);

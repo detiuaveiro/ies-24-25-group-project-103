@@ -1,14 +1,11 @@
 package org.ies.deti.ua.medisync.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
-import jakarta.persistence.Column;
-import jakarta.persistence.OneToMany;
 import java.util.ArrayList;
 import java.util.List;
+
+import jakarta.persistence.Entity;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "nurse")
@@ -19,8 +16,8 @@ public class Nurse extends User {
 
     public Nurse() {}
 
-    public Nurse(String username, String email, String password, UserType userType, String name, List<ScheduleEntry> schedule) {
-        super(username, email, password, userType, name);
+    public Nurse(String username, String email, String password, String name, List<ScheduleEntry> schedule) {
+        super(username, email, password, name);
         this.schedule = schedule;
     }
 
