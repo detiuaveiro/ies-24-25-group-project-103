@@ -9,7 +9,6 @@ import jakarta.persistence.Table;
 import java.util.List;
 
 @Entity
-@Table(name = "doctor")
 public class Doctor extends User {
 
     @OneToMany(mappedBy = "assignedDoctor")
