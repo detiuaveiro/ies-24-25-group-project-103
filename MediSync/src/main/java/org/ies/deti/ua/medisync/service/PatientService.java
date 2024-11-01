@@ -2,11 +2,14 @@ package org.ies.deti.ua.medisync.service;
 
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
 import org.ies.deti.ua.medisync.model.Patient;
+import org.ies.deti.ua.medisync.model.PatientWithVitals;
+import org.ies.deti.ua.medisync.model.Vitals;
 import org.ies.deti.ua.medisync.repository.PatientRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -44,6 +47,25 @@ public class PatientService {
 
     public Optional<Patient> getPatientById(Long id) {
         return patientRepository.findById(id);
+    }
+
+    public Optional<PatientWithVitals> getPatientWithVitalsById(Long id){
+        Optional<Patient> patientOptional = this.getPatientById(id);
+        if (patientOptional.isPresent()) {
+            Patient patient = patientOptional.get();
+            Long bedId = patient.getBed().getId();
+            Map<String, Object> lastVitals = this.getLastVitals(bedId.toString());
+            Long HeartRate = (Long) lastVitals.get("heartbeat");
+            Long o2 = (Long) lastVitals.get("o2");
+            Long temperature = (Long) lastVitals.get("temperature");
+            Long bloodPressure_systolic = (Long) lastVitals.get("bloodPressure_systolic");
+            Long bloodPressure_diastolic = (Long) lastVitals.get("bloodPressure_diastolic");
+            Vitals vitals = new Vitals(HeartRate, bloodPressure_diastolic, bloodPressure_systolic, o2, temperature);
+            PatientWithVitals patientWithVitals = new PatientWithVitals(patient, vitals);
+            return Optional.of(patientWithVitals);
+        } else {
+            return Optional.empty();
+        }
     }
 
     public List<Patient> getAllPatients() {
@@ -147,6 +169,34 @@ public class PatientService {
         String encodedChart = URLEncoder.encode(chartJson, StandardCharsets.UTF_8);
         return "https://quickchart.io/chart?c=" + encodedChart;
     }
+
+    public Map<String, Object> getLastVitals(String bedId) {
+        String fluxQuery = String.format(
+                "from(bucket: \"%s\") " +
+                "|> range(start: -1h) " + // Adjust the time range as needed
+                "|> filter(fn: (r) => r[\"bedId\"] == \"%s\") " +
+                "|> filter(fn: (r) => r[\"_measurement\"] == \"vitals\") " +
+                "|> last()",
+                BUCKET, bedId);
+
+        QueryApi queryApi = influxDBClient.getQueryApi();
+        List<FluxTable> tables = queryApi.query(fluxQuery);
+
+        Map<String, Object> latestVitals = new HashMap<>();
+        latestVitals.put("timestamp", null);
+
+        for (FluxTable table : tables) {
+            for (FluxRecord record : table.getRecords()) {
+                latestVitals.put("timestamp", record.getTime());             
+                String field = (String) record.getValueByKey("_field");
+                Long value = (Long) record.getValue();
+                latestVitals.put(field, value);
+            }
+        }
+        
+        return latestVitals;
+    }
+
 
     public void close() {
         influxDBClient.close();
