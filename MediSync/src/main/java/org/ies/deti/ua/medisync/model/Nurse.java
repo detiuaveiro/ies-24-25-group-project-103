@@ -6,7 +6,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import jakarta.persistence.Column;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.ManyToMany;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,13 +14,13 @@ import java.util.List;
 @Table(name = "nurse")
 public class Nurse extends User {
 
-    @OneToMany(mappedBy = "nurse")
+    @ManyToMany(mappedBy = "nurse")
     private List<ScheduleEntry> schedule = new ArrayList<>();
 
     public Nurse() {}
 
-    public Nurse(String username, String email, String password, UserType userType, String name, List<ScheduleEntry> schedule) {
-        super(username, email, password, userType, name);
+    public Nurse(String username, String email, String password, String name, List<ScheduleEntry> schedule) {
+        super(username, email, password, name);
         this.schedule = schedule;
     }
 
@@ -34,5 +34,6 @@ public class Nurse extends User {
 
     public void addScheduleEntry(ScheduleEntry entry) {
         this.schedule.add(entry);
+        entry.getNurses().add(this);
     }
 }
