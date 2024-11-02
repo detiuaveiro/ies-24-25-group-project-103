@@ -14,7 +14,7 @@ public class Room {
     @Column(name = "room_number", nullable = false, length = 10)
     private String roomNumber;
 
-    @OneToMany(mappedBy = "room")
+    @ManyToMany(mappedBy = "rooms")
     private List<ScheduleEntry> scheduleEntries;
 
     @OneToMany(mappedBy = "room", cascade = CascadeType.ALL)
