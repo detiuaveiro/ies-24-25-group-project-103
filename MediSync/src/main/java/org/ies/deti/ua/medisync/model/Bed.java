@@ -41,7 +41,6 @@ public class Bed {
         this.id = id;
     }
 
-
     public Room getRoom() {
         return room;
     }
