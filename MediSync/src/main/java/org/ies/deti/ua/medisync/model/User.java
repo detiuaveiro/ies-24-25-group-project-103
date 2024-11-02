@@ -9,7 +9,7 @@ import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "user")
-public class User {
+public abstract class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -77,7 +77,6 @@ public class User {
     public void setPassword(String password) {
         this.password = password;
     }
-
 
     public boolean checkPassword(String password) {
         return this.password.equals(password);

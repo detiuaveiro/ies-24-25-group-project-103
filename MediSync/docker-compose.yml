@@ -1,0 +1,77 @@
+version: "3.8"
+
+services:
+  mysqldb:
+    image: mysql:8.0
+    environment:
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+      - MYSQL_DATABASE=${MYSQL_DATABASE}
+      - MYSQL_USER=${MYSQL_USER}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+    ports:
+      - "${MYSQL_PORT}:3306"
+    volumes:
+      - db:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "${MYSQL_USER}", "-p${MYSQL_PASSWORD}"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    networks:
+      - medisync-network
+
+  influxdb:
+    image: influxdb:2.7
+    ports:
+      - "${INFLUXDB_PORT}:8086"
+    volumes:
+      - influxdb_data:/var/lib/influxdb2
+    environment:
+      - DOCKER_INFLUXDB_INIT_MODE=setup
+      - DOCKER_INFLUXDB_INIT_USERNAME=${INFLUXDB_USERNAME}
+      - DOCKER_INFLUXDB_INIT_PASSWORD=${INFLUXDB_PASSWORD}
+      - DOCKER_INFLUXDB_INIT_ORG=${INFLUXDB_ORG}
+      - DOCKER_INFLUXDB_INIT_BUCKET=${INFLUXDB_BUCKET}
+      - DOCKER_INFLUXDB_INIT_ADMIN_TOKEN=${INFLUXDB_TOKEN}
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8086/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    networks:
+      - medisync-network
+
+  app:
+    depends_on:
+      mysqldb:
+        condition: service_healthy
+      influxdb:
+        condition: service_healthy
+    build: .
+    ports:
+      - "${APP_PORT}:8080"
+    environment:
+      SPRING_APPLICATION_JSON: '{
+        "spring.datasource.url": "jdbc:mysql://mysqldb:3306/${MYSQL_DATABASE}?useSSL=false",
+        "spring.datasource.username": "${MYSQL_USER}",
+        "spring.datasource.password": "${MYSQL_PASSWORD}",
+        "spring.jpa.hibernate.ddl-auto": "update",
+        "spring.influx.url": "http://influxdb:8086",
+        "spring.influx.org": "${INFLUXDB_ORG}",
+        "spring.influx.bucket": "${INFLUXDB_BUCKET}",
+        "spring.influx.token": "${INFLUXDB_TOKEN}",
+        "spring.influx.username": "${INFLUXDB_USERNAME}",
+        "spring.influx.password": "${INFLUXDB_PASSWORD}"
+      }'
+    volumes:
+      - .m2:/root/.m2
+      - ./target:/app/target
+    networks:
+      - medisync-network
+
+networks:
+  medisync-network:
+
+volumes:
+  db:
+  influxdb_data:
