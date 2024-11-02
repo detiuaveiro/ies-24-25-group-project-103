@@ -22,4 +22,6 @@ public class HospitalManagerController {
         this.hospitalManagerService = hospitalManagerService;
     }
 
+    // End point das salas
+
 }
