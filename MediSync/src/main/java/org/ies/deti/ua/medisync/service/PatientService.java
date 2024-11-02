@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import org.ies.deti.ua.medisync.model.Doctor;
 import org.ies.deti.ua.medisync.model.Medication;
 import org.ies.deti.ua.medisync.model.Patient;
 import org.ies.deti.ua.medisync.model.PatientWithVitals;
@@ -92,6 +93,10 @@ public class PatientService {
 
     public void dischargePatient(Long id) {
         patientRepository.deleteById(id);
+    }
+
+    public List<Patient> getPatientsFromDoctor(Doctor doctor) {
+        return patientRepository.findByAssignedDoctor(doctor);
     }
 
 

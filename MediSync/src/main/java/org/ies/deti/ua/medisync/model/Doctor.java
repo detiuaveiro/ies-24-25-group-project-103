@@ -11,21 +11,10 @@ import java.util.List;
 @Entity
 public class Doctor extends User {
 
-    @OneToMany(mappedBy = "assignedDoctor")
-    private List<Patient> patientsAssigned;
-
     public Doctor() {}
 
     public Doctor(String username, String email, String password, String name, List<Patient> patientsAssigned) {
         super(username, email, password, name);
-        this.patientsAssigned = patientsAssigned;
     }
 
-    public List<Patient> getPatientsAssigned() {
-        return patientsAssigned;
-    }
-
-    public void setPatientsAssigned(List<Patient> patientsAssigned) {
-        this.patientsAssigned = patientsAssigned;
-    }
 }
