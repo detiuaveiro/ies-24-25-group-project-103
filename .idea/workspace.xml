@@ -5,12 +5,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="b97c8f04-407e-4897-9cfe-82955c479494" name="Changes" comment=".">
-      <change afterPath="$PROJECT_DIR$/MediSync/src/main/java/org/ies/deti/ua/medisync/controller/PatientController.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/MediSync/src/main/java/org/ies/deti/ua/medisync/repository/PatientRepository.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/MediSync/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/MediSync/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/MediSync/src/main/java/org/ies/deti/ua/medisync/model/Doctor.java" beforeDir="false" afterPath="$PROJECT_DIR$/MediSync/src/main/java/org/ies/deti/ua/medisync/model/Doctor.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/MediSync/src/main/java/org/ies/deti/ua/medisync/service/PatientVitalsService.java" beforeDir="false" afterPath="$PROJECT_DIR$/MediSync/src/main/java/org/ies/deti/ua/medisync/service/PatientService.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -28,20 +23,20 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;new/develop__patient__service__115&quot;,
-    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;/home/alof/Desktop/ies-24-25-group-project-103&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "git-widget-placeholder": "new/define__endpoint__medication__93",
+    "kotlin-language-version-configured": "true",
+    "last_opened_file_path": "/home/alof/Desktop/ies-24-25-group-project-103",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "vue.rearranger.settings.migration": "true"
   }
-}</component>
+}]]></component>
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
@@ -61,6 +56,7 @@
       <workItem from="1730223267306" duration="309000" />
       <workItem from="1730224088886" duration="345000" />
       <workItem from="1730479608599" duration="316000" />
+      <workItem from="1730562494011" duration="2691000" />
     </task>
     <task id="LOCAL-00001" summary=".">
       <option name="closed" value="true" />
@@ -70,7 +66,15 @@
       <option name="project" value="LOCAL" />
       <updated>1730461435514</updated>
     </task>
-    <option name="localTasksCounter" value="2" />
+    <task id="LOCAL-00002" summary=".">
+      <option name="closed" value="true" />
+      <created>1730562684826</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1730562684826</updated>
+    </task>
+    <option name="localTasksCounter" value="3" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">

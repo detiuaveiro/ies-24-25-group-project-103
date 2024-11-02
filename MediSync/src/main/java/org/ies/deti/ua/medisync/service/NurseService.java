@@ -28,16 +28,45 @@ public class NurseService {
         return nurseRepository.findById(nurseId);
     }
 
+    public List<Room> getRoomsByNurseId(Nurse nurse) {
+        List<Room> rooms = new ArrayList<>();
+        Date now = new Date();
+        for (ScheduleEntry entry : nurse.getSchedule()) {
+            if (entry.getRoom() != null) {
+                // Check if current time is between start_time and end_time
+                if (entry.getStart_time() != null && entry.getEnd_time() != null) {
+                    if (entry.getStart_time().before(now) && entry.getEnd_time().after(now)) {
+                        rooms.addAll(entry.getRoom());
+                    }
+                }
+            }
+        }
+        return rooms;
+    }
+
+
+    public Nurse updateNurse(Long id, Nurse updatedNurse) {
+        return nurseRepository.findById(id).map(existingNurse -> {
+            existingNurse.setName(updatedNurse.getName());
+            existingNurse.setSchedule(updatedNurse.getSchedule());
+            return nurseRepository.save(existingNurse);
+        }).orElseThrow(() -> new RuntimeException("Nurse not found with id: " + id));
+    }
+
     public Map<Bed, Patient> getAssignedBedsAndPatientsForNurse(Nurse nurse) {
         Map<Bed, Patient> bedPatientMap = new HashMap<>();
 
         for (ScheduleEntry entry : nurse.getSchedule()) {
-            Set<Bed> beds = entry.getRoom().getBeds();
+            Set<Room> rooms = entry.getRoom(); // Get the set of rooms
 
-            for (Bed bed : beds) {
-                Patient assignedPatient = bed.getAssignedPatient();
-                if (assignedPatient != null) {
-                    bedPatientMap.put(bed, assignedPatient);
+            for (Room room : rooms) { // Iterate through each room
+                Set<Bed> beds = room.getBeds(); // Get the beds for the current room
+
+                for (Bed bed : beds) {
+                    Patient assignedPatient = bed.getAssignedPatient();
+                    if (assignedPatient != null) {
+                        bedPatientMap.put(bed, assignedPatient);
+                    }
                 }
             }
         }
@@ -71,8 +100,34 @@ public class NurseService {
         }
     }
 
+    public Nurse updateScheduleEntryFromNurse(Long nurseId, Long before_entryId, ScheduleEntry updatedEntry) {
+        Optional<Nurse> nurseOpt = nurseRepository.findById(nurseId);
+        if (!nurseOpt.isPresent()) {
+            return null;
+        }
+        Nurse nurse = nurseOpt.get();
+
+        Optional<ScheduleEntry> entryOpt = nurse.getSchedule().stream()
+                .filter(entry -> entry.getId().equals(before_entryId))
+                .findFirst();
+
+        if (!entryOpt.isPresent()) {
+            return null;
+        }
+
+        ScheduleEntry existingEntry = entryOpt.get();
+
+        existingEntry.setStart_time(updatedEntry.getStart_time());
+        existingEntry.setEnd_time(updatedEntry.getEnd_time());
+        existingEntry.setRoom(updatedEntry.getRoom());
+
+        return nurseRepository.save(nurse);
+    }
+
     public Nurse removeScheduleEntryFromNurse(Long nurseId, Long entryId) {
         Optional<Nurse> nurseOpt = nurseRepository.findById(nurseId);
+        boolean scheduleDependencies = false;
+
         if (nurseOpt.isPresent()) {
             Nurse nurse = nurseOpt.get();
             nurse.getSchedule().removeIf(entry -> entry.getId().equals(entryId));
@@ -93,5 +148,9 @@ public class NurseService {
         nurse.cleanupUnassociatedScheduleEntries();
 
         nurseRepository.delete(nurse);
+    }
+
+    public Nurse addNurse(Nurse nurse) {
+        return nurseRepository.save(nurse);
     }
 }
