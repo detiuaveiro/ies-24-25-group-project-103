@@ -27,9 +27,13 @@ public class ScheduleEntry {
     @Column(name = "is_interval", nullable = false)
     private boolean isInterval;
 
-    @ManyToOne
-    @JoinColumn(name = "room_id", nullable = true)
-    private Room room;
+    @ManyToMany
+    @JoinTable(
+            name = "schedule_rooms",
+            joinColumns = @JoinColumn(name = "schedule_id"),
+            inverseJoinColumns = @JoinColumn(name = "room_id")
+    )
+    private Set<Room> rooms;
 
     @ManyToMany
     @JoinTable(
@@ -42,11 +46,11 @@ public class ScheduleEntry {
     // Constructors
     public ScheduleEntry() {}
 
-    public ScheduleEntry(String timeSlot, boolean isInterval, Room room, Date startTime, Date endTime) {
+    public ScheduleEntry(String timeSlot, boolean isInterval, Set<Room> rooms, Date startTime, Date endTime) {
         this.start_time = startTime;
         this.end_time = endTime;
         this.isInterval = isInterval;
-        this.room = room;
+        this.rooms = rooms;
     }
 
     // Getters and Setters
@@ -86,12 +90,12 @@ public class ScheduleEntry {
     }
 
 
-    public Room getRoom() {
-        return room;
+    public Set<Room> getRoom() {
+        return rooms;
     }
 
-    public void setRoom(Room room) {
-        this.room = room;
+    public void setRoom(Set<Room> rooms) {
+        this.rooms = rooms;
     }
 
     public void addNurse(Nurse nurse) {
