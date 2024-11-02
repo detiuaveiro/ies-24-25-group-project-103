@@ -14,6 +14,7 @@ import java.util.*;
 public class DoctorService {
     @Autowired
     private final DoctorRepository doctorRepository;
+
     @Autowired
     private PatientService patientService;
 
@@ -47,5 +48,10 @@ public class DoctorService {
             return doctorRepository.save(doc);
         }
         return null;
+    }
+
+    public void deleteDoctor(Long doctorId) {
+        Optional<Doctor> doctorOptional = doctorRepository.findById(doctorId);
+        doctorOptional.ifPresent(doctorRepository::delete);
     }
 }
