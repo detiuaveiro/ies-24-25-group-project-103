@@ -2,7 +2,6 @@ package org.ies.deti.ua.medisync.service;
 
 import org.ies.deti.ua.medisync.model.*;
 import org.ies.deti.ua.medisync.repository.NurseRepository;
-import org.ies.deti.ua.medisync.repository.ScheduleEntryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -13,15 +12,12 @@ public class NurseService {
 
     private final NurseRepository nurseRepository;
 
-    private final ScheduleEntryRepository scheduleEntryRepository;
-
     @Autowired
     private PatientService patientService;
 
     @Autowired
-    public NurseService(NurseRepository nurseRepository, ScheduleEntryRepository scheduleEntryRepository) {
+    public NurseService(NurseRepository nurseRepository) {
         this.nurseRepository = nurseRepository;
-        this.scheduleEntryRepository = scheduleEntryRepository;
     }
 
     public List<Nurse> getAllNurses() {
@@ -34,9 +30,15 @@ public class NurseService {
 
     public List<Room> getRoomsByNurseId(Nurse nurse) {
         List<Room> rooms = new ArrayList<>();
+        Date now = new Date();
         for (ScheduleEntry entry : nurse.getSchedule()) {
-            if(entry.getRoom() != null) {
-                rooms.addAll(entry.getRoom());
+            if (entry.getRoom() != null) {
+                // Check if current time is between start_time and end_time
+                if (entry.getStart_time() != null && entry.getEnd_time() != null) {
+                    if (entry.getStart_time().before(now) && entry.getEnd_time().after(now)) {
+                        rooms.addAll(entry.getRoom());
+                    }
+                }
             }
         }
         return rooms;
@@ -92,17 +94,15 @@ public class NurseService {
         if (nurseOpt.isPresent()) {
             Nurse nurse = nurseOpt.get();
             nurse.addScheduleEntry(newEntry);
-            scheduleEntryRepository.save(newEntry);
             return nurseRepository.save(nurse);
         } else {
             return null;
         }
     }
 
-    public Nurse updateScheduleEntryFromNurse(Long nurseId, Long before_entryId, Long after_entryId) {
+    public Nurse updateScheduleEntryFromNurse(Long nurseId, Long before_entryId, ScheduleEntry updatedEntry) {
         Optional<Nurse> nurseOpt = nurseRepository.findById(nurseId);
-        Optional<ScheduleEntry> scheduleEntryOpt = scheduleEntryRepository.findById(after_entryId);
-        if (!nurseOpt.isPresent() || !scheduleEntryOpt.isPresent()) {
+        if (!nurseOpt.isPresent()) {
             return null;
         }
         Nurse nurse = nurseOpt.get();
@@ -116,7 +116,6 @@ public class NurseService {
         }
 
         ScheduleEntry existingEntry = entryOpt.get();
-        ScheduleEntry updatedEntry = scheduleEntryOpt.get();
 
         existingEntry.setStart_time(updatedEntry.getStart_time());
         existingEntry.setEnd_time(updatedEntry.getEnd_time());
@@ -127,22 +126,11 @@ public class NurseService {
 
     public Nurse removeScheduleEntryFromNurse(Long nurseId, Long entryId) {
         Optional<Nurse> nurseOpt = nurseRepository.findById(nurseId);
-        Optional<ScheduleEntry> scheduleEntry = scheduleEntryRepository.findById(entryId);
         boolean scheduleDependencies = false;
 
         if (nurseOpt.isPresent()) {
             Nurse nurse = nurseOpt.get();
             nurse.getSchedule().removeIf(entry -> entry.getId().equals(entryId));
-            for (Nurse n : getAllNurses()) {
-                if (n.getSchedule().stream().anyMatch(entry -> entry.getId().equals(entryId))) {
-                    scheduleDependencies = true;
-                    break;
-                }
-            }
-            if (!scheduleDependencies) {
-                scheduleEntry.ifPresent(scheduleEntryRepository::delete);
-            }
-
             return nurseRepository.save(nurse);
         } else {
             return null;

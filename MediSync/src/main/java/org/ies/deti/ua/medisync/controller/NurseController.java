@@ -16,9 +16,9 @@ public class NurseController {
 
     private NurseService nurseService;
 
-    @GetMapping("/patients-with-vitals/{patient_id}/") //Issue a definir
-    public ResponseEntity<List<PatientWithVitals>> getPatientsWithVitals(@PathVariable Long patient_id) {
-        Optional<Nurse> nurseOpt = nurseService.getNurseById(patient_id);
+    @GetMapping("/{nurse_id}/patients-with-vitals") //Issue a definir
+    public ResponseEntity<List<PatientWithVitals>> getPatientsWithVitals(@PathVariable Long nurse_id) {
+        Optional<Nurse> nurseOpt = nurseService.getNurseById(nurse_id);
         if (nurseOpt.isPresent()) {
             List<PatientWithVitals> patientsWithVitals = nurseService.getPatientsWithVitalsForNurse(nurseOpt.get());
             return ResponseEntity.ok(patientsWithVitals);
@@ -32,9 +32,9 @@ public class NurseController {
         return updatedNurse != null ? ResponseEntity.ok(updatedNurse) : ResponseEntity.notFound().build();
     }
 
-    @PutMapping("/{nurseId}/update-schedule/{before_entryId}/{after_entryId}") //Issue:#91
-    public ResponseEntity<Nurse> updateScheduleEntry(@PathVariable Long nurseId, @PathVariable Long before_entryId, @PathVariable Long after_entryId) {
-        Nurse updatedNurse = nurseService.updateScheduleEntryFromNurse(nurseId, before_entryId, after_entryId);
+    @PutMapping("/{nurseId}/update-schedule/{before_entryId}") //Issue:#91
+    public ResponseEntity<Nurse> updateScheduleEntry(@PathVariable Long nurseId, @PathVariable Long before_entryId, @RequestBody ScheduleEntry newEntry) {
+        Nurse updatedNurse = nurseService.updateScheduleEntryFromNurse(nurseId, before_entryId, newEntry);
         return updatedNurse != null ? ResponseEntity.ok(updatedNurse) : ResponseEntity.notFound().build();
     }
 
