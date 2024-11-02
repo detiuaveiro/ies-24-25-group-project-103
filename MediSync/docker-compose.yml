@@ -1,0 +1,90 @@
+version: "3.8"
+
+services:
+  mysqldb:
+    image: mysql:8.0
+    restart: unless-stopped
+    environment:
+      - MYSQL_ROOT_PASSWORD=secret2
+      - MYSQL_DATABASE=demo
+      - MYSQL_USER=demo
+      - MYSQL_PASSWORD=secret2
+    ports:
+      - "33060:3306"
+    volumes:
+      - db:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "demo", "-psecret2"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 60s
+    networks:
+      - medisync-network
+
+  influxdb:
+    image: influxdb:2.7
+    restart: unless-stopped
+    ports:
+      - "8086:8086"
+    volumes:
+      - influxdb_data:/var/lib/influxdb2
+    environment:
+      - DOCKER_INFLUXDB_INIT_MODE=setup
+      - DOCKER_INFLUXDB_INIT_USERNAME=admin
+      - DOCKER_INFLUXDB_INIT_PASSWORD=secret2password
+      - DOCKER_INFLUXDB_INIT_ORG=myorg
+      - DOCKER_INFLUXDB_INIT_BUCKET=mybucket
+      - DOCKER_INFLUXDB_INIT_ADMIN_TOKEN=my-super-secret-auth-token-123456
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8086/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 60s
+    networks:
+      - medisync-network
+
+  app:
+    depends_on:
+      mysqldb:
+        condition: service_healthy
+      influxdb:
+        condition: service_healthy
+    build: .
+    restart: on-failure
+    ports:
+      - "8080:8080"
+    environment:
+      JAVA_TOOL_OPTIONS: "-Xdebug -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005"
+      SPRING_APPLICATION_JSON: '{
+        "spring.datasource.url": "jdbc:mysql://mysqldb:3306/demo?allowPublicKeyRetrieval=true&useSSL=false",
+        "spring.datasource.username": "demo",
+        "spring.datasource.password": "secret2",
+        "spring.jpa.properties.hibernate.dialect": "org.hibernate.dialect.MySQLDialect",
+        "spring.jpa.hibernate.ddl-auto": "update",
+        "spring.influx.url": "http://influxdb:8086",
+        "spring.influx.org": "myorg",
+        "spring.influx.bucket": "mybucket",
+        "spring.influx.token": "my-super-secret-auth-token-123456",
+        "spring.influx.username": "admin",
+        "spring.influx.password": "secret2password",
+        "logging.level.root": "INFO",
+        "logging.level.org.springframework": "INFO",
+        "logging.level.org.ies.deti.ua.medisync": "DEBUG"
+      }'
+    volumes:
+      - .m2:/root/.m2
+      - ./target:/app/target
+    networks:
+      - medisync-network
+
+networks:
+  medisync-network:
+    driver: bridge
+
+volumes:
+  db:
+    driver: local
+  influxdb_data:
+    driver: local
