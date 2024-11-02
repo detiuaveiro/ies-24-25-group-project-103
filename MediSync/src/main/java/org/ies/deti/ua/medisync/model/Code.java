@@ -1,0 +1,43 @@
+package org.ies.deti.ua.medisync.model;
+
+import jakarta.persistence.Entity;
+
+@Entity(name = "Code")
+public class Code {
+    private String code;
+    private String phoneNumber;
+    private Patient patient;
+
+    public Code() {
+    }
+
+    public Code(String code, String phoneNumber, Patient patient) {
+        this.code = code;
+        this.phoneNumber = phoneNumber;
+        this.patient = patient;
+    }
+
+    public String getCode() {
+        return code;
+    }
+
+    public String getPhoneNumber() {
+        return phoneNumber;
+    }
+
+    public Patient getPatient() {
+        return patient;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
+    }
+
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
+    }
+
+    public void setPatient(Patient patient) {
+        this.patient = patient;
+    }
+}

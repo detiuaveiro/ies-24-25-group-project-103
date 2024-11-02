@@ -71,9 +71,13 @@ public class Patient {
     @JoinColumn(name = "doctor_id")
     private Doctor assignedDoctor;
 
+    @Column(name = "phone")
+    private List<String> phone;
+    
+
     public Patient() {}
 
-    public Patient(String name, Gender gender, Date birthDate, Date estimatedDischargeDate, Float weight, Float height, List<String> conditions, List<String> observations, List<Medication> medicationList, Bed bed, Doctor assignedDoctor) {
+    public Patient(String name, Gender gender, Date birthDate, Date estimatedDischargeDate, Float weight, Float height, List<String> conditions, List<String> observations, List<Medication> medicationList, Bed bed, Doctor assignedDoctor, List<String> phone) {
         this.name = name;
         this.gender = gender;
         this.birthDate = birthDate;
@@ -85,6 +89,7 @@ public class Patient {
         this.medicationList = medicationList;
         this.bed = bed;
         this.assignedDoctor = assignedDoctor;
+        this.phone = phone;
     }
 
     // Getters and Setters
@@ -182,5 +187,13 @@ public class Patient {
 
     public void setAssignedDoctor(Doctor assignedDoctor) {
         this.assignedDoctor = assignedDoctor;
+    }
+
+    public List<String> getPhoneNumbers() {
+        return phone;
+    }
+
+    public void setPhoneNumbers(List<String> phone) {
+        this.phone = phone;
     }
 }
