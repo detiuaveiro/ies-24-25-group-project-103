@@ -48,4 +48,12 @@ public class Bed {
     public void setRoom(Room room) {
         this.room = room;
     }
+
+    public Patient getAssignedPatient() {
+        return assignedPatient;
+    }
+
+    public void setAssignedPatient(Patient assignedPatient) {
+        this.assignedPatient = assignedPatient;
+    }
 }

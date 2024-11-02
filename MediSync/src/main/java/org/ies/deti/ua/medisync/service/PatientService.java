@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.Optional;
 
 import org.ies.deti.ua.medisync.model.Doctor;
+import org.ies.deti.ua.medisync.model.Medication;
 import org.ies.deti.ua.medisync.model.Patient;
 import org.ies.deti.ua.medisync.model.PatientWithVitals;
 import org.ies.deti.ua.medisync.model.Vitals;
@@ -202,6 +203,53 @@ public class PatientService {
         return latestVitals;
     }
 
+    public Patient addMedication(Long patientId, Medication medication) {
+        Optional<Patient> patientOptional = patientRepository.findById(patientId);
+        if (patientOptional.isPresent()) {
+            Patient patient = patientOptional.get();
+            List<Medication> medicationList = patient.getMedicationList();
+            medicationList.add(medication);
+            patient.setMedicationList(medicationList);
+            return patientRepository.save(patient);
+        }
+        return null;
+    }
+
+    public Patient updateMedication(Long patientId, Long medicationId, Medication updatedMedication) {
+        Optional<Patient> patientOptional = patientRepository.findById(patientId);
+        if (patientOptional.isPresent()) {
+            Patient patient = patientOptional.get();
+            List<Medication> medicationList = patient.getMedicationList();
+            for (Medication medication : medicationList) {
+                if (medication.getId().equals(medicationId)) {
+                    medication.setName(updatedMedication.getName());
+                    medication.setDosage(updatedMedication.getDosage());
+                    medication.setHourInterval(updatedMedication.getHourInterval());
+                    medication.setPatient(updatedMedication.getPatient());
+                    break;
+                }
+            }
+            patient.setMedicationList(medicationList);
+            return patientRepository.save(patient);
+        }
+        return null;
+    }
+
+    public void deleteMedication(Long patientId, Long medicationId) {
+        Optional<Patient> patientOptional = patientRepository.findById(patientId);
+        if (patientOptional.isPresent()) {
+            Patient patient = patientOptional.get();
+            List<Medication> medicationList = patient.getMedicationList();
+            medicationList.removeIf(medication -> medication.getId().equals(medicationId));
+            patient.setMedicationList(medicationList);
+            patientRepository.save(patient);
+        }
+    }
+
+    public List<Medication> getMedicationsByPatientId(Long patientId) {
+        Optional<Patient> patientOptional = patientRepository.findById(patientId);
+        return patientOptional.map(Patient::getMedicationList).orElse(null);
+    }
 
     public void close() {
         influxDBClient.close();

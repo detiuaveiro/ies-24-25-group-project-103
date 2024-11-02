@@ -1,18 +1,19 @@
 package org.ies.deti.ua.medisync.service;
 
-import org.ies.deti.ua.medisync.model.Nurse;
-import org.ies.deti.ua.medisync.model.ScheduleEntry;
+import org.ies.deti.ua.medisync.model.*;
 import org.ies.deti.ua.medisync.repository.NurseRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 public class NurseService {
 
     private final NurseRepository nurseRepository;
+
+    @Autowired
+    private PatientService patientService;
 
     @Autowired
     public NurseService(NurseRepository nurseRepository) {
@@ -25,6 +26,36 @@ public class NurseService {
 
     public Optional<Nurse> getNurseById(Long nurseId) {
         return nurseRepository.findById(nurseId);
+    }
+
+    public Map<Bed, Patient> getAssignedBedsAndPatientsForNurse(Nurse nurse) {
+        Map<Bed, Patient> bedPatientMap = new HashMap<>();
+
+        for (ScheduleEntry entry : nurse.getSchedule()) {
+            Set<Bed> beds = entry.getRoom().getBeds();
+
+            for (Bed bed : beds) {
+                Patient assignedPatient = bed.getAssignedPatient();
+                if (assignedPatient != null) {
+                    bedPatientMap.put(bed, assignedPatient);
+                }
+            }
+        }
+
+        return bedPatientMap;
+    }
+
+    public List<PatientWithVitals> getPatientsWithVitalsForNurse(Nurse nurse) {
+        Map<Bed, Patient> bedPatientMap = getAssignedBedsAndPatientsForNurse(nurse);
+        List<PatientWithVitals> patientsWithVitals = new ArrayList<>();
+
+        for (Map.Entry<Bed, Patient> entry : bedPatientMap.entrySet()) {
+            Patient patient = entry.getValue();
+            Optional<PatientWithVitals> patientWithVitals = patientService.getPatientWithVitalsById(patient.getId());
+            patientWithVitals.ifPresent(patientsWithVitals::add);
+        }
+
+        return patientsWithVitals;
     }
 
     public Nurse addScheduleEntryToNurse(Long nurseId, ScheduleEntry newEntry) {
