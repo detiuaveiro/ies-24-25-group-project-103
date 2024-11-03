@@ -1,6 +1,8 @@
 
 package org.ies.deti.ua.medisync.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
@@ -17,6 +19,7 @@ public class Bed {
     @Column(name = "id", nullable = false)
     private Long id;
 
+    @JsonBackReference
     @ManyToOne
     @JoinColumn(name = "room_number", nullable = false)
     private Room room;
@@ -55,5 +58,11 @@ public class Bed {
 
     public void setAssignedPatient(Patient assignedPatient) {
         this.assignedPatient = assignedPatient;
+    }
+
+
+    @Override
+    public String toString() {
+        return "Bed " + id + " in room " + room.getRoomNumber();
     }
 }

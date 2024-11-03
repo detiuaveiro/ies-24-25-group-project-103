@@ -110,4 +110,8 @@ public class HospitalManagerService {
         roomRepository.deleteAll();
     }
 
+    public List<Room> getAllRooms() {
+        return roomRepository.findAll();
+    }
+
 }

@@ -4,6 +4,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import jakarta.persistence.*;
 
 @Entity
@@ -17,6 +19,7 @@ public class Room {
     @ManyToMany(mappedBy = "rooms")
     private Set<ScheduleEntry> scheduleEntries;
 
+    @JsonManagedReference
     @OneToMany(mappedBy = "room", cascade = CascadeType.ALL)
     private Set<Bed> beds = new HashSet<>();
 
@@ -50,5 +53,19 @@ public class Room {
 
     public void setBeds(Set<Bed> beds) {
         this.beds = beds;
+    }
+
+
+    @Override
+    public String toString() {
+        String result="";
+
+        result+="Room number: "+roomNumber+"\n";
+        result+="Beds: \n";
+        for(Bed bed: beds){
+            result+=bed.toString()+"\n";
+        }
+
+        return result;
     }
 }
