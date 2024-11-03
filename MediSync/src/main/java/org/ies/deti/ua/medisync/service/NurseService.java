@@ -137,6 +137,10 @@ public class NurseService {
         }
     }
 
+    public Nurse newNurse(Nurse nurse) {
+        return nurseRepository.save(nurse);
+    }
+
     public void deleteNurse(Long nurseId) {
         Nurse nurse = nurseRepository.findById(nurseId)
                 .orElseThrow(() -> new RuntimeException("Nurse not found"));

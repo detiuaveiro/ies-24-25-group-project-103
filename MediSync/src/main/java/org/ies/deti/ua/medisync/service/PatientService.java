@@ -7,12 +7,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import org.ies.deti.ua.medisync.model.Bed;
 import org.ies.deti.ua.medisync.model.Doctor;
 import org.ies.deti.ua.medisync.model.Medication;
 import org.ies.deti.ua.medisync.model.Patient;
 import org.ies.deti.ua.medisync.model.PatientWithVitals;
+import org.ies.deti.ua.medisync.model.Room;
 import org.ies.deti.ua.medisync.model.Vitals;
 import org.ies.deti.ua.medisync.repository.PatientRepository;
+import org.ies.deti.ua.medisync.repository.RoomRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -29,6 +32,9 @@ public class PatientService {
 
     private final PatientRepository patientRepository;
 
+    @Autowired
+    private RoomRepository roomRepository;
+
     private static final String TOKEN = "your-influxdb-token";
     private static final String ORGANIZATION = "your-organization";
     private static final String BUCKET = "your-bucket";
@@ -42,9 +48,28 @@ public class PatientService {
         influxDBClient = InfluxDBClientFactory.create(URL, TOKEN.toCharArray());
     }
 
-
     public Patient createPatient(Patient patient) {
+        // Find bed specified in the patient object
+        Room room = roomRepository.findByBeds_Id(patient.getBed().getId())
+                .orElseThrow(() -> new RuntimeException("Bed not found with id: " + patient.getBed().getId()));
+                
+        Bed bed = room.getBeds().stream()
+                .filter(b -> b.getId().equals(patient.getBed().getId()))
+                .findFirst()
+                .orElseThrow(() -> new RuntimeException("Bed not found with id: " + patient.getBed().getId()));
+        
+        if (bed.getAssignedPatient() != null) {
+            throw new RuntimeException("Bed " + bed.getId() + " is already occupied");
+        }
+        
+        patient.setBed(bed);
+        bed.setAssignedPatient(patient);
+        
         return patientRepository.save(patient);
+    }
+
+    public void deleteAllPatients() {
+        patientRepository.deleteAll();
     }
 
     public Optional<Patient> getPatientById(Long id) {
