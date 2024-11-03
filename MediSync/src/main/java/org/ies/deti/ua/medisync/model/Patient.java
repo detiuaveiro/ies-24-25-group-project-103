@@ -23,7 +23,6 @@ import jakarta.persistence.TemporalType;
 @Table(name = "patient")
 public class Patient {
 
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

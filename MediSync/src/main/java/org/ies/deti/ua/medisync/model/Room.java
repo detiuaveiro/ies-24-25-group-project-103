@@ -14,18 +14,20 @@ public class Room {
     @Column(name = "room_number", nullable = false, length = 10)
     private String roomNumber;
 
-    @ManyToMany(mappedBy = "rooms")
+    @ManyToMany
+    @JoinTable(
+            name = "schedule_rooms",
+            joinColumns = @JoinColumn(name = "schedule_id"),
+            inverseJoinColumns = @JoinColumn(name = "room_id")
+    )
     private Set<ScheduleEntry> scheduleEntries;
 
-    @OneToMany(mappedBy = "room", cascade = CascadeType.ALL)
-    private Set<Bed> beds = new HashSet<>();
 
     public Room() {}
 
-    public Room(String roomNumber, Set<ScheduleEntry> scheduleEntries, Set<Bed> beds) {
+    public Room(String roomNumber, Set<ScheduleEntry> scheduleEntries) {
         this.roomNumber = roomNumber;
         this.scheduleEntries = scheduleEntries;
-        this.beds = beds;
     }
 
     public String getRoomNumber() {
@@ -44,11 +46,4 @@ public class Room {
         this.scheduleEntries = scheduleEntries;
     }
 
-    public Set<Bed> getBeds() {
-        return beds;
-    }
-
-    public void setBeds(Set<Bed> beds) {
-        this.beds = beds;
-    }
 }

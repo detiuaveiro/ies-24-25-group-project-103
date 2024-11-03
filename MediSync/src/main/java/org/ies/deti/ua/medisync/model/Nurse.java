@@ -10,21 +10,26 @@ import java.util.Set;
 @Entity
 public class Nurse extends User {
 
-    @ManyToMany(mappedBy = "nurses")
-    private Set<ScheduleEntry> schedule = new HashSet<>();
+    @ManyToMany
+    @JoinTable(
+            name = "schedule_nurse",
+            joinColumns = @JoinColumn(name = "schedule_id"),
+            inverseJoinColumns = @JoinColumn(name = "nurse_id")
+    )
+    private List<ScheduleEntry> schedule = new ArrayList<>();
 
     public Nurse() {}
 
-    public Nurse(String username, String email, String password, String name, Set<ScheduleEntry> schedule) {
+    public Nurse(String username, String email, String password, String name, List<ScheduleEntry> schedule) {
         super(username, email, password, name);
         this.schedule = schedule;
     }
 
-    public Set<ScheduleEntry> getSchedule() {
+    public List<ScheduleEntry> getSchedule() {
         return schedule;
     }
 
-    public void setSchedule(Set<ScheduleEntry> schedule) {
+    public void setSchedule(List<ScheduleEntry> schedule) {
         this.schedule = schedule;
     }
 

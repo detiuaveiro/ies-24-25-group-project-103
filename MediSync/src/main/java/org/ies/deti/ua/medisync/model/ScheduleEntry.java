@@ -27,20 +27,10 @@ public class ScheduleEntry {
     @Column(name = "is_interval", nullable = false)
     private boolean isInterval;
 
-    @ManyToMany
-    @JoinTable(
-            name = "schedule_rooms",
-            joinColumns = @JoinColumn(name = "schedule_id"),
-            inverseJoinColumns = @JoinColumn(name = "room_id")
-    )
+    @ManyToMany(mappedBy = "room")
     private Set<Room> rooms;
 
-    @ManyToMany
-    @JoinTable(
-        name = "schedule_nurse",
-        joinColumns = @JoinColumn(name = "schedule_id"),
-        inverseJoinColumns = @JoinColumn(name = "nurse_id")
-    )
+    @ManyToMany(mappedBy = "nurse")
     private Set<Nurse> nurses = new HashSet<>();
 
     // Constructors
