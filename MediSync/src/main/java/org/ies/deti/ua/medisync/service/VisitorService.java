@@ -3,8 +3,10 @@ package org.ies.deti.ua.medisync.service;
 import java.util.List;
 import java.util.Random;
 
+import jakarta.annotation.PostConstruct;
 import org.ies.deti.ua.medisync.model.Code;
 import org.ies.deti.ua.medisync.model.Patient;
+import org.ies.deti.ua.medisync.model.Visitor;
 import org.ies.deti.ua.medisync.repository.CodeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -19,13 +21,6 @@ public class VisitorService {
     private final PatientService patientService;
     private final CodeRepository codeRepository;
 
-    @Autowired
-    public VisitorService(PatientService patientService, TwilioService twilioService, CodeRepository codeRepository) {
-        this.patientService = patientService;
-        this.codeRepository = codeRepository;
-        Twilio.init(accountSid, authToken);
-    }
-
     @Value("${twilio.accountSid}")
     private String accountSid;
 
@@ -34,6 +29,19 @@ public class VisitorService {
 
     @Value("${twilio.phoneNumber}")
     private String fromPhoneNumber;
+
+    @Autowired
+    public VisitorService(PatientService patientService, CodeRepository codeRepository) {
+        this.patientService = patientService;
+        this.codeRepository = codeRepository;
+    }
+
+    @PostConstruct
+    private void initTwilio() {
+        Twilio.init(accountSid, authToken);
+    }
+
+
 
     public void sendSms(String to, String body) {
         Message.creator(
@@ -46,8 +54,8 @@ public class VisitorService {
     public boolean checkIfVisitorIsAllowed(String name, String phoneNumber) {
         List<Patient> patients = patientService.getAllPatients();
         for (Patient patient : patients) {
-            for (String phoneNumbers : patient.getPhoneNumbers()) {
-                if (phoneNumbers.equals(phoneNumber) && patient.getName().equals(name)) {
+            for (Visitor phoneNumbers : patient.getPhoneNumbers()) {
+                if (phoneNumbers.getPhoneNumber().equals(phoneNumber) && patient.getName().equals(name)) {
                     String code = String.format("%06d", new Random().nextInt(1_000_000));
                     codeRepository.save(new Code(code, phoneNumber, patient));    
                     sendVisitorNotification(code, phoneNumber);                

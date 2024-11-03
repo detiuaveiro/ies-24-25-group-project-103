@@ -12,12 +12,9 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/v1/visitors")
 public class VisitorController {
-
-    private final PatientService patientService;
     private final VisitorService visitorService;
 
-    public VisitorController(PatientService patientService, VisitorService visitorService) {
-        this.patientService = patientService;
+    public VisitorController(VisitorService visitorService) {
         this.visitorService = visitorService;
     }
 

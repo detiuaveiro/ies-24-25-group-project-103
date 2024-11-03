@@ -1,11 +1,17 @@
 package org.ies.deti.ua.medisync.model;
 
-import jakarta.persistence.Entity;
+import jakarta.persistence.*;
 
 @Entity(name = "Code")
 public class Code {
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private Long id;
+
     private String code;
     private String phoneNumber;
+
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private Patient patient;
 
     public Code() {

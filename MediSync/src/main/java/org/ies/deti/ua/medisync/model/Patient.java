@@ -71,13 +71,13 @@ public class Patient {
     @JoinColumn(name = "doctor_id")
     private Doctor assignedDoctor;
 
-    @Column(name = "phone")
-    private List<String> phone;
+    @OneToMany(mappedBy = "patient")
+    private List<Visitor> phone;
     
 
     public Patient() {}
 
-    public Patient(String name, Gender gender, Date birthDate, Date estimatedDischargeDate, Float weight, Float height, List<String> conditions, List<String> observations, List<Medication> medicationList, Bed bed, Doctor assignedDoctor, List<String> phone) {
+    public Patient(String name, Gender gender, Date birthDate, Date estimatedDischargeDate, Float weight, Float height, List<String> conditions, List<String> observations, List<Medication> medicationList, Bed bed, Doctor assignedDoctor, List<Visitor> phone) {
         this.name = name;
         this.gender = gender;
         this.birthDate = birthDate;
@@ -189,11 +189,11 @@ public class Patient {
         this.assignedDoctor = assignedDoctor;
     }
 
-    public List<String> getPhoneNumbers() {
+    public List<Visitor> getPhoneNumbers() {
         return phone;
     }
 
-    public void setPhoneNumbers(List<String> phone) {
+    public void setPhoneNumbers(List<Visitor> phone) {
         this.phone = phone;
     }
 }
