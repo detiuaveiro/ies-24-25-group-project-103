@@ -69,6 +69,11 @@ public class HospitalManagerService {
     // Salas
 
     public void addRooms() {
+        // Additional check to avoid adding rooms multiple times
+        if (!roomRepository.findAll().isEmpty()) {
+            return;
+        }
+
         // Floors 1-3
         for (int floor = 1; floor <= 3; floor++) {
             // Each floor has 8 rooms
@@ -99,6 +104,10 @@ public class HospitalManagerService {
                 roomRepository.save(room);
             }
         }
+    }
+
+    public void removeAllRooms() {
+        roomRepository.deleteAll();
     }
 
 }

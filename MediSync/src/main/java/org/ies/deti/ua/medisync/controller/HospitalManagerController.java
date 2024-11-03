@@ -30,4 +30,14 @@ public class HospitalManagerController {
         return ResponseEntity.status(HttpStatus.CREATED).body("Rooms added successfully");
     }
 
+    @DeleteMapping("/rooms")
+    public ResponseEntity<String> removeAllRooms() {
+        try {
+            hospitalManagerService.removeAllRooms();
+            return ResponseEntity.ok("All rooms successfully removed");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error removing rooms: " + e.getMessage());
+        }
+    }
+
 }
