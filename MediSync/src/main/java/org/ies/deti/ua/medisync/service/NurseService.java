@@ -1,11 +1,22 @@
 package org.ies.deti.ua.medisync.service;
 
-import org.ies.deti.ua.medisync.model.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
+
+import org.ies.deti.ua.medisync.model.Bed;
+import org.ies.deti.ua.medisync.model.Nurse;
+import org.ies.deti.ua.medisync.model.Patient;
+import org.ies.deti.ua.medisync.model.PatientWithVitals;
+import org.ies.deti.ua.medisync.model.Room;
+import org.ies.deti.ua.medisync.model.ScheduleEntry;
 import org.ies.deti.ua.medisync.repository.NurseRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.util.*;
 
 @Service
 public class NurseService {
@@ -36,7 +47,6 @@ public class NurseService {
         Date now = new Date();
         for (ScheduleEntry entry : nurse.getSchedule()) {
             if (entry.getRoom() != null) {
-                // Check if current time is between start_time and end_time
                 if (entry.getStart_time() != null && entry.getEnd_time() != null) {
                     if (entry.getStart_time().before(now) && entry.getEnd_time().after(now)) {
                         rooms.addAll(entry.getRoom());
@@ -60,10 +70,10 @@ public class NurseService {
         Map<Bed, Patient> bedPatientMap = new HashMap<>();
 
         for (ScheduleEntry entry : nurse.getSchedule()) {
-            Set<Room> rooms = entry.getRoom(); // Get the set of rooms
+            Set<Room> rooms = entry.getRoom();
 
-            for (Room room : rooms) { // Iterate through each room
-                List<Bed> beds = hospitalManagerService.getBedsInRoom(room); // Get the beds for the current room
+            for (Room room : rooms) {
+                List<Bed> beds = hospitalManagerService.getBedsInRoom(room);
 
                 for (Bed bed : beds) {
                     Patient assignedPatient = bed.getAssignedPatient();
@@ -91,8 +101,6 @@ public class NurseService {
     }
 
     public Nurse addScheduleEntryToNurse(Long nurseId, ScheduleEntry newEntry) {
-        // Optional<Nurse>: To avoid the use of null and the problems it can cause (such as NullPointerException), Spring Data JPA and other Java libraries use the Optional class. An Optional is a container that can or cannot contain a value.
-        // nurseOpt.isPresent(): This method checks if the Optional contains a value. If the Nurse was found, isPresent() returns true; otherwise, it returns false.
         Optional<Nurse> nurseOpt = nurseRepository.findById(nurseId);
         if (nurseOpt.isPresent()) {
             Nurse nurse = nurseOpt.get();
