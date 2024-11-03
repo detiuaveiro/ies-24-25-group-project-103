@@ -9,6 +9,7 @@ public class Visitor {
     private String phoneNumber;
 
     @ManyToOne
+    @JoinColumn(name = "patient_id", nullable = false)
     private Patient patient;
 
     public Visitor() {}

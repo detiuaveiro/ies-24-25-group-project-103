@@ -23,10 +23,6 @@ import jakarta.persistence.TemporalType;
 @Table(name = "patient")
 public class Patient {
 
-    public enum Gender {
-        MALE,
-        FEMALE
-    }
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -37,7 +33,7 @@ public class Patient {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "gender", nullable = false)
-    private Gender gender;
+    private String gender;
 
     @Temporal(TemporalType.DATE)
     @Column(name = "birth_date")
@@ -61,23 +57,17 @@ public class Patient {
     @Column(name = "observations")
     private List<String> observations;
 
-    @OneToMany(mappedBy = "patient")
-    private List<Medication> medicationList;
-
     @OneToOne(mappedBy = "assignedPatient", optional = false)
     private Bed bed;
 
     @ManyToOne
-    @JoinColumn(name = "doctor_id")
+    @JoinColumn(name = "doctor_id", nullable = false)
     private Doctor assignedDoctor;
-
-    @OneToMany(mappedBy = "patient")
-    private List<Visitor> phone;
     
 
     public Patient() {}
 
-    public Patient(String name, Gender gender, Date birthDate, Date estimatedDischargeDate, Float weight, Float height, List<String> conditions, List<String> observations, List<Medication> medicationList, Bed bed, Doctor assignedDoctor, List<Visitor> phone) {
+    public Patient(String name, String gender, Date birthDate, Date estimatedDischargeDate, Float weight, Float height, List<String> conditions, List<String> observations, Bed bed, Doctor assignedDoctor) {
         this.name = name;
         this.gender = gender;
         this.birthDate = birthDate;
@@ -86,10 +76,8 @@ public class Patient {
         this.height = height;
         this.conditions = conditions;
         this.observations = observations;
-        this.medicationList = medicationList;
         this.bed = bed;
         this.assignedDoctor = assignedDoctor;
-        this.phone = phone;
     }
 
     // Getters and Setters
@@ -109,11 +97,11 @@ public class Patient {
         this.name = name;
     }
 
-    public Gender getGender() {
+    public String getGender() {
         return this.gender;
     }
 
-    public void setGender(Gender gender) {
+    public void setGender(String gender) {
         this.gender = gender;
     }
 
@@ -165,14 +153,6 @@ public class Patient {
         this.observations = observations;
     }
 
-    public List<Medication> getMedicationList() {
-        return medicationList;
-    }
-
-    public void setMedicationList(List<Medication> medicationList) {
-        this.medicationList = medicationList;
-    }
-
     public Bed getBed() {
         return bed;
     }
@@ -189,11 +169,4 @@ public class Patient {
         this.assignedDoctor = assignedDoctor;
     }
 
-    public List<Visitor> getPhoneNumbers() {
-        return phone;
-    }
-
-    public void setPhoneNumbers(List<Visitor> phone) {
-        this.phone = phone;
-    }
 }
