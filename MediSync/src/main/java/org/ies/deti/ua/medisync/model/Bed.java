@@ -24,6 +24,7 @@ public class Bed {
     @JoinColumn(name = "room_number", nullable = false)
     private Room room;
 
+    @JsonBackReference
     @OneToOne
     @JoinColumn(name = "patient_id", nullable = true)
     private Patient assignedPatient;
