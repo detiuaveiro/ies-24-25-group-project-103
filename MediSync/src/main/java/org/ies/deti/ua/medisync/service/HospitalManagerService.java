@@ -5,6 +5,8 @@ import org.ies.deti.ua.medisync.model.Doctor;
 import org.ies.deti.ua.medisync.model.Nurse;
 import org.ies.deti.ua.medisync.model.Patient;
 import org.ies.deti.ua.medisync.model.Room;
+import org.ies.deti.ua.medisync.repository.BedRepository;
+import org.ies.deti.ua.medisync.repository.HospitalManagerRepository;
 import org.ies.deti.ua.medisync.repository.RoomRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -16,19 +18,37 @@ import java.util.Set;
 @Service
 public class HospitalManagerService {
 
+    @Autowired
     private final PatientService patientService;
+
+    @Autowired
     private final NurseService nurseService;
+
+    @Autowired
     private final DoctorService doctorService;
 
     @Autowired
-    public HospitalManagerService(PatientService patientService, NurseService nurseService, DoctorService doctorService) {
+    private final HospitalManagerRepository hospitalManagerRepository;
+
+    @Autowired
+    private final RoomRepository roomRepository;
+
+    @Autowired
+    private final BedRepository bedRepository;
+
+
+
+    @Autowired
+    public HospitalManagerService(PatientService patientService, NurseService nurseService, DoctorService doctorService, HospitalManagerRepository hospitalManagerRepository, RoomRepository roomRepository, BedRepository bedRepository) {
         this.patientService = patientService;
         this.nurseService = nurseService;
         this.doctorService = doctorService;
+        this.hospitalManagerRepository = hospitalManagerRepository;
+        this.roomRepository = roomRepository;
+        this.bedRepository = bedRepository;
     }
     
-    @Autowired
-    private RoomRepository roomRepository;
+
 
     public Patient createPatient(Patient patient) {
         return patientService.createPatient(patient);
@@ -85,9 +105,7 @@ public class HospitalManagerService {
                 Room room = new Room();
                 room.setRoomNumber(roomNumber);
                 room.setScheduleEntries(new HashSet<>());
-                
-                // Each room has 4 beds
-                Set<Bed> beds = new HashSet<>();
+
                 for (int bedNum = 1; bedNum <= 4; bedNum++) {
                     Bed bed = new Bed();
                     // Format: room_number+bed_number
@@ -95,10 +113,7 @@ public class HospitalManagerService {
                     bed.setId(bedId);
                     bed.setRoom(room);
                     bed.setAssignedPatient(null);
-                    beds.add(bed);
                 }
-                
-                room.setBeds(beds);
                 
                 // Due to the cascade type (Room.java, line 20), the beds will be saved as well
                 roomRepository.save(room);
@@ -112,6 +127,22 @@ public class HospitalManagerService {
 
     public List<Room> getAllRooms() {
         return roomRepository.findAll();
+    }
+
+    public Room getRoomById(String roomId) {
+        return roomRepository.findById(roomId).orElse(null);
+    }
+
+    public Bed getBedById(Long bedId) {
+        return bedRepository.findById(bedId).orElse(null);
+    }
+
+    public List<Bed> getAllBeds() {
+        return bedRepository.findAll();
+    }
+
+    public List<Bed> getBedsInRoom(Room room) {
+        return bedRepository.findBedByRoom(room);
     }
 
 }
