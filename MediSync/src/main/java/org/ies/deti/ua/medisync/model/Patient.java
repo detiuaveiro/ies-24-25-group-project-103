@@ -67,14 +67,16 @@ public class Patient {
     @OneToMany(mappedBy = "patient")
     private List<Medication> medicationList;
 
+    @JsonBackReference(value = "patient-bed")
     @OneToOne(mappedBy = "assignedPatient", optional = false)
     private Bed bed;
 
-    @JsonManagedReference
+    @JsonBackReference(value = "patient-doctor")
     @ManyToOne
     @JoinColumn(name = "doctor_id")
     private Doctor assignedDoctor;
 
+    @JsonBackReference(value = "patient-visitors")
     @OneToMany(mappedBy = "patient")
     private List<Visitor> phone;
     

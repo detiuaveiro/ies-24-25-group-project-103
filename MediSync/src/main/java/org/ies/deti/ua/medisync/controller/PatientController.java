@@ -39,6 +39,12 @@ public class PatientController {
         return ResponseEntity.status(HttpStatus.CREATED).body(createdPatient);
     }
 
+    @DeleteMapping
+    public ResponseEntity<Void> deleteAllPatients() {
+        patientService.deleteAllPatients();
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    }
+
     @GetMapping("/{id}")
     public Optional<PatientWithVitals> getPatientById(@PathVariable Long id) {
         Optional<PatientWithVitals> patient = patientService.getPatientWithVitalsById(id);

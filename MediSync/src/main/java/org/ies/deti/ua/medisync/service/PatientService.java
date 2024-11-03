@@ -68,6 +68,10 @@ public class PatientService {
         return patientRepository.save(patient);
     }
 
+    public void deleteAllPatients() {
+        patientRepository.deleteAll();
+    }
+
     public Optional<Patient> getPatientById(Long id) {
         return patientRepository.findById(id);
     }
