@@ -8,5 +8,4 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface RoomRepository extends JpaRepository<Room, String> {
-    Optional<Room> findByBeds_Id(Long bedId);
 }

@@ -10,12 +10,15 @@ import java.util.*;
 @Service
 public class NurseService {
 
+    @Autowired
     private final NurseRepository nurseRepository;
 
     @Autowired
     private PatientService patientService;
 
     @Autowired
+    private HospitalManagerService hospitalManagerService;
+
     public NurseService(NurseRepository nurseRepository) {
         this.nurseRepository = nurseRepository;
     }
@@ -60,7 +63,7 @@ public class NurseService {
             Set<Room> rooms = entry.getRoom(); // Get the set of rooms
 
             for (Room room : rooms) { // Iterate through each room
-                Set<Bed> beds = room.getBeds(); // Get the beds for the current room
+                List<Bed> beds = hospitalManagerService.getBedsInRoom(room); // Get the beds for the current room
 
                 for (Bed bed : beds) {
                     Patient assignedPatient = bed.getAssignedPatient();
