@@ -1,11 +1,11 @@
 package org.ies.deti.ua.medisync.controller;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
-import org.ies.deti.ua.medisync.model.Medication;
-import org.ies.deti.ua.medisync.model.Patient;
-import org.ies.deti.ua.medisync.model.PatientWithVitals;
+import org.ies.deti.ua.medisync.model.*;
+import org.ies.deti.ua.medisync.repository.PatientRepository;
 import org.ies.deti.ua.medisync.service.PatientService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -27,16 +27,37 @@ import com.influxdb.query.FluxTable;
 public class PatientController {
 
     private final PatientService patientService;
+    private final PatientRepository patientRepository;
 
     @Autowired
-    public PatientController(PatientService patientService) {
+    public PatientController(PatientService patientService, PatientRepository patientRepository) {
         this.patientService = patientService;
+        this.patientRepository = patientRepository;
     }
 
-    @PostMapping
+    @PostMapping("")
     public ResponseEntity<Patient> createPatient(@RequestBody Patient patient) {
         Patient createdPatient = patientService.createPatient(patient);
         return ResponseEntity.status(HttpStatus.CREATED).body(createdPatient);
+    }
+
+
+    @PostMapping("/{id}/bed")
+    public ResponseEntity<Patient> assignToBed(@RequestBody Bed bed, @PathVariable Long id) {
+        Patient updatedPatient = patientService.setBed(id, bed);
+        if (updatedPatient != null) {
+            return ResponseEntity.status(HttpStatus.CREATED).body(updatedPatient);
+        }
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+    }
+
+    @PostMapping("/{id}/doctor")
+    public ResponseEntity<Patient> assignToDoctor(@RequestBody Doctor doctor, @PathVariable Long id) {
+        Patient updatedPatient = patientService.setDoctor(id, doctor);
+        if (updatedPatient != null) {
+            return ResponseEntity.status(HttpStatus.CREATED).body(updatedPatient);
+        }
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
     }
 
     @DeleteMapping

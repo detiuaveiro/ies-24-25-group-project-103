@@ -26,6 +26,7 @@ import com.influxdb.client.domain.WritePrecision;
 import com.influxdb.client.write.Point;
 import com.influxdb.query.FluxRecord;
 import com.influxdb.query.FluxTable;
+import org.springframework.web.bind.annotation.RequestBody;
 
 @Service
 public class PatientService {
@@ -49,22 +50,6 @@ public class PatientService {
     }
 
     public Patient createPatient(Patient patient) {
-        // Find bed specified in the patient object
-        Room room = roomRepository.findByBeds_Id(patient.getBed().getId())
-                .orElseThrow(() -> new RuntimeException("Bed not found with id: " + patient.getBed().getId()));
-                
-        Bed bed = room.getBeds().stream()
-                .filter(b -> b.getId().equals(patient.getBed().getId()))
-                .findFirst()
-                .orElseThrow(() -> new RuntimeException("Bed not found with id: " + patient.getBed().getId()));
-        
-        if (bed.getAssignedPatient() != null) {
-            throw new RuntimeException("Bed " + bed.getId() + " is already occupied");
-        }
-        
-        patient.setBed(bed);
-        bed.setAssignedPatient(patient);
-        
         return patientRepository.save(patient);
     }
 
@@ -74,6 +59,24 @@ public class PatientService {
 
     public Optional<Patient> getPatientById(Long id) {
         return patientRepository.findById(id);
+    }
+
+    public Patient setBed(Long id, Bed bed) {
+        Optional<Patient> patient = this.getPatientById(id);
+        if (patient.isPresent()) {
+            patient.get().setBed(bed);
+            return patientRepository.save(patient.get());
+        }
+        return null;
+    }
+
+    public Patient setDoctor(Long id, Doctor doctor) {
+        Optional<Patient> patient = this.getPatientById(id);
+        if (patient.isPresent()) {
+            patient.get().setAssignedDoctor(doctor);
+            return patientRepository.save(patient.get());
+        }
+        return null;
     }
 
     public Optional<PatientWithVitals> getPatientWithVitalsById(Long id){

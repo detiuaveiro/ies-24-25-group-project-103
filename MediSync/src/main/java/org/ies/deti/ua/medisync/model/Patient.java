@@ -56,7 +56,7 @@ public class Patient {
     @Column(name = "observations")
     private List<String> observations;
 
-    @OneToOne(mappedBy = "assignedPatient", optional = false)
+    @OneToOne(mappedBy = "assignedPatient")
     private Bed bed;
 
     @ManyToOne
