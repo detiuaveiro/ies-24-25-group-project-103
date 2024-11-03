@@ -122,9 +122,9 @@ public class PatientController {
     }
 
     @PutMapping("/patients/{id}/medications/{medicationId}")
-    public ResponseEntity<Patient> updateMedication(@PathVariable Long id, @PathVariable Long medicationId, @RequestBody Medication updatedMedication) {
-        Patient patientWithUpdatedMedication = patientService.updateMedication(id, medicationId, updatedMedication);
-        return ResponseEntity.ok(patientWithUpdatedMedication);
+    public ResponseEntity<Medication> updateMedication(@PathVariable Long id, @PathVariable Long medicationId, @RequestBody Medication updatedMedication) {
+        Medication medication = patientService.updateMedication(id, medicationId, updatedMedication);
+        return ResponseEntity.ok(medication);
     }
 
 }
