@@ -24,4 +24,10 @@ public class HospitalManagerController {
 
     // End point das salas
 
+    @PostMapping("/rooms")
+    public ResponseEntity<String> addRooms() {
+        hospitalManagerService.addRooms();
+        return ResponseEntity.status(HttpStatus.CREATED).body("Rooms added successfully");
+    }
+
 }
