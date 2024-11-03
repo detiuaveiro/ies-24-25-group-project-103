@@ -12,7 +12,6 @@ import org.ies.deti.ua.medisync.model.Doctor;
 import org.ies.deti.ua.medisync.model.Medication;
 import org.ies.deti.ua.medisync.model.Patient;
 import org.ies.deti.ua.medisync.model.PatientWithVitals;
-import org.ies.deti.ua.medisync.model.Room;
 import org.ies.deti.ua.medisync.model.Vitals;
 import org.ies.deti.ua.medisync.repository.MedicationRepository;
 import org.ies.deti.ua.medisync.repository.PatientRepository;
@@ -28,7 +27,6 @@ import com.influxdb.client.domain.WritePrecision;
 import com.influxdb.client.write.Point;
 import com.influxdb.query.FluxRecord;
 import com.influxdb.query.FluxTable;
-import org.springframework.web.bind.annotation.RequestBody;
 
 @Service
 public class PatientService {
@@ -242,15 +240,19 @@ public class PatientService {
         return latestVitals;
     }
 
-    public boolean addMedication(Long patientId, Medication medication) {
+    public List<Medication> getMedicationsByPatientId(Long patientId) {
+        return medicationRepository.findMedicationByPatientId(patientId);
+    }
+
+    public Patient addMedication(Long patientId, Medication medication) {
         Optional<Patient> patientOptional = patientRepository.findById(patientId);
         if (patientOptional.isPresent()) {
             Patient patient = patientOptional.get();
             medication.setPatient(patient);
             medicationRepository.save(medication);
-            return true;
+            return patient;
         }
-        return false;
+        return null;
     }
 
     public Medication updateMedication(Long patientId, Long medicationId, Medication updatedMedication) {
