@@ -16,9 +16,8 @@ public class NurseController {
 
     private NurseService nurseService;
 
-    // Get /api/v1/nurses/{nurse_id}/patients-with-vitals - Get all patients
-    // assigned to a specified Nurse
-    @GetMapping("/{nurse_id}/patients-with-vitals") // Issue #153
+    // Get all patients assigned to a specified Nurse
+    @GetMapping("/{nurse_id}/patients")
     public ResponseEntity<List<PatientWithVitals>> getPatientsWithVitals(@PathVariable Long nurse_id) {
         Optional<Nurse> nurseOpt = nurseService.getNurseById(nurse_id);
         if (nurseOpt.isPresent()) {
@@ -28,33 +27,30 @@ public class NurseController {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
     }
 
-    // Post /api/v1/nurses/{nurseId}/add-schedule - Add a Schedule Entry to a
-    // specified Nurse
-    @PostMapping("/{nurseId}/add-schedule") // Issue #154
+    // Add a Schedule Entry to a specified Nurse
+    @PostMapping("/{nurseId}/schedule") // Issue #154
     public ResponseEntity<Nurse> addScheduleEntry(@PathVariable Long nurseId, @RequestBody ScheduleEntry newEntry) {
         Nurse updatedNurse = nurseService.addScheduleEntryToNurse(nurseId, newEntry);
         return updatedNurse != null ? ResponseEntity.ok(updatedNurse) : ResponseEntity.notFound().build();
     }
 
-    // Put /api/v1/nurses/{nurseId}/update-schedule/{before_entryId} - Update a
-    // Schedule Entry from a specified nurse
-    @PutMapping("/{nurseId}/update-schedule/{before_entryId}") // Issue:#91
+    // Update a Schedule Entry from a specified nurse
+    @PutMapping("/{nurseId}/schedule/{before_entryId}") // Issue:#91
     public ResponseEntity<Nurse> updateScheduleEntry(@PathVariable Long nurseId, @PathVariable Long before_entryId,
             @RequestBody ScheduleEntry newEntry) {
         Nurse updatedNurse = nurseService.updateScheduleEntryFromNurse(nurseId, before_entryId, newEntry);
         return updatedNurse != null ? ResponseEntity.ok(updatedNurse) : ResponseEntity.notFound().build();
     }
 
-    // Delete /api/v1/nurses/{nurseId}/remove-schedule/{entryId} - Delete a Schedule
-    // Entry from a specified nurse
-    @DeleteMapping("/{nurseId}/remove-schedule/{entryId}") // Issue #155
+    // Delete a Schedule Entry from a specified nurse
+    @DeleteMapping("/{nurseId}/schedule/{entryId}") // Issue #155
     public ResponseEntity<Nurse> removeScheduleEntry(@PathVariable Long nurseId, @PathVariable Long entryId) {
         Nurse updatedNurse = nurseService.removeScheduleEntryFromNurse(nurseId, entryId);
         return updatedNurse != null ? ResponseEntity.ok(updatedNurse) : ResponseEntity.notFound().build();
     }
 
-    // Delete /api/v1/nurses/delete/{id} - Delete nurse
-    @DeleteMapping("/delete/{id}") // Issue #156
+    // Delete nurse
+    @DeleteMapping("/{id}") // Issue #156
     public ResponseEntity<Void> deleteNurse(@PathVariable Long id) {
         try {
             nurseService.deleteNurse(id);
@@ -64,7 +60,7 @@ public class NurseController {
         }
     }
 
-    // GET /api/v1/nurses/{nurse_id}/rooms - Get all rooms
+    // Get all rooms
     @GetMapping("{nurse_id}/rooms") // Issue #82
     public ResponseEntity<List<Room>> getAllRooms(@PathVariable Long nurse_id) {
         Optional<Nurse> nurse = nurseService.getNurseById(nurse_id);
@@ -75,29 +71,29 @@ public class NurseController {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
     }
 
-    // GET /api/v1/nurses/nurses - Get all nurses
-    @GetMapping("/nurses") // Issue #79
+    // Get all nurses
+    @GetMapping // Issue #79
     public ResponseEntity<List<Nurse>> getAllNurses() {
         List<Nurse> nurses = nurseService.getAllNurses();
         return ResponseEntity.ok(nurses);
     }
 
-    // GET /api/v1/nurses/{id} - Get nurse by ID
+    // Get nurse by ID
     @GetMapping("/{id}") // Issue #80
     public ResponseEntity<Nurse> getNurseById(@PathVariable Long id) {
         Optional<Nurse> nurse = nurseService.getNurseById(id);
         return nurse.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
-    // POST /api/v1/nurses/add/nurse - Add a new nurse (create)
-    @PostMapping("/add/nurse") // Issue: #89
+    // Add a new nurse (create)
+    @PostMapping// Issue: #89
     public ResponseEntity<Nurse> addNurse(@RequestBody Nurse nurse) {
         Nurse createdNurse = nurseService.addNurse(nurse);
         return ResponseEntity.ok(createdNurse);
     }
 
-    // PUT /api/v1/nurses/update/nurse/{id} - Update nurse information
-    @PutMapping("/update/nurse/{id}") // Issue #99
+    // Update nurse information
+    @PutMapping("/{id}") // Issue #99
     public ResponseEntity<Nurse> updateNurse(@PathVariable Long id, @RequestBody Nurse updatedNurse) {
         try {
             Nurse updated = nurseService.updateNurse(id, updatedNurse);

@@ -101,25 +101,25 @@ public class PatientController {
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
-    @GetMapping("/patients/{id}/medications")
+    @GetMapping("/{id}/medications")
     public ResponseEntity<List<Medication>> getMedications(@PathVariable Long id) {
         List<Medication> medications = patientService.getMedicationsByPatientId(id);
         return ResponseEntity.ok(medications);
     }
 
-    @PostMapping("/patients/{id}/medications")
+    @PostMapping("/{id}/medications")
     public ResponseEntity<Patient> createMedication(@PathVariable Long id, @RequestBody Medication medication) {
         Patient patientWithMedication  = patientService.addMedication(id, medication);
         return ResponseEntity.status(HttpStatus.CREATED).body(patientWithMedication);
     }
 
-    @DeleteMapping("/patients/{id}/medications/{medicationId}")
+    @DeleteMapping("/{id}/medications/{medicationId}")
     public ResponseEntity<Void> deleteMedication(@PathVariable Long id, @PathVariable Long medicationId) {
         patientService.deleteMedication(id, medicationId);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
-    @PutMapping("/patients/{id}/medications/{medicationId}")
+    @PutMapping("/{id}/medications/{medicationId}")
     public ResponseEntity<Medication> updateMedication(@PathVariable Long id, @PathVariable Long medicationId, @RequestBody Medication updatedMedication) {
         Medication medication = patientService.updateMedication(id, medicationId, updatedMedication);
         return ResponseEntity.ok(medication);

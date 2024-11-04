@@ -7,7 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/v1")
+@RequestMapping("/api/v1/users")
 public class UserController {
 
     private final UserService userService;
@@ -17,24 +17,13 @@ public class UserController {
         this.userService = userService;
     }
 
-    @GetMapping("/{username}:{password}")
-    public ResponseEntity<User> authenticateUser(
-            @PathVariable String username,
-            @PathVariable String password) {
-        User authenticatedUser = userService.authenticateUser(username, password);
-        if (authenticatedUser != null) {
-            return ResponseEntity.ok(authenticatedUser);
-        }
-        return ResponseEntity.notFound().build();
-    }
-
     // Create a new user
     @PostMapping("/users")
     public ResponseEntity<User> createUser(@RequestBody User user, @RequestParam String password) {
         User createdUser = userService.createUser(user, password);
         return ResponseEntity.ok(createdUser);
     }
-
+    /*
     // Update password (not tested because I forgot)
     @PutMapping("/users/{userId}/password")
     public ResponseEntity<User> updatePassword(
@@ -43,4 +32,5 @@ public class UserController {
         User updatedUser = userService.updateUserPassword(userId, newPassword);
         return ResponseEntity.ok(updatedUser);
     }
+     */
 }
