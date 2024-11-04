@@ -1,5 +1,8 @@
 package org.ies.deti.ua.medisync.model;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIdentityReference;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -11,6 +14,7 @@ import jakarta.persistence.JoinColumn;
 
 @Entity
 @Table(name = "medication")
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 public class Medication {
 
     @Id
@@ -28,6 +32,7 @@ public class Medication {
 
     @ManyToOne
     @JoinColumn(name = "patient_id", nullable = false)
+    @JsonIdentityReference(alwaysAsId = true)
     private Patient patient;
 
     public Medication() {}

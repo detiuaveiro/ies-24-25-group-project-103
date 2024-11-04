@@ -7,13 +7,18 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import jakarta.annotation.PostConstruct;
+import org.ies.deti.ua.medisync.model.Bed;
 import org.ies.deti.ua.medisync.model.Doctor;
 import org.ies.deti.ua.medisync.model.Medication;
 import org.ies.deti.ua.medisync.model.Patient;
 import org.ies.deti.ua.medisync.model.PatientWithVitals;
 import org.ies.deti.ua.medisync.model.Vitals;
+import org.ies.deti.ua.medisync.repository.MedicationRepository;
 import org.ies.deti.ua.medisync.repository.PatientRepository;
+import org.ies.deti.ua.medisync.repository.RoomRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import com.influxdb.client.InfluxDBClient;
@@ -28,27 +33,65 @@ import com.influxdb.query.FluxTable;
 public class PatientService {
 
     private final PatientRepository patientRepository;
-
-    private static final String TOKEN = "your-influxdb-token";
-    private static final String ORGANIZATION = "your-organization";
-    private static final String BUCKET = "your-bucket";
-    private static final String URL = "http://localhost:8086";
-
-    private final InfluxDBClient influxDBClient;
+    private final MedicationRepository medicationRepository;
 
     @Autowired
-    public PatientService(PatientRepository patientRepository) {
+    private RoomRepository roomRepository;
+
+    @Value("${spring.influx.token}")
+    private String TOKEN;
+
+    @Value("${spring.influx.org}")
+    private String ORGANIZATION;
+
+    @Value("${spring.influx.bucket}")
+    private String BUCKET;
+
+    @Value("${spring.influx.url}")
+    private String URL;
+
+
+    private InfluxDBClient influxDBClient;
+
+    @Autowired
+    public PatientService(PatientRepository patientRepository, MedicationRepository medicationRepository) {
         this.patientRepository = patientRepository;
-        influxDBClient = InfluxDBClientFactory.create(URL, TOKEN.toCharArray());
+        this.medicationRepository = medicationRepository;
     }
 
+    @PostConstruct
+    public void init() {
+        this.influxDBClient = InfluxDBClientFactory.create(URL, TOKEN.toCharArray());
+    }
 
     public Patient createPatient(Patient patient) {
         return patientRepository.save(patient);
     }
 
+    public void deleteAllPatients() {
+        patientRepository.deleteAll();
+    }
+
     public Optional<Patient> getPatientById(Long id) {
         return patientRepository.findById(id);
+    }
+
+    public Patient setBed(Long id, Bed bed) {
+        Optional<Patient> patient = this.getPatientById(id);
+        if (patient.isPresent()) {
+            patient.get().setBed(bed);
+            return patientRepository.save(patient.get());
+        }
+        return null;
+    }
+
+    public Patient setDoctor(Long id, Doctor doctor) {
+        Optional<Patient> patient = this.getPatientById(id);
+        if (patient.isPresent()) {
+            patient.get().setAssignedDoctor(doctor);
+            return patientRepository.save(patient.get());
+        }
+        return null;
     }
 
     public Optional<PatientWithVitals> getPatientWithVitalsById(Long id){
@@ -84,7 +127,6 @@ public class PatientService {
             existingPatient.setHeight(updatedPatient.getHeight());
             existingPatient.setConditions(updatedPatient.getConditions());
             existingPatient.setObservations(updatedPatient.getObservations());
-            existingPatient.setMedicationList(updatedPatient.getMedicationList());
             existingPatient.setBed(updatedPatient.getBed());
             existingPatient.setAssignedDoctor(updatedPatient.getAssignedDoctor());
             return patientRepository.save(existingPatient);
@@ -203,52 +245,43 @@ public class PatientService {
         return latestVitals;
     }
 
+    public List<Medication> getMedicationsByPatientId(Long patientId) {
+        return medicationRepository.findMedicationByPatientId(patientId);
+    }
+
     public Patient addMedication(Long patientId, Medication medication) {
         Optional<Patient> patientOptional = patientRepository.findById(patientId);
         if (patientOptional.isPresent()) {
             Patient patient = patientOptional.get();
-            List<Medication> medicationList = patient.getMedicationList();
-            medicationList.add(medication);
-            patient.setMedicationList(medicationList);
-            return patientRepository.save(patient);
+            medication.setPatient(patient);
+            medicationRepository.save(medication);
+            return patient;
         }
         return null;
     }
 
-    public Patient updateMedication(Long patientId, Long medicationId, Medication updatedMedication) {
-        Optional<Patient> patientOptional = patientRepository.findById(patientId);
-        if (patientOptional.isPresent()) {
-            Patient patient = patientOptional.get();
-            List<Medication> medicationList = patient.getMedicationList();
+    public Medication updateMedication(Long patientId, Long medicationId, Medication updatedMedication) {
+            List<Medication> medicationList = medicationRepository.findMedicationByPatientId(patientId);
             for (Medication medication : medicationList) {
                 if (medication.getId().equals(medicationId)) {
                     medication.setName(updatedMedication.getName());
                     medication.setDosage(updatedMedication.getDosage());
                     medication.setHourInterval(updatedMedication.getHourInterval());
                     medication.setPatient(updatedMedication.getPatient());
-                    break;
+                    return medicationRepository.save(medication);                    
                 }
             }
-            patient.setMedicationList(medicationList);
-            return patientRepository.save(patient);
-        }
+        
         return null;
     }
 
     public void deleteMedication(Long patientId, Long medicationId) {
-        Optional<Patient> patientOptional = patientRepository.findById(patientId);
-        if (patientOptional.isPresent()) {
-            Patient patient = patientOptional.get();
-            List<Medication> medicationList = patient.getMedicationList();
-            medicationList.removeIf(medication -> medication.getId().equals(medicationId));
-            patient.setMedicationList(medicationList);
-            patientRepository.save(patient);
+        List<Medication> medicationList = medicationRepository.findMedicationByPatientId(patientId);
+        for (Medication medication : medicationList) {
+            if (medication.getId().equals(medicationId)) {
+                medicationRepository.delete(medication);
+            }
         }
-    }
-
-    public List<Medication> getMedicationsByPatientId(Long patientId) {
-        Optional<Patient> patientOptional = patientRepository.findById(patientId);
-        return patientOptional.map(Patient::getMedicationList).orElse(null);
     }
 
     public void close() {

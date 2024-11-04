@@ -1,8 +1,12 @@
 
 package org.ies.deti.ua.medisync.model;
 
-import jakarta.persistence.Column;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+
 import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
@@ -11,24 +15,24 @@ import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "bed")
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 public class Bed {
 
     @Id
-    @Column(name = "id", nullable = false)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "room_number", nullable = false)
+    @JoinColumn(name = "room_id", referencedColumnName = "id", nullable = false)
     private Room room;
 
     @OneToOne
-    @JoinColumn(name = "patient_id", nullable = true)
+    @JoinColumn(name = "patient_id")
     private Patient assignedPatient;
 
     public Bed() {}
 
-    public Bed(Long id, Room room, Patient assignedPatient) {
-        this.id = id;
+    public Bed(Room room, Patient assignedPatient) {
         this.room = room;
         this.assignedPatient = assignedPatient;
     }
@@ -55,5 +59,11 @@ public class Bed {
 
     public void setAssignedPatient(Patient assignedPatient) {
         this.assignedPatient = assignedPatient;
+    }
+
+
+    @Override
+    public String toString() {
+        return "Bed " + id + " in room " + room.getRoomNumber();
     }
 }

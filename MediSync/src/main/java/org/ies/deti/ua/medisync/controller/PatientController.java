@@ -1,11 +1,11 @@
 package org.ies.deti.ua.medisync.controller;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
-import org.ies.deti.ua.medisync.model.Medication;
-import org.ies.deti.ua.medisync.model.Patient;
-import org.ies.deti.ua.medisync.model.PatientWithVitals;
+import org.ies.deti.ua.medisync.model.*;
+import org.ies.deti.ua.medisync.repository.PatientRepository;
 import org.ies.deti.ua.medisync.service.PatientService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -29,7 +29,7 @@ public class PatientController {
     private final PatientService patientService;
 
     @Autowired
-    public PatientController(PatientService patientService) {
+    public PatientController(PatientService patientService, PatientRepository patientRepository) {
         this.patientService = patientService;
     }
 
@@ -37,6 +37,31 @@ public class PatientController {
     public ResponseEntity<Patient> createPatient(@RequestBody Patient patient) {
         Patient createdPatient = patientService.createPatient(patient);
         return ResponseEntity.status(HttpStatus.CREATED).body(createdPatient);
+    }
+
+
+    @PostMapping("/{id}/bed")
+    public ResponseEntity<Patient> assignToBed(@RequestBody Bed bed, @PathVariable Long id) {
+        Patient updatedPatient = patientService.setBed(id, bed);
+        if (updatedPatient != null) {
+            return ResponseEntity.status(HttpStatus.CREATED).body(updatedPatient);
+        }
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+    }
+
+    @PostMapping("/{id}/doctor")
+    public ResponseEntity<Patient> assignToDoctor(@RequestBody Doctor doctor, @PathVariable Long id) {
+        Patient updatedPatient = patientService.setDoctor(id, doctor);
+        if (updatedPatient != null) {
+            return ResponseEntity.status(HttpStatus.CREATED).body(updatedPatient);
+        }
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+    }
+
+    @DeleteMapping
+    public ResponseEntity<Void> deleteAllPatients() {
+        patientService.deleteAllPatients();
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
     @GetMapping("/{id}")
@@ -95,9 +120,9 @@ public class PatientController {
     }
 
     @PutMapping("/patients/{id}/medications/{medicationId}")
-    public ResponseEntity<Patient> updateMedication(@PathVariable Long id, @PathVariable Long medicationId, @RequestBody Medication updatedMedication) {
-        Patient patientWithUpdatedMedication = patientService.updateMedication(id, medicationId, updatedMedication);
-        return ResponseEntity.ok(patientWithUpdatedMedication);
+    public ResponseEntity<Medication> updateMedication(@PathVariable Long id, @PathVariable Long medicationId, @RequestBody Medication updatedMedication) {
+        Medication medication = patientService.updateMedication(id, medicationId, updatedMedication);
+        return ResponseEntity.ok(medication);
     }
 
 }
