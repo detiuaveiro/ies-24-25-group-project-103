@@ -1,15 +1,23 @@
 package org.ies.deti.ua.medisync.model;
 
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
-import jakarta.persistence.*;
-
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
+
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
+import jakarta.persistence.Table;
+import jakarta.persistence.Temporal;
+import jakarta.persistence.TemporalType;
 
 @Entity
 @Table(name = "schedule_entry")
@@ -32,7 +40,6 @@ public class ScheduleEntry {
     private boolean isInterval;
 
     @ManyToMany(mappedBy = "scheduleEntries")
-    @JsonManagedReference
     private List<Room> rooms;
 
     @ManyToMany
@@ -41,7 +48,6 @@ public class ScheduleEntry {
             joinColumns = @JoinColumn(name = "schedule_id"),
             inverseJoinColumns = @JoinColumn(name = "nurse_id")
     )
-    @JsonManagedReference
     private List<Nurse> nurses = new ArrayList<>();
 
     // Constructors
