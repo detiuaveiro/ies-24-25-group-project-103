@@ -14,7 +14,8 @@ Link to the issue:
 
 ## Motivation and Context
 <!--- If it fixes an open issue, please link to the issue here. -->
-Completes Issue #
+<!--- Other keywords also work: Fixes, Resolves, https://docs.github.com/en/issues/tracking-your-work-with-issues/using-issues/linking-a-pull-request-to-an-issue for others -->
+Closes #
 <!--- Why is this change required? What problem does it solve? -->
 I made this change because...
 
