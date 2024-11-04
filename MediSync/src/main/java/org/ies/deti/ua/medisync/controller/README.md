@@ -251,3 +251,57 @@ This directory stores all the controllers for the project
     <td>Checks if the user inserted the correct code</td>
 </tr>
 </table>
+
+# Some screenshots we took to test the application:
+
+## Create an user
+
+![create an user](postmanScreenshots/image.png)
+
+## Login
+
+![login](postmanScreenshots/image-1.png)
+
+## Add Rooms
+
+![add Rooms](postmanScreenshots/image-3.png)
+
+## View Rooms
+
+![ver quartos](postmanScreenshots/image-2.png)
+
+## Add a Patient
+
+![adicionar um paciente](postmanScreenshots/image-4.png)
+
+## View Patients
+
+![ver pacientes](postmanScreenshots/image-5.png)
+
+## Associate a patient to a bed
+
+![associar um paciente a uma cama](postmanScreenshots/image-6.png)
+
+## Add a medication to a patient
+
+![adicionar medicação a um paciente](postmanScreenshots/image-8.png)
+
+## View Medications
+
+![ver medicação de um paciente](postmanScreenshots/image-9.png)
+
+## Create a doctor
+
+![criar um doutor ](postmanScreenshots/image-10.png)
+
+## Add a doctor to a patient
+
+![assign doctor to patient](postmanScreenshots/image-11.png)
+
+## Add notification to a patient
+
+![add notification](postmanScreenshots/image-12.png)
+
+## See notifications from a user
+
+![see notifications from a user](postmanScreenshots/image-13.png)

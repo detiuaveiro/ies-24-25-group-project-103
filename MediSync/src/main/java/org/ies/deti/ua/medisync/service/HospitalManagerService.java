@@ -1,5 +1,8 @@
 package org.ies.deti.ua.medisync.service;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.ies.deti.ua.medisync.model.Bed;
 import org.ies.deti.ua.medisync.model.Doctor;
 import org.ies.deti.ua.medisync.model.Nurse;
@@ -10,11 +13,6 @@ import org.ies.deti.ua.medisync.repository.HospitalManagerRepository;
 import org.ies.deti.ua.medisync.repository.RoomRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 
 @Service
 public class HospitalManagerService {
@@ -114,6 +112,7 @@ public class HospitalManagerService {
                     bed.setId(bedId);
                     bed.setRoom(room);
                     bed.setAssignedPatient(null);
+                    bedRepository.save(bed);
                 }
                 
                 // Due to the cascade type (Room.java, line 20), the beds will be saved as well
