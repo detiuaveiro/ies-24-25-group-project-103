@@ -26,7 +26,7 @@
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
     "RunOnceActivity.ShowReadmeOnStart": "true",
-    "git-widget-placeholder": "new/define__endpoint__medication__93",
+    "git-widget-placeholder": "new/add__screenshots",
     "kotlin-language-version-configured": "true",
     "last_opened_file_path": "/home/alof/Desktop/ies-24-25-group-project-103",
     "node.js.detected.package.eslint": "true",
@@ -34,6 +34,7 @@
     "node.js.selected.package.eslint": "(autodetect)",
     "node.js.selected.package.tslint": "(autodetect)",
     "nodejs_package_manager_path": "npm",
+    "settings.editor.selected.configurable": "preferences.pluginManager",
     "vue.rearranger.settings.migration": "true"
   }
 }]]></component>
@@ -57,6 +58,7 @@
       <workItem from="1730224088886" duration="345000" />
       <workItem from="1730479608599" duration="316000" />
       <workItem from="1730562494011" duration="2691000" />
+      <workItem from="1730747545111" duration="2845000" />
     </task>
     <task id="LOCAL-00001" summary=".">
       <option name="closed" value="true" />
