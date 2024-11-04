@@ -25,7 +25,7 @@ public class NotificationController {
         this.notificationService = notificationService;
     }
 
-    @PostMapping("/send/{userId}")
+    @PostMapping("/user/{userId}")
     public ResponseEntity<Notification> sendNotification(@PathVariable Long userId, @RequestBody Notification notification) {
         Notification savedNotification = notificationService.saveNotification(notification);
         return new ResponseEntity<>(savedNotification, HttpStatus.CREATED);
