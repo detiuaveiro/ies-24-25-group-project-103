@@ -14,6 +14,7 @@ import org.ies.deti.ua.medisync.model.Patient;
 import org.ies.deti.ua.medisync.model.PatientWithVitals;
 import org.ies.deti.ua.medisync.model.Room;
 import org.ies.deti.ua.medisync.model.ScheduleEntry;
+import org.ies.deti.ua.medisync.repository.BedRepository;
 import org.ies.deti.ua.medisync.repository.NurseRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -26,9 +27,8 @@ public class NurseService {
 
     @Autowired
     private PatientService patientService;
-
     @Autowired
-    private HospitalManagerService hospitalManagerService;
+    private BedRepository bedRepository;
 
     public NurseService(NurseRepository nurseRepository) {
         this.nurseRepository = nurseRepository;
@@ -73,7 +73,7 @@ public class NurseService {
             Set<Room> rooms = entry.getRoom();
 
             for (Room room : rooms) {
-                List<Bed> beds = hospitalManagerService.getBedsInRoom(room);
+                List<Bed> beds = bedRepository.findBedByRoom(room);
 
                 for (Bed bed : beds) {
                     Patient assignedPatient = bed.getAssignedPatient();

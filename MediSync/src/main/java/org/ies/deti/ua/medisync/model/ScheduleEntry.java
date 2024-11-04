@@ -1,5 +1,7 @@
 package org.ies.deti.ua.medisync.model;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
 
 import java.util.ArrayList;
@@ -10,6 +12,7 @@ import java.util.Set;
 
 @Entity
 @Table(name = "schedule_entry")
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 public class ScheduleEntry {
 
     @Id
@@ -27,10 +30,15 @@ public class ScheduleEntry {
     @Column(name = "is_interval", nullable = false)
     private boolean isInterval;
 
-    @ManyToMany(mappedBy = "room")
+    @ManyToMany(mappedBy = "scheduleEntries")
     private Set<Room> rooms;
 
-    @ManyToMany(mappedBy = "nurse")
+    @ManyToMany
+    @JoinTable(
+            name = "schedule_nurse",
+            joinColumns = @JoinColumn(name = "schedule_id"),
+            inverseJoinColumns = @JoinColumn(name = "nurse_id")
+    )
     private Set<Nurse> nurses = new HashSet<>();
 
     // Constructors

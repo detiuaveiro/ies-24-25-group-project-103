@@ -27,15 +27,13 @@ import com.influxdb.query.FluxTable;
 public class PatientController {
 
     private final PatientService patientService;
-    private final PatientRepository patientRepository;
 
     @Autowired
     public PatientController(PatientService patientService, PatientRepository patientRepository) {
         this.patientService = patientService;
-        this.patientRepository = patientRepository;
     }
 
-    @PostMapping("")
+    @PostMapping
     public ResponseEntity<Patient> createPatient(@RequestBody Patient patient) {
         Patient createdPatient = patientService.createPatient(patient);
         return ResponseEntity.status(HttpStatus.CREATED).body(createdPatient);

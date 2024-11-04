@@ -1,5 +1,7 @@
 package org.ies.deti.ua.medisync.model;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
 
 import java.util.ArrayList;
@@ -8,14 +10,10 @@ import java.util.List;
 import java.util.Set;
 
 @Entity
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 public class Nurse extends User {
 
-    @ManyToMany
-    @JoinTable(
-            name = "schedule_nurse",
-            joinColumns = @JoinColumn(name = "schedule_id"),
-            inverseJoinColumns = @JoinColumn(name = "nurse_id")
-    )
+    @ManyToMany(mappedBy = "nurses")
     private List<ScheduleEntry> schedule = new ArrayList<>();
 
     public Nurse() {}

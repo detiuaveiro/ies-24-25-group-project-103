@@ -3,6 +3,8 @@ package org.ies.deti.ua.medisync.model;
 import java.util.Date;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.Column;
 import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
@@ -21,6 +23,7 @@ import jakarta.persistence.TemporalType;
 
 @Entity
 @Table(name = "patient")
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 public class Patient {
 
     @Id
@@ -30,7 +33,6 @@ public class Patient {
     @Column(name = "name", nullable = false, length = 100)
     private String name;
 
-    @Enumerated(EnumType.STRING)
     @Column(name = "gender", nullable = false)
     private String gender;
 

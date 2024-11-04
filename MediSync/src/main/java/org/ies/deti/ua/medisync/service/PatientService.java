@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import jakarta.annotation.PostConstruct;
 import org.ies.deti.ua.medisync.model.Bed;
 import org.ies.deti.ua.medisync.model.Doctor;
 import org.ies.deti.ua.medisync.model.Medication;
@@ -50,13 +51,17 @@ public class PatientService {
     private String URL;
 
 
-    private final InfluxDBClient influxDBClient;
+    private InfluxDBClient influxDBClient;
 
     @Autowired
     public PatientService(PatientRepository patientRepository, MedicationRepository medicationRepository) {
         this.patientRepository = patientRepository;
         this.medicationRepository = medicationRepository;
-        influxDBClient = InfluxDBClientFactory.create(URL, TOKEN.toCharArray());
+    }
+
+    @PostConstruct
+    public void init() {
+        this.influxDBClient = InfluxDBClientFactory.create(URL, TOKEN.toCharArray());
     }
 
     public Patient createPatient(Patient patient) {
