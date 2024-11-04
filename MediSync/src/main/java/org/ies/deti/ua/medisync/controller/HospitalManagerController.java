@@ -47,4 +47,26 @@ public class HospitalManagerController {
         return ResponseEntity.ok(rooms);
     }
 
+    @GetMapping("/rooms/{id}")
+    public ResponseEntity<?> getRoomById(@PathVariable Long id) {
+        try {
+            Room room = hospitalManagerService.getRoomById(id);
+            return ResponseEntity.ok(room);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                               .body("Error getting room with id " + id + "\n" + e.getMessage());
+        }
+    }
+
+    @GetMapping("/rooms/number/{roomNumber}")
+    public ResponseEntity<?> getRoomByNumber(@PathVariable String roomNumber) {
+        try {
+            Room room = hospitalManagerService.getRoomByNumber(roomNumber);
+            return ResponseEntity.ok(room);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                               .body("Room not found with number: " + roomNumber);
+        }
+    }
+
 }
