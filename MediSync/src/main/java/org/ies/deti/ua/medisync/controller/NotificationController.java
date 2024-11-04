@@ -52,7 +52,7 @@ public class NotificationController {
         return ResponseEntity.ok(notifications);
     }
 
-    // Send notificatiosn by type
+    // Send notifications by type
     @PostMapping("/discharge/{userId}/{roomNumber}")
     public ResponseEntity<Notification> createDischargeNotification(
             @PathVariable Long userId,
