@@ -12,7 +12,7 @@ import jakarta.persistence.Table;
 @Entity
 @Table(name = "user")
 @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
-public abstract class User {
+public class User {  // Removed 'abstract' keyword
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -30,7 +30,6 @@ public abstract class User {
     @Column(name = "password", nullable = false, length = 255)
     private String password;
 
-
     public User() {}
 
     public User(String username, String email, String password, String name) {
@@ -39,8 +38,7 @@ public abstract class User {
         this.password = password;
         this.name = name;
     }
-
-    // Getters and Setters
+    
     public Long getId() {
         return id;
     }
@@ -79,9 +77,5 @@ public abstract class User {
 
     public void setPassword(String password) {
         this.password = password;
-    }
-
-    public boolean checkPassword(String password) {
-        return this.password.equals(password);
     }
 }
