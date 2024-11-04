@@ -6,5 +6,5 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface CodeRepository extends JpaRepository<Code, Long> {
     public Code findByCode(String code);
-    
+    public Code findByPatientId(Long patientId);
 }

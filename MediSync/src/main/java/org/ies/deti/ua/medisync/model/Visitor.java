@@ -1,18 +1,22 @@
 package org.ies.deti.ua.medisync.model;
 
-
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+import com.influxdb.annotations.Column;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 
 @Entity
-@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 public class Visitor {
+    
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column(name = "phone_number")
     private String phoneNumber;
 
     @ManyToOne
@@ -24,6 +28,10 @@ public class Visitor {
     public Visitor(String phoneNumber, Patient patient) {
         this.phoneNumber = phoneNumber;
         this.patient = patient;
+    }
+
+    public Long getId() {
+        return id;
     }
 
     public String getPhoneNumber() {

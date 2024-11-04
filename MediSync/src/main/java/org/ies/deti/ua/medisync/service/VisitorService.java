@@ -6,6 +6,7 @@ import org.ies.deti.ua.medisync.model.Code;
 import org.ies.deti.ua.medisync.model.Patient;
 import org.ies.deti.ua.medisync.model.Visitor;
 import org.ies.deti.ua.medisync.repository.CodeRepository;
+import org.ies.deti.ua.medisync.repository.PatientRepository;
 import org.ies.deti.ua.medisync.repository.VisitorRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -22,6 +23,7 @@ public class VisitorService {
     private final PatientService patientService;
     private final CodeRepository codeRepository;
     private final VisitorRepository visitorRepository;
+    private final PatientRepository patientRepository;
 
     @Value("${twilio.accountSid}")
     private String accountSid;
@@ -33,10 +35,12 @@ public class VisitorService {
     private String fromPhoneNumber;
 
     @Autowired
-    public VisitorService(PatientService patientService, CodeRepository codeRepository, VisitorRepository visitorRepository) {
+    public VisitorService(PatientService patientService, CodeRepository codeRepository, VisitorRepository visitorRepository, PatientRepository patientRepository) {
         this.patientService = patientService;
         this.codeRepository = codeRepository;
         this.visitorRepository = visitorRepository;
+        this.patientRepository = patientRepository;
+
     }
 
     @PostConstruct
@@ -67,8 +71,14 @@ public class VisitorService {
     public String generateCode(Patient patient, String phoneNumber) {
         Random random = new Random();
         String code = String.format("%06d", random.nextInt(1000000));
-        Code newCode = new Code(code, phoneNumber, patient);
-        codeRepository.save(newCode);
+        if (codeRepository.findByPatientId(patient.getId()) == null) {
+            Code newCode = new Code(code, phoneNumber, patient);
+            codeRepository.save(newCode);
+            sendVisitorNotification(code, phoneNumber);
+        }
+        else {
+            sendVisitorNotification(code, phoneNumber);   
+        }
         return code;
     }
 
@@ -83,5 +93,11 @@ public class VisitorService {
             return foundCode.getPatient().getBed().toString();
         }
         return null;
+    }
+
+    public Visitor addVisitor(Visitor visitor, Long id) {
+        Patient patient = patientRepository.findPatientById(id);
+        visitor.setPatient(patient);
+        return visitorRepository.save(visitor);
     }
 }
