@@ -42,6 +42,70 @@ This directory stores all the controllers for the project
 </tr>
 </table>
 
+# Nurse:
+
+<table>
+  <thead>
+    <tr>
+      <td><strong>METHOD</strong></td>
+      <td><strong>ENDPOINT</strong></td>
+      <td><strong>DESCRIPTION</strong></td>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>GET</td>
+      <td>/api/v1/nurses/{nurse_id}/patients-with-vitals</td>
+      <td>Returns the list of patients with vitals assigned to the specified nurse.</td>
+    </tr>
+    <tr>
+      <td>POST</td>
+      <td>/api/v1/nurses/{nurseId}/add-schedule</td>
+      <td>Adds a new schedule entry for the specified nurse.</td>
+    </tr>
+    <tr>
+      <td>PUT</td>
+      <td>/api/v1/nurses/{nurseId}/update-schedule/{before_entryId}</td>
+      <td>Updates an existing schedule entry for the specified nurse.</td>
+    </tr>
+    <tr>
+      <td>DELETE</td>
+      <td>/api/v1/nurses/{nurseId}/remove-schedule/{entryId}</td>
+      <td>Removes a schedule entry from the specified nurse.</td>
+    </tr>
+    <tr>
+      <td>DELETE</td>
+      <td>/api/v1/nurses/delete/{id}</td>
+      <td>Deletes the nurse specified by the given ID.</td>
+    </tr>
+    <tr>
+      <td>GET</td>
+      <td>/api/v1/nurses/{nurse_id}/rooms</td>
+      <td>Returns all rooms associated with the specified nurse.</td>
+    </tr>
+    <tr>
+      <td>GET</td>
+      <td>/api/v1/nurses/nurses</td>
+      <td>Returns a list of all nurses.</td>
+    </tr>
+    <tr>
+      <td>GET</td>
+      <td>/api/v1/nurses/{id}</td>
+      <td>Returns details of the nurse specified by the given ID.</td>
+    </tr>
+    <tr>
+      <td>POST</td>
+      <td>/api/v1/nurses/add/nurse</td>
+      <td>Creates a new nurse with the details provided in the request body.</td>
+    </tr>
+    <tr>
+      <td>PUT</td>
+      <td>/api/v1/nurses/update/nurse/{id}</td>
+      <td>Updates information for the nurse specified by the given ID.</td>
+    </tr>
+  </tbody>
+</table>
+
 # Patient:
 
 <table>
