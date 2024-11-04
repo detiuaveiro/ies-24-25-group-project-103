@@ -2,40 +2,34 @@ package org.ies.deti.ua.medisync.service;
 
 import org.ies.deti.ua.medisync.model.User;
 import org.ies.deti.ua.medisync.repository.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
 public class UserService {
     
     private final UserRepository userRepository;
-    private final BCryptPasswordEncoder passwordEncoder;
 
-    @Autowired
-    public UserService(UserRepository userRepository, BCryptPasswordEncoder passwordEncoder) {
+    public UserService(UserRepository userRepository) {
         this.userRepository = userRepository;
-        this.passwordEncoder = passwordEncoder;
     }
 
-    public User authenticateUser(String username, String rawPassword) {
+    public User authenticateUser(String username, String password) {
         User user = userRepository.findByUsername(username);
-        if (user != null && passwordEncoder.matches(rawPassword, user.getPassword())) {
+        if (user != null && user.getPassword().equals(password)) {
             return user;
         }
         return null;
     }
 
-    public User createUser(User user, String rawPassword) {
-        // Encrypt the password before saving
-        user.setPassword(passwordEncoder.encode(rawPassword));
+    public User createUser(User user, String password) {
+        user.setPassword(password);
         return userRepository.save(user);
     }
 
-    public User updateUserPassword(Long userId, String newRawPassword) {
+    public User updateUserPassword(Long userId, String newPassword) {
         User user = userRepository.findById(userId)
             .orElseThrow(() -> new RuntimeException("User not found"));
-        user.setPassword(passwordEncoder.encode(newRawPassword));
+        user.setPassword(newPassword);
         return userRepository.save(user);
     }
 }

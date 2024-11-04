@@ -28,14 +28,14 @@ public class UserController {
         return ResponseEntity.notFound().build();
     }
 
-    // For creating a new user
+    // Create a new user
     @PostMapping("/users")
     public ResponseEntity<User> createUser(@RequestBody User user, @RequestParam String password) {
         User createdUser = userService.createUser(user, password);
         return ResponseEntity.ok(createdUser);
     }
 
-    // For updating password
+    // Update password (not tested because I forgot)
     @PutMapping("/users/{userId}/password")
     public ResponseEntity<User> updatePassword(
             @PathVariable Long userId,
