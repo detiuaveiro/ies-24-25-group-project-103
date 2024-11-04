@@ -14,17 +14,17 @@ import jakarta.persistence.*;
 public class Bed {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
     @JsonBackReference
     @ManyToOne
-    @JoinColumn(name = "room_id", nullable = false)
+    @JoinColumn(name = "room_id")
     private Room room;
 
     @JsonManagedReference
     @OneToOne
-    @JoinColumn(name = "patient_id", nullable = true)
+    @JoinColumn(name = "patient_id")
     private Patient assignedPatient;
 
     public Bed() {}

@@ -130,7 +130,7 @@ public class HospitalManagerService {
         return roomRepository.findAll();
     }
 
-    public Room getRoomById(String roomId) {
+    public Room getRoomById(Long roomId) {
         return roomRepository.findById(roomId).orElse(null);
     }
 
