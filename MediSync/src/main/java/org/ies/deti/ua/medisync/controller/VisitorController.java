@@ -41,9 +41,11 @@ public class VisitorController {
         return ResponseEntity.ok(bed);
     }    
 
+    /*
     @PostMapping("/add/{id}")
     public ResponseEntity<Visitor> addVisitor( @RequestBody Visitor visitor, @PathVariable Long id) {
         return ResponseEntity.ok(visitorService.addVisitor(visitor, id));
     }
+    */
 
 }

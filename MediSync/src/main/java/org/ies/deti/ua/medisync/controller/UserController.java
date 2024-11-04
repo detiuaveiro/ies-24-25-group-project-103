@@ -23,7 +23,7 @@ public class UserController {
         User createdUser = userService.createUser(user, password);
         return ResponseEntity.ok(createdUser);
     }
-
+    /*
     // Update password (not tested because I forgot)
     @PutMapping("/users/{userId}/password")
     public ResponseEntity<User> updatePassword(
@@ -32,4 +32,5 @@ public class UserController {
         User updatedUser = userService.updateUserPassword(userId, newPassword);
         return ResponseEntity.ok(updatedUser);
     }
+     */
 }

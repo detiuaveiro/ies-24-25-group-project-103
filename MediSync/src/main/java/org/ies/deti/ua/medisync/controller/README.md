@@ -12,17 +12,17 @@ This directory stores all the controllers for the project
 </thead>
 <tr>
     <td>GET</td>
-    <td>/api/v1/rooms</td>
+    <td>/api/v1/hospital/rooms</td>
     <td>Returns all rooms in the DB</td>
 </tr>
 <tr>
     <td>GET</td>
-    <td>/api/v1/rooms/{id}</td>
+    <td>/api/v1/hospital/rooms/{id}</td>
     <td>Returns a room using its id</td>
 </tr>
 <tr>
     <td>GET</td>
-    <td>/api/v1/rooms/number/{roomNumber}</td>
+    <td>/api/v1/hospital/rooms/number/{roomNumber}</td>
     <td>Returns a room using its room number</td>
 </tr>
 </table>
@@ -80,28 +80,8 @@ This directory stores all the controllers for the project
   <tbody>
     <tr>
       <td>GET</td>
-      <td>/api/v1/nurses/{nurse_id}/patients-with-vitals</td>
+      <td>/api/v1/nurses/{nurse_id}/patients</td>
       <td>Returns the list of patients with vitals assigned to the specified nurse.</td>
-    </tr>
-    <tr>
-      <td>POST</td>
-      <td>/api/v1/nurses/{nurseId}/add-schedule</td>
-      <td>Adds a new schedule entry for the specified nurse.</td>
-    </tr>
-    <tr>
-      <td>PUT</td>
-      <td>/api/v1/nurses/{nurseId}/update-schedule/{before_entryId}</td>
-      <td>Updates an existing schedule entry for the specified nurse.</td>
-    </tr>
-    <tr>
-      <td>DELETE</td>
-      <td>/api/v1/nurses/{nurseId}/remove-schedule/{entryId}</td>
-      <td>Removes a schedule entry from the specified nurse.</td>
-    </tr>
-    <tr>
-      <td>DELETE</td>
-      <td>/api/v1/nurses/delete/{id}</td>
-      <td>Deletes the nurse specified by the given ID.</td>
     </tr>
     <tr>
       <td>GET</td>
@@ -110,7 +90,7 @@ This directory stores all the controllers for the project
     </tr>
     <tr>
       <td>GET</td>
-      <td>/api/v1/nurses/nurses</td>
+      <td>/api/v1/nurses</td>
       <td>Returns a list of all nurses.</td>
     </tr>
     <tr>
@@ -120,13 +100,33 @@ This directory stores all the controllers for the project
     </tr>
     <tr>
       <td>POST</td>
-      <td>/api/v1/nurses/add/nurse</td>
+      <td>/api/v1/nurses/{nurseId}/schedule</td>
+      <td>Adds a new schedule entry for the specified nurse.</td>
+    </tr>
+    <tr>
+      <td>POST</td>
+      <td>/api/v1/nurses</td>
       <td>Creates a new nurse with the details provided in the request body.</td>
     </tr>
     <tr>
       <td>PUT</td>
-      <td>/api/v1/nurses/update/nurse/{id}</td>
+      <td>/api/v1/nurses/{id}</td>
       <td>Updates information for the nurse specified by the given ID.</td>
+    </tr>
+    <tr>
+      <td>PUT</td>
+      <td>/api/v1/nurses/{nurseId}/schedule/{before_entryId}</td>
+      <td>Updates an existing schedule entry for the specified nurse.</td>
+    </tr>
+    <tr>
+      <td>DELETE</td>
+      <td>/api/v1/nurses/{nurseId}/schedule/{entryId}</td>
+      <td>Removes a schedule entry from the specified nurse.</td>
+    </tr>
+    <tr>
+      <td>DELETE</td>
+      <td>/api/v1/nurses/{id}</td>
+      <td>Deletes the nurse specified by the given ID.</td>
     </tr>
   </tbody>
 </table>
@@ -145,24 +145,9 @@ This directory stores all the controllers for the project
     <td>Returns all patients in the DB</td>
 </tr>
 <tr>
-    <td>POST</td>
-    <td>/api/v1/patients</td>
-    <td>Creates a patient according to what is in the body of the request</td>
-</tr>
-<tr>
     <td>GET</td>
     <td>/api/v1/patients/{id}</td>
     <td>Returns patient that matches the given id</td>
-</tr>
-<tr>
-    <td>DELETE</td>
-    <td>/api/v1/patients/{id}/</td>
-    <td>Deletes the patient that matched the id</td>
-</tr>
-<tr>
-    <td>PUT</td>
-    <td>/api/v1/patients/{id}</td>
-    <td>Edits the patient specified in the id according to what is in the body of the request</td>
 </tr>
 <tr>
     <td>GET</td>
@@ -171,18 +156,33 @@ This directory stores all the controllers for the project
 </tr>
 <tr>
     <td>POST</td>
-    <td>/api/v1/patients/{id}/medications</td>
-    <td>Assigns a medication to a specific patient</td>
+    <td>/api/v1/patients</td>
+    <td>Creates a patient according to what is in the body of the request</td>
 </tr>
 <tr>
-    <td>DELETE</td>
-    <td>/api/v1/patients/{id}/medications/{medicationId}</td>
-    <td>Deletes the medication assigned to the patient</td>
+    <td>POST</td>
+    <td>/api/v1/patients/{id}/medications</td>
+    <td>Assigns a medication to a specific patient</td>
 </tr>
 <tr>
     <td>POST</td>
     <td>/api/v1/patients/{id}/medications/{medicationId}</td>
     <td>Edits the medication assigned to the patient</td>
+</tr>
+<tr>
+    <td>PUT</td>
+    <td>/api/v1/patients/{id}</td>
+    <td>Edits the patient specified in the id according to what is in the body of the request</td>
+</tr>
+<tr>
+    <td>DELETE</td>
+    <td>/api/v1/patients/{id}/</td>
+    <td>Deletes the patient that matched the id</td>
+</tr>
+<tr>
+    <td>DELETE</td>
+    <td>/api/v1/patients/{id}/medications/{medicationId}</td>
+    <td>Deletes the medication assigned to the patient</td>
 </tr>
 </table>
 
@@ -195,8 +195,13 @@ This directory stores all the controllers for the project
     <td><strong>DESCRIPTION</strong></td>
 </thead>
 <tr>
+    <td>GET</td>
+    <td>/api/v1/notifications/user/{userId}</td>
+    <td>Returns all notifications for the user with the specified id</td>
+</tr>
+<tr>
     <td>POST</td>
-    <td>/api/v1/notifications/send/{userId}</td>
+    <td>/api/v1/notifications/user/{userId}</td>
     <td>Sends a notification to the user with the specified id</td>
 </tr>
 <tr>
@@ -204,11 +209,7 @@ This directory stores all the controllers for the project
     <td>/api/v1/notifications/{id}</td>
     <td>Returns all notifications for the user with the specified id</td>
 </tr>
-<tr>
-    <td>GET</td>
-    <td>/api/v1/notifications/user{userId}</td>
-    <td>Returns all notifications for the user with the specified id</td>
-</tr>
+
 </table>
 
 # Users:
@@ -227,7 +228,7 @@ This directory stores all the controllers for the project
 <tr>
     <td>POST</td>
     <td>/api/v1/users</td>
-    <td>Create an account with an username, password, name and email</td>
+    <td>Create an account with a username, password, name and email</td>
 </tr>
 </table>
 
@@ -249,3 +250,4 @@ This directory stores all the controllers for the project
     <td>/api/v1/visitors/checkcode</td>
     <td>Checks if the user inserted the correct code</td>
 </tr>
+</table>
