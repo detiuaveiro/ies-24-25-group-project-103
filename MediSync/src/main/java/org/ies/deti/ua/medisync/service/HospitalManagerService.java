@@ -5,6 +5,7 @@ import org.ies.deti.ua.medisync.model.Doctor;
 import org.ies.deti.ua.medisync.model.Nurse;
 import org.ies.deti.ua.medisync.model.Patient;
 import org.ies.deti.ua.medisync.model.Room;
+import org.ies.deti.ua.medisync.model.User;
 import org.ies.deti.ua.medisync.repository.BedRepository;
 import org.ies.deti.ua.medisync.repository.HospitalManagerRepository;
 import org.ies.deti.ua.medisync.repository.RoomRepository;
@@ -29,6 +30,9 @@ public class HospitalManagerService {
     private final DoctorService doctorService;
 
     @Autowired
+    private final NotificationService notificationService;
+
+    @Autowired
     private final HospitalManagerRepository hospitalManagerRepository;
 
     @Autowired
@@ -40,10 +44,11 @@ public class HospitalManagerService {
 
 
     @Autowired
-    public HospitalManagerService(PatientService patientService, NurseService nurseService, DoctorService doctorService, HospitalManagerRepository hospitalManagerRepository, RoomRepository roomRepository, BedRepository bedRepository) {
+    public HospitalManagerService(PatientService patientService, NurseService nurseService, DoctorService doctorService, NotificationService notificationService, HospitalManagerRepository hospitalManagerRepository, RoomRepository roomRepository, BedRepository bedRepository) {
         this.patientService = patientService;
         this.nurseService = nurseService;
         this.doctorService = doctorService;
+        this.notificationService = notificationService;
         this.hospitalManagerRepository = hospitalManagerRepository;
         this.roomRepository = roomRepository;
         this.bedRepository = bedRepository;
