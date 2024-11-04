@@ -3,7 +3,9 @@ package org.ies.deti.ua.medisync.model;
 import java.util.Date;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.Column;
 import jakarta.persistence.ElementCollection;
@@ -59,10 +61,12 @@ public class Patient {
     private List<String> observations;
 
     @OneToOne(mappedBy = "assignedPatient")
+    @JsonManagedReference
     private Bed bed;
 
     @ManyToOne
     @JoinColumn(name = "doctor_id", nullable = false)
+    @JsonBackReference
     private Doctor assignedDoctor;
     
 

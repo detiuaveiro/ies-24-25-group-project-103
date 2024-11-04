@@ -1,6 +1,7 @@
 package org.ies.deti.ua.medisync.model;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
 
@@ -31,6 +32,7 @@ public class ScheduleEntry {
     private boolean isInterval;
 
     @ManyToMany(mappedBy = "scheduleEntries")
+    @JsonManagedReference
     private Set<Room> rooms;
 
     @ManyToMany
@@ -39,6 +41,7 @@ public class ScheduleEntry {
             joinColumns = @JoinColumn(name = "schedule_id"),
             inverseJoinColumns = @JoinColumn(name = "nurse_id")
     )
+    @JsonManagedReference
     private Set<Nurse> nurses = new HashSet<>();
 
     // Constructors
