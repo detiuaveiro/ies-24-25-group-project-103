@@ -18,7 +18,7 @@ public class NurseController {
 
     // Get /api/v1/nurses/{nurse_id}/patients-with-vitals - Get all patients
     // assigned to a specified Nurse
-    @GetMapping("/{nurse_id}/patients-with-vitals") // Issue a definir
+    @GetMapping("/{nurse_id}/patients-with-vitals") // Issue #153
     public ResponseEntity<List<PatientWithVitals>> getPatientsWithVitals(@PathVariable Long nurse_id) {
         Optional<Nurse> nurseOpt = nurseService.getNurseById(nurse_id);
         if (nurseOpt.isPresent()) {
@@ -30,7 +30,7 @@ public class NurseController {
 
     // Post /api/v1/nurses/{nurseId}/add-schedule - Add a Schedule Entry to a
     // specified Nurse
-    @PostMapping("/{nurseId}/add-schedule") // Issue a definir
+    @PostMapping("/{nurseId}/add-schedule") // Issue #154
     public ResponseEntity<Nurse> addScheduleEntry(@PathVariable Long nurseId, @RequestBody ScheduleEntry newEntry) {
         Nurse updatedNurse = nurseService.addScheduleEntryToNurse(nurseId, newEntry);
         return updatedNurse != null ? ResponseEntity.ok(updatedNurse) : ResponseEntity.notFound().build();
@@ -47,14 +47,14 @@ public class NurseController {
 
     // Delete /api/v1/nurses/{nurseId}/remove-schedule/{entryId} - Delete a Schedule
     // Entry from a specified nurse
-    @DeleteMapping("/{nurseId}/remove-schedule/{entryId}") // Issue a definir
+    @DeleteMapping("/{nurseId}/remove-schedule/{entryId}") // Issue #155
     public ResponseEntity<Nurse> removeScheduleEntry(@PathVariable Long nurseId, @PathVariable Long entryId) {
         Nurse updatedNurse = nurseService.removeScheduleEntryFromNurse(nurseId, entryId);
         return updatedNurse != null ? ResponseEntity.ok(updatedNurse) : ResponseEntity.notFound().build();
     }
 
     // Delete /api/v1/nurses/delete/{id} - Delete nurse
-    @DeleteMapping("/delete/{id}") // Issue a definir
+    @DeleteMapping("/delete/{id}") // Issue #156
     public ResponseEntity<Void> deleteNurse(@PathVariable Long id) {
         try {
             nurseService.deleteNurse(id);
@@ -97,7 +97,7 @@ public class NurseController {
     }
 
     // PUT /api/v1/nurses/update/nurse/{id} - Update nurse information
-    @PutMapping("/update/nurse/{id}")
+    @PutMapping("/update/nurse/{id}") // Issue #99
     public ResponseEntity<Nurse> updateNurse(@PathVariable Long id, @RequestBody Nurse updatedNurse) {
         try {
             Nurse updated = nurseService.updateNurse(id, updatedNurse);
