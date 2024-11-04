@@ -1,9 +1,11 @@
 package org.ies.deti.ua.medisync.controller;
 
-import org.ies.deti.ua.medisync.service.PatientService;
+import org.ies.deti.ua.medisync.model.Visitor;
+import org.ies.deti.ua.medisync.model.VisitorDTO;
 import org.ies.deti.ua.medisync.service.VisitorService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -19,8 +21,11 @@ public class VisitorController {
     }
 
     @PostMapping
-    public ResponseEntity<String> checkIfVisitorIsAllowed(@RequestBody String name, @RequestBody String phoneNumber) {
-        if (visitorService.checkIfVisitorIsAllowed(name,phoneNumber)) {
+    public ResponseEntity<String> checkIfVisitorIsAllowed(@RequestBody VisitorDTO visitorDTO) {
+        String name = visitorDTO.getName();
+        String phoneNumber = visitorDTO.getPhoneNumber();
+    
+        if (visitorService.checkIfVisitorIsAllowed(name, phoneNumber)) {
             return ResponseEntity.ok("Visitor allowed");
         } else {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Visitor not allowed");
@@ -35,4 +40,10 @@ public class VisitorController {
         }
         return ResponseEntity.ok(bed);
     }    
+
+    @PostMapping("/add/{id}")
+    public ResponseEntity<Visitor> addVisitor( @RequestBody Visitor visitor, @PathVariable Long id) {
+        return ResponseEntity.ok(visitorService.addVisitor(visitor, id));
+    }
+
 }
