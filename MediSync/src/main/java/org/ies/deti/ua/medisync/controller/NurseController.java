@@ -1,20 +1,33 @@
 package org.ies.deti.ua.medisync.controller;
 
-import org.ies.deti.ua.medisync.model.*;
-import org.ies.deti.ua.medisync.service.NurseService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
 import java.util.Optional;
+
+import org.ies.deti.ua.medisync.model.Nurse;
+import org.ies.deti.ua.medisync.model.PatientWithVitals;
+import org.ies.deti.ua.medisync.model.Room;
+import org.ies.deti.ua.medisync.model.ScheduleEntry;
+import org.ies.deti.ua.medisync.service.NurseService;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/v1/nurses")
 public class NurseController {
 
     private NurseService nurseService;
+
+    public NurseController(NurseService nurseService) {
+        this.nurseService = nurseService;
+    }
 
     // Get all patients assigned to a specified Nurse
     @GetMapping("/{nurse_id}/patients")

@@ -7,13 +7,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import jakarta.annotation.PostConstruct;
 import org.ies.deti.ua.medisync.model.Bed;
 import org.ies.deti.ua.medisync.model.Doctor;
 import org.ies.deti.ua.medisync.model.Medication;
 import org.ies.deti.ua.medisync.model.Patient;
 import org.ies.deti.ua.medisync.model.PatientWithVitals;
 import org.ies.deti.ua.medisync.model.Vitals;
+import org.ies.deti.ua.medisync.repository.BedRepository;
+import org.ies.deti.ua.medisync.repository.DoctorRepository;
 import org.ies.deti.ua.medisync.repository.MedicationRepository;
 import org.ies.deti.ua.medisync.repository.PatientRepository;
 import org.ies.deti.ua.medisync.repository.RoomRepository;
@@ -29,11 +30,15 @@ import com.influxdb.client.write.Point;
 import com.influxdb.query.FluxRecord;
 import com.influxdb.query.FluxTable;
 
+import jakarta.annotation.PostConstruct;
+
 @Service
 public class PatientService {
 
     private final PatientRepository patientRepository;
     private final MedicationRepository medicationRepository;
+    private final BedRepository bedRepository;
+    private final DoctorRepository doctorRepository;
 
     @Autowired
     private RoomRepository roomRepository;
@@ -54,9 +59,11 @@ public class PatientService {
     private InfluxDBClient influxDBClient;
 
     @Autowired
-    public PatientService(PatientRepository patientRepository, MedicationRepository medicationRepository) {
+    public PatientService(PatientRepository patientRepository, MedicationRepository medicationRepository, BedRepository bedRepository, DoctorRepository doctorRepository) {
         this.patientRepository = patientRepository;
         this.medicationRepository = medicationRepository;
+        this.bedRepository = bedRepository;
+        this.doctorRepository = doctorRepository;
     }
 
     @PostConstruct
@@ -80,6 +87,7 @@ public class PatientService {
         Optional<Patient> patient = this.getPatientById(id);
         if (patient.isPresent()) {
             patient.get().setBed(bed);
+            bedRepository.save(bed);
             return patientRepository.save(patient.get());
         }
         return null;
@@ -89,6 +97,7 @@ public class PatientService {
         Optional<Patient> patient = this.getPatientById(id);
         if (patient.isPresent()) {
             patient.get().setAssignedDoctor(doctor);
+            doctorRepository.save(doctor);
             return patientRepository.save(patient.get());
         }
         return null;
