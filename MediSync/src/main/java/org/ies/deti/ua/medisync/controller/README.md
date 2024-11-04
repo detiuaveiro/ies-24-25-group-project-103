@@ -2,6 +2,31 @@ This directory stores all the controllers for the project
 
 # ENDPOINTS:
 
+# Hospital Manager:
+
+<table>
+<thead>
+    <td><strong>METHOD</strong></td>
+    <td><strong>ENDPOINT</strong></td>
+    <td><strong>DESCRIPTION</strong></td>
+</thead>
+<tr>
+    <td>GET</td>
+    <td>/api/v1/rooms</td>
+    <td>Returns all rooms in the DB</td>
+</tr>
+<tr>
+    <td>GET</td>
+    <td>/api/v1/rooms/{id}</td>
+    <td>Returns a room using its id</td>
+</tr>
+<tr>
+    <td>GET</td>
+    <td>/api/v1/rooms/number/{roomNumber}</td>
+    <td>Returns a room using its room number</td>
+</tr>
+</table>
+
 # Doctor:
 
 <table>
@@ -14,7 +39,7 @@ This directory stores all the controllers for the project
     <td>GET</td>
     <td>/api/v1/doctors</td>
     <td>Returns all doctors in the DB</td>
-</tr>Patient
+</tr>
 <tr>
     <td>GET</td>
     <td>/api/v1/doctors/{id}</td>
@@ -183,6 +208,26 @@ This directory stores all the controllers for the project
     <td>GET</td>
     <td>/api/v1/notifications/user{userId}</td>
     <td>Returns all notifications for the user with the specified id</td>
+</tr>
+</table>
+
+# Users:
+
+<table>
+<thead>
+    <td><strong>METHOD</strong></td>
+    <td><strong>ENDPOINT</strong></td>
+    <td><strong>DESCRIPTION</strong></td>
+</thead>
+<tr>
+    <td>POST</td>
+    <td>/api/v1/auth/login</td>
+    <td>Login using username and password</td>
+</tr>
+<tr>
+    <td>POST</td>
+    <td>/api/v1/users</td>
+    <td>Create an account with an username, password, name and email</td>
 </tr>
 </table>
 
