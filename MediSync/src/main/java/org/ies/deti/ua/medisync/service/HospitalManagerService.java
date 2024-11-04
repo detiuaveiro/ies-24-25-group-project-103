@@ -11,6 +11,7 @@ import org.ies.deti.ua.medisync.repository.RoomRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -104,7 +105,7 @@ public class HospitalManagerService {
                 // Create new room
                 Room room = new Room();
                 room.setRoomNumber(roomNumber);
-                room.setScheduleEntries(new HashSet<>());
+                room.setScheduleEntries(new ArrayList<>());
 
                 for (int bedNum = 1; bedNum <= 4; bedNum++) {
                     Bed bed = new Bed();

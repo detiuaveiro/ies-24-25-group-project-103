@@ -65,8 +65,8 @@ public class Patient {
     private Bed bed;
 
     @ManyToOne
-    @JoinColumn(name = "doctor_id", nullable = false)
-    @JsonBackReference
+    @JoinColumn(name = "doctor_id")
+    @JsonManagedReference
     private Doctor assignedDoctor;
     
 

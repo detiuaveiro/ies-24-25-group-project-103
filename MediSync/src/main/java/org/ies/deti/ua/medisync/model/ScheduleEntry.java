@@ -33,7 +33,7 @@ public class ScheduleEntry {
 
     @ManyToMany(mappedBy = "scheduleEntries")
     @JsonManagedReference
-    private Set<Room> rooms;
+    private List<Room> rooms;
 
     @ManyToMany
     @JoinTable(
@@ -42,12 +42,12 @@ public class ScheduleEntry {
             inverseJoinColumns = @JoinColumn(name = "nurse_id")
     )
     @JsonManagedReference
-    private Set<Nurse> nurses = new HashSet<>();
+    private List<Nurse> nurses = new ArrayList<>();
 
     // Constructors
     public ScheduleEntry() {}
 
-    public ScheduleEntry(String timeSlot, boolean isInterval, Set<Room> rooms, Date startTime, Date endTime) {
+    public ScheduleEntry(String timeSlot, boolean isInterval, List<Room> rooms, Date startTime, Date endTime) {
         this.start_time = startTime;
         this.end_time = endTime;
         this.isInterval = isInterval;
@@ -75,10 +75,10 @@ public class ScheduleEntry {
     public void setEnd_time(Date end_time) {
         this.end_time = end_time;
     }
-    public void setNurses(Set<Nurse> nurses) {
+    public void setNurses(List<Nurse> nurses) {
         this.nurses = nurses;
     }
-    public Set<Nurse> getNurses() {
+    public List<Nurse> getNurses() {
         return nurses;
     }
 
@@ -91,11 +91,11 @@ public class ScheduleEntry {
     }
 
 
-    public Set<Room> getRoom() {
+    public List<Room> getRoom() {
         return rooms;
     }
 
-    public void setRoom(Set<Room> rooms) {
+    public void setRoom(List<Room> rooms) {
         this.rooms = rooms;
     }
 

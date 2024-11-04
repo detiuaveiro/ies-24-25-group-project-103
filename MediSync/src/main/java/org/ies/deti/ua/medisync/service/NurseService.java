@@ -70,7 +70,7 @@ public class NurseService {
         Map<Bed, Patient> bedPatientMap = new HashMap<>();
 
         for (ScheduleEntry entry : nurse.getSchedule()) {
-            Set<Room> rooms = entry.getRoom();
+            List<Room> rooms = entry.getRoom();
 
             for (Room room : rooms) {
                 List<Bed> beds = bedRepository.findBedByRoom(room);
