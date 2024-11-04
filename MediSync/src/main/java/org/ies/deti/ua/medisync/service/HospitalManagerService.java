@@ -146,4 +146,8 @@ public class HospitalManagerService {
         return bedRepository.findBedByRoom(room);
     }
 
+    public Room getRoomByNumber(String roomNumber) {
+        return roomRepository.findByRoomNumber(roomNumber).orElse(null);
+    }
+
 }
