@@ -21,7 +21,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.influxdb.query.FluxTable;
 
-
 @RestController
 @RequestMapping("/api/v1/patients")
 public class PatientController {
@@ -38,7 +37,6 @@ public class PatientController {
         Patient createdPatient = patientService.createPatient(patient);
         return ResponseEntity.status(HttpStatus.CREATED).body(createdPatient);
     }
-
 
     @PostMapping("/{id}/bed")
     public ResponseEntity<Bed> assignToBed(@RequestBody Bed bed, @PathVariable Long id) {
@@ -72,11 +70,13 @@ public class PatientController {
     }
 
     @GetMapping("/graph/{id}/{type}/{start}/{end}")
-    public String getGraph(@PathVariable String id, @PathVariable String type, @PathVariable String start, @PathVariable String end) {
-        String bedID = patientService.getPatientBed(patientService.getPatientById(Long.parseLong(id)).get()).getId().toString();
+    public String getGraph(@PathVariable String id, @PathVariable String type, @PathVariable String start,
+            @PathVariable String end) {
+        String bedID = patientService.getPatientBed(patientService.getPatientById(Long.parseLong(id)).get()).getId()
+                .toString();
         List<FluxTable> tables = patientService.getPatientVitals(bedID, start, end);
         return patientService.generateQuickChartUrl(tables, bedID, type);
-                    
+
     }
 
     @GetMapping
@@ -109,7 +109,7 @@ public class PatientController {
 
     @PostMapping("/{id}/medications")
     public ResponseEntity<Patient> createMedication(@PathVariable Long id, @RequestBody Medication medication) {
-        Patient patientWithMedication  = patientService.addMedication(id, medication);
+        Patient patientWithMedication = patientService.addMedication(id, medication);
         return ResponseEntity.status(HttpStatus.CREATED).body(patientWithMedication);
     }
 
@@ -120,7 +120,8 @@ public class PatientController {
     }
 
     @PutMapping("/{id}/medications/{medicationId}")
-    public ResponseEntity<Medication> updateMedication(@PathVariable Long id, @PathVariable Long medicationId, @RequestBody Medication updatedMedication) {
+    public ResponseEntity<Medication> updateMedication(@PathVariable Long id, @PathVariable Long medicationId,
+            @RequestBody Medication updatedMedication) {
         Medication medication = patientService.updateMedication(id, medicationId, updatedMedication);
         return ResponseEntity.ok(medication);
     }

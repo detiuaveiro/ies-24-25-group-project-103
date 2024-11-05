@@ -4,6 +4,7 @@ package org.ies.deti.ua.medisync.model;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -22,6 +23,9 @@ public class Bed {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(name = "bed_number", nullable = false, length = 3)
+    private String bedNumber;
+
     @ManyToOne
     @JoinColumn(name = "room_id", referencedColumnName = "id", nullable = false)
     private Room room;
@@ -30,10 +34,12 @@ public class Bed {
     @JoinColumn(name = "patient_id")
     private Patient assignedPatient;
 
-    public Bed() {}
+    public Bed() {
+    }
 
-    public Bed(Room room, Patient assignedPatient) {
+    public Bed(Room room, String bedNumber, Patient assignedPatient) {
         this.room = room;
+        this.bedNumber = bedNumber;
         this.assignedPatient = assignedPatient;
     }
 
@@ -61,9 +67,16 @@ public class Bed {
         this.assignedPatient = assignedPatient;
     }
 
-
     @Override
     public String toString() {
         return "Bed " + id + " in room " + room.getRoomNumber();
+    }
+
+    public String getBedNumber() {
+        return bedNumber;
+    }
+
+    public void setBedNumber(String bedNumber) {
+        this.bedNumber = bedNumber;
     }
 }

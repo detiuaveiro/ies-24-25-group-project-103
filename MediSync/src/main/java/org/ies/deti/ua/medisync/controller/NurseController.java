@@ -62,7 +62,7 @@ public class NurseController {
         return updatedNurse != null ? ResponseEntity.ok(updatedNurse) : ResponseEntity.notFound().build();
     }
 
-    // Delete nurse
+    // Delete nurse FEITO
     @DeleteMapping("/{id}") // Issue #156
     public ResponseEntity<Void> deleteNurse(@PathVariable Long id) {
         try {
@@ -84,28 +84,28 @@ public class NurseController {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
     }
 
-    // Get all nurses
+    // Get all nurses FEITO
     @GetMapping // Issue #79
     public ResponseEntity<List<Nurse>> getAllNurses() {
         List<Nurse> nurses = nurseService.getAllNurses();
         return ResponseEntity.ok(nurses);
     }
 
-    // Get nurse by ID
+    // Get nurse by ID FEITO
     @GetMapping("/{id}") // Issue #80
     public ResponseEntity<Nurse> getNurseById(@PathVariable Long id) {
         Optional<Nurse> nurse = nurseService.getNurseById(id);
         return nurse.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
-    // Add a new nurse (create)
-    @PostMapping// Issue: #89
+    // Add a new nurse (create) FEITO
+    @PostMapping // Issue: #89
     public ResponseEntity<Nurse> addNurse(@RequestBody Nurse nurse) {
         Nurse createdNurse = nurseService.addNurse(nurse);
         return ResponseEntity.ok(createdNurse);
     }
 
-    // Update nurse information
+    // Update nurse information FEITO
     @PutMapping("/{id}") // Issue #99
     public ResponseEntity<Nurse> updateNurse(@PathVariable Long id, @RequestBody Nurse updatedNurse) {
         try {

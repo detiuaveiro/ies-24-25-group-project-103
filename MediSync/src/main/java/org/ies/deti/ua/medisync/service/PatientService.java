@@ -55,11 +55,11 @@ public class PatientService {
     @Value("${spring.influx.url}")
     private String URL;
 
-
     private InfluxDBClient influxDBClient;
 
     @Autowired
-    public PatientService(PatientRepository patientRepository, MedicationRepository medicationRepository, BedRepository bedRepository, DoctorRepository doctorRepository) {
+    public PatientService(PatientRepository patientRepository, MedicationRepository medicationRepository,
+            BedRepository bedRepository, DoctorRepository doctorRepository) {
         this.patientRepository = patientRepository;
         this.medicationRepository = medicationRepository;
         this.bedRepository = bedRepository;
@@ -87,7 +87,7 @@ public class PatientService {
         Optional<Patient> patient = this.getPatientById(id);
         if (patient.isPresent()) {
             bed.setAssignedPatient(patient.get());
-            bedRepository.save(bed);
+            return bedRepository.save(bed);
         }
         return null;
     }
@@ -102,7 +102,7 @@ public class PatientService {
         return null;
     }
 
-    public Optional<PatientWithVitals> getPatientWithVitalsById(Long id){
+    public Optional<PatientWithVitals> getPatientWithVitalsById(Long id) {
         Optional<Patient> patientOptional = this.getPatientById(id);
         if (patientOptional.isPresent()) {
             Patient patient = patientOptional.get();
@@ -152,7 +152,6 @@ public class PatientService {
         return patientRepository.findByAssignedDoctor(doctor);
     }
 
-
     public void writeVitals(String bedId, Map<String, Object> vitals) {
         long currentTimestamp = System.currentTimeMillis();
 
@@ -200,7 +199,8 @@ public class PatientService {
                 String field = (String) record.getValueByKey("_field");
                 Number value = (Number) record.getValue();
 
-                if (value == null || !vitalType.equals(field)) continue;
+                if (value == null || !vitalType.equals(field))
+                    continue;
 
                 String timeLabel = record.getTime().toString();
                 labels.append("\"").append(timeLabel).append("\",");
@@ -208,8 +208,10 @@ public class PatientService {
             }
         }
 
-        if (labels.length() > 0) labels.setLength(labels.length() - 1);
-        if (dataPoints.length() > 0) dataPoints.setLength(dataPoints.length() - 1);
+        if (labels.length() > 0)
+            labels.setLength(labels.length() - 1);
+        if (dataPoints.length() > 0)
+            dataPoints.setLength(dataPoints.length() - 1);
 
         String chartJson = String.format(
                 "{"
@@ -222,8 +224,7 @@ public class PatientService {
                         + "\"title\":{\"display\":true,\"text\":\"%s\"}"
                         + "}"
                         + "}",
-                labels.toString(), vitalType, dataPoints.toString(), vitalType
-        );
+                labels.toString(), vitalType, dataPoints.toString(), vitalType);
 
         String encodedChart = URLEncoder.encode(chartJson, StandardCharsets.UTF_8);
         return "https://quickchart.io/chart?c=" + encodedChart;
@@ -232,10 +233,10 @@ public class PatientService {
     public Map<String, Object> getLastVitals(String bedId) {
         String fluxQuery = String.format(
                 "from(bucket: \"%s\") " +
-                "|> range(start: -1h) " + // Adjust the time range as needed
-                "|> filter(fn: (r) => r[\"bedId\"] == \"%s\") " +
-                "|> filter(fn: (r) => r[\"_measurement\"] == \"vitals\") " +
-                "|> last()",
+                        "|> range(start: -1h) " + // Adjust the time range as needed
+                        "|> filter(fn: (r) => r[\"bedId\"] == \"%s\") " +
+                        "|> filter(fn: (r) => r[\"_measurement\"] == \"vitals\") " +
+                        "|> last()",
                 BUCKET, bedId);
 
         QueryApi queryApi = influxDBClient.getQueryApi();
@@ -246,13 +247,13 @@ public class PatientService {
 
         for (FluxTable table : tables) {
             for (FluxRecord record : table.getRecords()) {
-                latestVitals.put("timestamp", record.getTime());             
+                latestVitals.put("timestamp", record.getTime());
                 String field = (String) record.getValueByKey("_field");
                 Long value = (Long) record.getValue();
                 latestVitals.put(field, value);
             }
         }
-        
+
         return latestVitals;
     }
 
@@ -272,17 +273,17 @@ public class PatientService {
     }
 
     public Medication updateMedication(Long patientId, Long medicationId, Medication updatedMedication) {
-            List<Medication> medicationList = medicationRepository.findMedicationByPatientId(patientId);
-            for (Medication medication : medicationList) {
-                if (medication.getId().equals(medicationId)) {
-                    medication.setName(updatedMedication.getName());
-                    medication.setDosage(updatedMedication.getDosage());
-                    medication.setHourInterval(updatedMedication.getHourInterval());
-                    medication.setPatient(updatedMedication.getPatient());
-                    return medicationRepository.save(medication);                    
-                }
+        List<Medication> medicationList = medicationRepository.findMedicationByPatientId(patientId);
+        for (Medication medication : medicationList) {
+            if (medication.getId().equals(medicationId)) {
+                medication.setName(updatedMedication.getName());
+                medication.setDosage(updatedMedication.getDosage());
+                medication.setHourInterval(updatedMedication.getHourInterval());
+                medication.setPatient(updatedMedication.getPatient());
+                return medicationRepository.save(medication);
             }
-        
+        }
+
         return null;
     }
 
