@@ -112,7 +112,6 @@ public class HospitalManagerService {
                     bed.setId(bedId);
                     bed.setRoom(room);
                     bed.setAssignedPatient(null);
-                    bedRepository.save(bed);
                 }
                 
                 // Due to the cascade type (Room.java, line 20), the beds will be saved as well
