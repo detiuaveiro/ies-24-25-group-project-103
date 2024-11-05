@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.ies.deti.ua.medisync.model.Bed;
 import org.ies.deti.ua.medisync.model.Doctor;
@@ -24,6 +25,7 @@ import org.springframework.stereotype.Service;
 
 import com.influxdb.client.InfluxDBClient;
 import com.influxdb.client.InfluxDBClientFactory;
+import com.influxdb.client.InfluxDBClientOptions;
 import com.influxdb.client.QueryApi;
 import com.influxdb.client.domain.WritePrecision;
 import com.influxdb.client.write.Point;
@@ -43,23 +45,23 @@ public class PatientService {
     @Autowired
     private RoomRepository roomRepository;
 
-    @Value("${spring.influx.token}")
-    private String TOKEN;
+    @Value("${spring.influxdb.token}")
+    private String token;
 
-    @Value("${spring.influx.org}")
-    private String ORGANIZATION;
+    @Value("${spring.influxdb.org}")
+    private String org;
 
-    @Value("${spring.influx.bucket}")
-    private String BUCKET;
+    @Value("${spring.influxdb.bucket}")
+    private String bucket;
 
-    @Value("${spring.influx.url}")
-    private String URL;
-
+    @Value("${spring.influxdb.url}")
+    private String url;
 
     private InfluxDBClient influxDBClient;
 
     @Autowired
-    public PatientService(PatientRepository patientRepository, MedicationRepository medicationRepository, BedRepository bedRepository, DoctorRepository doctorRepository) {
+    public PatientService(PatientRepository patientRepository, MedicationRepository medicationRepository, 
+                         BedRepository bedRepository, DoctorRepository doctorRepository) {
         this.patientRepository = patientRepository;
         this.medicationRepository = medicationRepository;
         this.bedRepository = bedRepository;
@@ -68,7 +70,14 @@ public class PatientService {
 
     @PostConstruct
     public void init() {
-        this.influxDBClient = InfluxDBClientFactory.create(URL, TOKEN.toCharArray());
+        InfluxDBClientOptions options = InfluxDBClientOptions.builder()
+                .url(url)
+                .authenticateToken(token.toCharArray())
+                .org(org)
+                .bucket(bucket)
+                .build();
+
+        this.influxDBClient = InfluxDBClientFactory.create(options);
     }
 
     public Patient createPatient(Patient patient) {
@@ -102,7 +111,7 @@ public class PatientService {
         return null;
     }
 
-    public Optional<PatientWithVitals> getPatientWithVitalsById(Long id){
+    public Optional<PatientWithVitals> getPatientWithVitalsById(Long id) {
         Optional<Patient> patientOptional = this.getPatientById(id);
         if (patientOptional.isPresent()) {
             Patient patient = patientOptional.get();
@@ -152,16 +161,19 @@ public class PatientService {
         return patientRepository.findByAssignedDoctor(doctor);
     }
 
-
     public void writeVitals(String bedId, Map<String, Object> vitals) {
         long currentTimestamp = System.currentTimeMillis();
-
+    
         try {
-            Integer heartbeat = (Integer) vitals.get("heartbeat");
-            Integer o2 = (Integer) vitals.get("o2");
-            List<Integer> bloodPressure = (List<Integer>) vitals.get("bloodPressure");
-            Double temperature = (Double) vitals.get("temperature");
-
+            Double heartbeat = Double.valueOf(vitals.get("heartbeat").toString());
+            Double o2 = Double.valueOf(vitals.get("o2").toString());
+            @SuppressWarnings("unchecked")
+            List<Double> bloodPressure = ((List<Object>) vitals.get("bloodPressure"))
+                .stream()
+                .map(obj -> Double.valueOf(obj.toString()))
+                .collect(Collectors.toList());
+            Double temperature = Double.valueOf(vitals.get("temperature").toString());
+    
             Point point = Point.measurement("vitals")
                     .time(currentTimestamp, WritePrecision.MS)
                     .addTag("bedId", bedId)
@@ -170,8 +182,8 @@ public class PatientService {
                     .addField("bloodPressure_systolic", bloodPressure.get(0))
                     .addField("bloodPressure_diastolic", bloodPressure.get(1))
                     .addField("temperature", temperature);
-
-            influxDBClient.getWriteApiBlocking().writePoint(BUCKET, ORGANIZATION, point);
+    
+            influxDBClient.getWriteApiBlocking().writePoint(bucket, org, point);
         } catch (Exception e) {
             e.printStackTrace();
             System.out.println("Error writing vitals to InfluxDB for bed ID: " + bedId);
@@ -185,7 +197,7 @@ public class PatientService {
                         "|> filter(fn: (r) => r[\"bedId\"] == \"%s\") " +
                         "|> filter(fn: (r) => r[\"_measurement\"] == \"vitals\") " +
                         "|> pivot(rowKey: [\"_time\"], columnKey: [\"bedId\"], valueColumn: \"_value\")",
-                BUCKET, startTime, endTime, bedId);
+                bucket, startTime, endTime, bedId);
 
         QueryApi queryApi = influxDBClient.getQueryApi();
         return queryApi.query(fluxQuery);
@@ -232,24 +244,24 @@ public class PatientService {
     public Map<String, Object> getLastVitals(String bedId) {
         String fluxQuery = String.format(
                 "from(bucket: \"%s\") " +
-                "|> range(start: -1h) " + // Adjust the time range as needed
+                "|> range(start: -1h) " +
                 "|> filter(fn: (r) => r[\"bedId\"] == \"%s\") " +
                 "|> filter(fn: (r) => r[\"_measurement\"] == \"vitals\") " +
                 "|> last()",
-                BUCKET, bedId);
-
+                bucket, bedId);
+    
         QueryApi queryApi = influxDBClient.getQueryApi();
         List<FluxTable> tables = queryApi.query(fluxQuery);
-
+    
         Map<String, Object> latestVitals = new HashMap<>();
         latestVitals.put("timestamp", null);
-
+    
         for (FluxTable table : tables) {
             for (FluxRecord record : table.getRecords()) {
                 latestVitals.put("timestamp", record.getTime());             
                 String field = (String) record.getValueByKey("_field");
-                Long value = (Long) record.getValue();
-                latestVitals.put(field, value);
+                Number value = (Number) record.getValue();
+                latestVitals.put(field, value.doubleValue());
             }
         }
         
@@ -272,17 +284,16 @@ public class PatientService {
     }
 
     public Medication updateMedication(Long patientId, Long medicationId, Medication updatedMedication) {
-            List<Medication> medicationList = medicationRepository.findMedicationByPatientId(patientId);
-            for (Medication medication : medicationList) {
-                if (medication.getId().equals(medicationId)) {
-                    medication.setName(updatedMedication.getName());
-                    medication.setDosage(updatedMedication.getDosage());
-                    medication.setHourInterval(updatedMedication.getHourInterval());
-                    medication.setPatient(updatedMedication.getPatient());
-                    return medicationRepository.save(medication);                    
-                }
+        List<Medication> medicationList = medicationRepository.findMedicationByPatientId(patientId);
+        for (Medication medication : medicationList) {
+            if (medication.getId().equals(medicationId)) {
+                medication.setName(updatedMedication.getName());
+                medication.setDosage(updatedMedication.getDosage());
+                medication.setHourInterval(updatedMedication.getHourInterval());
+                medication.setPatient(updatedMedication.getPatient());
+                return medicationRepository.save(medication);                    
             }
-        
+        }
         return null;
     }
 
@@ -296,6 +307,8 @@ public class PatientService {
     }
 
     public void close() {
-        influxDBClient.close();
+        if (influxDBClient != null) {
+            influxDBClient.close();
+        }
     }
 }
