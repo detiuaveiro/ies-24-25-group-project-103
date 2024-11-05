@@ -56,9 +56,6 @@ public class Patient {
     @Column(name = "observations")
     private List<String> observations;
 
-    @OneToOne(mappedBy = "assignedPatient")
-    private Bed bed;
-
     @ManyToOne
     @JoinColumn(name = "doctor_id")
     private Doctor assignedDoctor;
@@ -66,7 +63,7 @@ public class Patient {
 
     public Patient() {}
 
-    public Patient(String name, String gender, Date birthDate, Date estimatedDischargeDate, Float weight, Float height, List<String> conditions, List<String> observations, Bed bed, Doctor assignedDoctor) {
+    public Patient(String name, String gender, Date birthDate, Date estimatedDischargeDate, Float weight, Float height, List<String> conditions, List<String> observations, Doctor assignedDoctor) {
         this.name = name;
         this.gender = gender;
         this.birthDate = birthDate;
@@ -75,7 +72,6 @@ public class Patient {
         this.height = height;
         this.conditions = conditions;
         this.observations = observations;
-        this.bed = bed;
         this.assignedDoctor = assignedDoctor;
     }
 
@@ -150,14 +146,6 @@ public class Patient {
 
     public void setObservations(List<String> observations) {
         this.observations = observations;
-    }
-
-    public Bed getBed() {
-        return bed;
-    }
-
-    public void setBed(Bed bed) {
-        this.bed = bed;
     }
 
     public Doctor getAssignedDoctor() {

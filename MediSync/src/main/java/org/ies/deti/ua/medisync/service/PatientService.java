@@ -83,12 +83,11 @@ public class PatientService {
         return patientRepository.findById(id);
     }
 
-    public Patient setBed(Long id, Bed bed) {
+    public Bed setBed(Long id, Bed bed) {
         Optional<Patient> patient = this.getPatientById(id);
         if (patient.isPresent()) {
-            patient.get().setBed(bed);
+            bed.setAssignedPatient(patient.get());
             bedRepository.save(bed);
-            return patientRepository.save(patient.get());
         }
         return null;
     }
@@ -107,7 +106,7 @@ public class PatientService {
         Optional<Patient> patientOptional = this.getPatientById(id);
         if (patientOptional.isPresent()) {
             Patient patient = patientOptional.get();
-            Long bedId = patient.getBed().getId();
+            Long bedId = bedRepository.getBedByAssignedPatient(patient).getId();
             Map<String, Object> lastVitals = this.getLastVitals(bedId.toString());
             Long HeartRate = (Long) lastVitals.get("heartbeat");
             Long o2 = (Long) lastVitals.get("o2");
@@ -136,10 +135,13 @@ public class PatientService {
             existingPatient.setHeight(updatedPatient.getHeight());
             existingPatient.setConditions(updatedPatient.getConditions());
             existingPatient.setObservations(updatedPatient.getObservations());
-            existingPatient.setBed(updatedPatient.getBed());
             existingPatient.setAssignedDoctor(updatedPatient.getAssignedDoctor());
             return patientRepository.save(existingPatient);
         }).orElseThrow(() -> new RuntimeException("Patient not found with id: " + id));
+    }
+
+    public Bed getPatientBed(Patient patient) {
+        return bedRepository.getBedByAssignedPatient(patient);
     }
 
     public void dischargePatient(Long id) {
