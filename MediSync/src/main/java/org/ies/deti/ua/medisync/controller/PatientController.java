@@ -41,10 +41,10 @@ public class PatientController {
 
 
     @PostMapping("/{id}/bed")
-    public ResponseEntity<Patient> assignToBed(@RequestBody Bed bed, @PathVariable Long id) {
-        Patient updatedPatient = patientService.setBed(id, bed);
-        if (updatedPatient != null) {
-            return ResponseEntity.status(HttpStatus.CREATED).body(updatedPatient);
+    public ResponseEntity<Bed> assignToBed(@RequestBody Bed bed, @PathVariable Long id) {
+        Bed updatedBed = patientService.setBed(id, bed);
+        if (updatedBed != null) {
+            return ResponseEntity.status(HttpStatus.CREATED).body(updatedBed);
         }
         return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
     }
@@ -73,7 +73,7 @@ public class PatientController {
 
     @GetMapping("/graph/{id}/{type}/{start}/{end}")
     public String getGraph(@PathVariable String id, @PathVariable String type, @PathVariable String start, @PathVariable String end) {
-        String bedID = patientService.getPatientById(Long.parseLong(id)).get().getBed().getId().toString();
+        String bedID = patientService.getPatientBed(patientService.getPatientById(Long.parseLong(id)).get()).getId().toString();
         List<FluxTable> tables = patientService.getPatientVitals(bedID, start, end);
         return patientService.generateQuickChartUrl(tables, bedID, type);
                     

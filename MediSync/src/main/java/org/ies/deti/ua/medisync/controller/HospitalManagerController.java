@@ -1,9 +1,6 @@
 package org.ies.deti.ua.medisync.controller;
 
-import org.ies.deti.ua.medisync.model.Doctor;
-import org.ies.deti.ua.medisync.model.Nurse;
-import org.ies.deti.ua.medisync.model.Patient;
-import org.ies.deti.ua.medisync.model.Room;
+import org.ies.deti.ua.medisync.model.*;
 import org.ies.deti.ua.medisync.service.HospitalManagerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -67,6 +64,11 @@ public class HospitalManagerController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                                .body("Room not found with number: " + roomNumber);
         }
+    }
+
+    @GetMapping("/beds")
+    public ResponseEntity<List<Bed>> getBeds() {
+        return ResponseEntity.ok(hospitalManagerService.getAllBeds());
     }
 
 }

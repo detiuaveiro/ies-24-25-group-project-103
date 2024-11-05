@@ -104,6 +104,7 @@ public class HospitalManagerService {
                 Room room = new Room();
                 room.setRoomNumber(roomNumber);
                 room.setScheduleEntries(new ArrayList<>());
+                roomRepository.save(room);
 
                 for (int bedNum = 1; bedNum <= 4; bedNum++) {
                     Bed bed = new Bed();
@@ -112,10 +113,8 @@ public class HospitalManagerService {
                     bed.setId(bedId);
                     bed.setRoom(room);
                     bed.setAssignedPatient(null);
+                    bedRepository.save(bed);
                 }
-                
-                // Due to the cascade type (Room.java, line 20), the beds will be saved as well
-                roomRepository.save(room);
             }
         }
     }
