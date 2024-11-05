@@ -4,7 +4,6 @@ import java.util.List;
 
 import org.ies.deti.ua.medisync.model.Notification;
 import org.ies.deti.ua.medisync.service.NotificationService; // Ensure you have this service created
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -27,7 +26,7 @@ public class NotificationController {
 
     @PostMapping("/user/{userId}")
     public ResponseEntity<Notification> sendNotification(@PathVariable Long userId, @RequestBody Notification notification) {
-        Notification savedNotification = notificationService.saveNotification(notification);
+        Notification savedNotification = notificationService.saveNotification(notification, userId);
         return new ResponseEntity<>(savedNotification, HttpStatus.CREATED);
     }
 

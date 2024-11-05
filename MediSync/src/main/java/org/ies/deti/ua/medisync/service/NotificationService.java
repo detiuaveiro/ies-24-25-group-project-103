@@ -5,6 +5,7 @@ import java.util.Optional; // Ensure you have this repository created
 
 import org.ies.deti.ua.medisync.model.Notification;
 import org.ies.deti.ua.medisync.repository.NotificationRepository;
+import org.ies.deti.ua.medisync.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -12,13 +13,16 @@ import org.springframework.stereotype.Service;
 public class NotificationService {
 
     private final NotificationRepository notificationRepository;
+    private final UserRepository userRepository;
 
     @Autowired
-    public NotificationService(NotificationRepository notificationRepository) {
+    public NotificationService(NotificationRepository notificationRepository, UserRepository userRepository) {
         this.notificationRepository = notificationRepository;
+        this.userRepository = userRepository;
     }
 
-    public Notification saveNotification(Notification notification) {
+    public Notification saveNotification(Notification notification, Long userId) {
+        notification.setUser(userRepository.findById(userId).get());
         return notificationRepository.save(notification);
     }
 
