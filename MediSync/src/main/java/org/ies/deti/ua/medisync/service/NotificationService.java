@@ -46,7 +46,7 @@ public class NotificationService {
         return notificationRepository.findByUserId(userId);
     }
     
-    public List<Notification> getNotificationsByType(Notification.Type type) {
+    public List<Notification> getNotificationsByType(String type) {
         return notificationRepository.findByType(type);
     }
 }

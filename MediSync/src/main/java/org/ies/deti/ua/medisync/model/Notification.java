@@ -36,23 +36,16 @@ public class Notification {
     private Date date;
 
     @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false)
+    @JoinColumn(name = "user_id")
     @JsonBackReference
     private User user;
     
-    public enum Type {
-        DISCHARGE,
-        CLEANING,
-        MEDICATION,
-        DANGERVITALS
-    }
-
     @Column(name = "type", nullable = false)
-    private Type type;
+    private String type;
 
     public Notification() {}
 
-    public Notification(String title, String description, Date date, User user, Type type) {
+    public Notification(String title, String description, Date date, User user, String type) {
         this.title = title;
         this.description = description;
         this.date = date;
@@ -100,11 +93,11 @@ public class Notification {
         this.user = user;
     }
 
-    public Type getType() {
+    public String getType() {
         return type;
     }
 
-    public void setType(Type type) {
+    public void setType(String type) {
         this.type = type;
     }
 

@@ -11,5 +11,8 @@ import java.util.List;
 @Repository
 public interface BedRepository extends JpaRepository<Bed, Long> {
     List<Bed> findBedByRoom(Room room);
+
     Bed getBedByAssignedPatient(Patient patient);
+
+    Bed getBedByBedNumber(String bedNumber);
 }
