@@ -305,3 +305,15 @@ This directory stores all the controllers for the project
 ## See notifications from a user
 
 ![see notifications from a user](postmanScreenshots/image-13.png)
+
+## Send notification to a user
+![send notification](postmanScreenshots/image-14.png)
+
+## Check notifications from a user
+![check notification from a user](postmanScreenshots/image-15.png)
+
+## Check all beds
+![check all beds](postmanScreenshots/image-16.png)
+
+## Add vitals to patient
+![add vitals](postmanScreenshots/image-17.png)

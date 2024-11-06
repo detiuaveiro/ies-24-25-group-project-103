@@ -126,4 +126,16 @@ public class PatientController {
         return ResponseEntity.ok(medication);
     }
 
+    @PutMapping("vitals/{bed_id}")
+    public ResponseEntity<Void> postVitals(@PathVariable String bed_id, @RequestBody Map<String, Object> vitals) {
+        patientService.writeVitals(bed_id, vitals);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    }
+
+    @GetMapping("{id}/vitals")
+    public ResponseEntity<Map<String, Object>> getVitals(@PathVariable Long id) {
+        Map<String, Object> lastVitals = patientService.getLastVitals(patientService.getPatientBed(patientService.getPatientById(id).get()).getId().toString());
+        return ResponseEntity.ok(lastVitals);
+    }
+
 }
