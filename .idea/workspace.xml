@@ -4,9 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="b97c8f04-407e-4897-9cfe-82955c479494" name="Changes" comment=".">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-    </list>
+    <list default="true" id="b97c8f04-407e-4897-9cfe-82955c479494" name="Changes" comment="." />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -26,7 +24,7 @@
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
     "RunOnceActivity.ShowReadmeOnStart": "true",
-    "git-widget-placeholder": "new/add__screenshots",
+    "git-widget-placeholder": "new/create__react__project__200",
     "kotlin-language-version-configured": "true",
     "last_opened_file_path": "/home/alof/Desktop/ies-24-25-group-project-103",
     "node.js.detected.package.eslint": "true",
@@ -59,6 +57,7 @@
       <workItem from="1730479608599" duration="316000" />
       <workItem from="1730562494011" duration="2691000" />
       <workItem from="1730747545111" duration="2845000" />
+      <workItem from="1731420794828" duration="443000" />
     </task>
     <task id="LOCAL-00001" summary=".">
       <option name="closed" value="true" />
