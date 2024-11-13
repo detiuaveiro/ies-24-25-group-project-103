@@ -147,7 +147,6 @@ public class NurseService {
             existingEntry.setRoom(updatedEntry.getRoom());
             scheduleEntryRepository.save(existingEntry);
         } else {
-            // por fazer (update a um calendário que está em várias nurses)
             existingEntry.removeNurse(nurse);
             scheduleEntryRepository.save(existingEntry);
             updatedEntry.addNurse(nurse);
