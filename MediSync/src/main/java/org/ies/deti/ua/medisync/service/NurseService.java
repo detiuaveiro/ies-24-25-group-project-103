@@ -146,14 +146,12 @@ public class NurseService {
             existingEntry.setEnd_time(updatedEntry.getEnd_time());
             existingEntry.setRoom(updatedEntry.getRoom());
             scheduleEntryRepository.save(existingEntry);
-            return nurseRepository.save(nurse);
         } else {
-            // por fazer (update a um calendário que está em várias nurses)
+            existingEntry.removeNurse(nurse);
+            scheduleEntryRepository.save(existingEntry);
+            updatedEntry.addNurse(nurse);
+            scheduleEntryRepository.save(updatedEntry);
         }
-
-        existingEntry.setStart_time(updatedEntry.getStart_time());
-        existingEntry.setEnd_time(updatedEntry.getEnd_time());
-        existingEntry.setRoom(updatedEntry.getRoom());
 
         return nurseRepository.save(nurse);
     }
