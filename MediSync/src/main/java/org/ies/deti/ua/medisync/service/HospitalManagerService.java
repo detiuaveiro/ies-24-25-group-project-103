@@ -35,10 +35,10 @@ public class HospitalManagerService {
     @Autowired
     private final BedRepository bedRepository;
 
-
-
     @Autowired
-    public HospitalManagerService(PatientService patientService, NurseService nurseService, DoctorService doctorService, HospitalManagerRepository hospitalManagerRepository, RoomRepository roomRepository, BedRepository bedRepository) {
+    public HospitalManagerService(PatientService patientService, NurseService nurseService, DoctorService doctorService,
+            HospitalManagerRepository hospitalManagerRepository, RoomRepository roomRepository,
+            BedRepository bedRepository) {
         this.patientService = patientService;
         this.nurseService = nurseService;
         this.doctorService = doctorService;
@@ -46,8 +46,6 @@ public class HospitalManagerService {
         this.roomRepository = roomRepository;
         this.bedRepository = bedRepository;
     }
-    
-
 
     public Patient createPatient(Patient patient) {
         return patientService.createPatient(patient);
@@ -99,24 +97,22 @@ public class HospitalManagerService {
             for (int roomNum = 1; roomNum <= 8; roomNum++) {
                 // Format: floor_number+room_number
                 String roomNumber = String.format("%d%d", floor, roomNum);
-                
+
                 // Create new room
                 Room room = new Room();
                 room.setRoomNumber(roomNumber);
                 room.setScheduleEntries(new ArrayList<>());
+                roomRepository.save(room);
 
                 for (int bedNum = 1; bedNum <= 4; bedNum++) {
                     Bed bed = new Bed();
                     // Format: room_number+bed_number
-                    Long bedId = Long.parseLong(roomNumber + bedNum);
-                    bed.setId(bedId);
+                    String bedNumber = String.format("%s%d", roomNumber, bedNum);
                     bed.setRoom(room);
+                    bed.setBedNumber(bedNumber);
                     bed.setAssignedPatient(null);
                     bedRepository.save(bed);
                 }
-                
-                // Due to the cascade type (Room.java, line 20), the beds will be saved as well
-                roomRepository.save(room);
             }
         }
     }
@@ -135,6 +131,10 @@ public class HospitalManagerService {
 
     public Bed getBedById(Long bedId) {
         return bedRepository.findById(bedId).orElse(null);
+    }
+
+    public Bed getBedByBedNumber(String bedNumber) {
+        return bedRepository.getBedByBedNumber(bedNumber);
     }
 
     public List<Bed> getAllBeds() {

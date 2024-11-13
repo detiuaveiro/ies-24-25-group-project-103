@@ -21,7 +21,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.influxdb.query.FluxTable;
 
-
 @RestController
 @RequestMapping("/api/v1/patients")
 public class PatientController {
@@ -39,12 +38,11 @@ public class PatientController {
         return ResponseEntity.status(HttpStatus.CREATED).body(createdPatient);
     }
 
-
     @PostMapping("/{id}/bed")
-    public ResponseEntity<Patient> assignToBed(@RequestBody Bed bed, @PathVariable Long id) {
-        Patient updatedPatient = patientService.setBed(id, bed);
-        if (updatedPatient != null) {
-            return ResponseEntity.status(HttpStatus.CREATED).body(updatedPatient);
+    public ResponseEntity<Bed> assignToBed(@RequestBody Bed bed, @PathVariable Long id) {
+        Bed updatedBed = patientService.setBed(id, bed);
+        if (updatedBed != null) {
+            return ResponseEntity.status(HttpStatus.CREATED).body(updatedBed);
         }
         return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
     }
@@ -72,11 +70,13 @@ public class PatientController {
     }
 
     @GetMapping("/graph/{id}/{type}/{start}/{end}")
-    public String getGraph(@PathVariable String id, @PathVariable String type, @PathVariable String start, @PathVariable String end) {
-        String bedID = patientService.getPatientById(Long.parseLong(id)).get().getBed().getId().toString();
+    public String getGraph(@PathVariable String id, @PathVariable String type, @PathVariable String start,
+            @PathVariable String end) {
+        String bedID = patientService.getPatientBed(patientService.getPatientById(Long.parseLong(id)).get()).getId()
+                .toString();
         List<FluxTable> tables = patientService.getPatientVitals(bedID, start, end);
         return patientService.generateQuickChartUrl(tables, bedID, type);
-                    
+
     }
 
     @GetMapping
@@ -109,7 +109,7 @@ public class PatientController {
 
     @PostMapping("/{id}/medications")
     public ResponseEntity<Patient> createMedication(@PathVariable Long id, @RequestBody Medication medication) {
-        Patient patientWithMedication  = patientService.addMedication(id, medication);
+        Patient patientWithMedication = patientService.addMedication(id, medication);
         return ResponseEntity.status(HttpStatus.CREATED).body(patientWithMedication);
     }
 
@@ -120,9 +120,22 @@ public class PatientController {
     }
 
     @PutMapping("/{id}/medications/{medicationId}")
-    public ResponseEntity<Medication> updateMedication(@PathVariable Long id, @PathVariable Long medicationId, @RequestBody Medication updatedMedication) {
+    public ResponseEntity<Medication> updateMedication(@PathVariable Long id, @PathVariable Long medicationId,
+            @RequestBody Medication updatedMedication) {
         Medication medication = patientService.updateMedication(id, medicationId, updatedMedication);
         return ResponseEntity.ok(medication);
+    }
+
+    @PutMapping("vitals/{bed_id}")
+    public ResponseEntity<Void> postVitals(@PathVariable String bed_id, @RequestBody Map<String, Object> vitals) {
+        patientService.writeVitals(bed_id, vitals);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    }
+
+    @GetMapping("{id}/vitals")
+    public ResponseEntity<Map<String, Object>> getVitals(@PathVariable Long id) {
+        Map<String, Object> lastVitals = patientService.getLastVitals(patientService.getPatientBed(patientService.getPatientById(id).get()).getId().toString());
+        return ResponseEntity.ok(lastVitals);
     }
 
 }

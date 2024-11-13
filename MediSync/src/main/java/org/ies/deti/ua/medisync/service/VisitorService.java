@@ -90,7 +90,7 @@ public class VisitorService {
     public String verifyVisitorCode(String code) {
         Code foundCode = codeRepository.findByCode(code);
         if (foundCode != null) {
-            return foundCode.getPatient().getBed().toString();
+            return patientService.getPatientBed(foundCode.getPatient()).toString();
         }
         return null;
     }

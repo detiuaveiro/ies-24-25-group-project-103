@@ -16,22 +16,26 @@ import org.ies.deti.ua.medisync.model.Room;
 import org.ies.deti.ua.medisync.model.ScheduleEntry;
 import org.ies.deti.ua.medisync.repository.BedRepository;
 import org.ies.deti.ua.medisync.repository.NurseRepository;
+import org.ies.deti.ua.medisync.repository.ScheduleEntryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
 public class NurseService {
 
-    @Autowired
     private final NurseRepository nurseRepository;
+    private final BedRepository bedRepository;
+    private final ScheduleEntryRepository scheduleEntryRepository;
 
     @Autowired
-    private PatientService patientService;
-    @Autowired
-    private BedRepository bedRepository;
+    private final PatientService patientService;
 
-    public NurseService(NurseRepository nurseRepository) {
+    public NurseService(NurseRepository nurseRepository, ScheduleEntryRepository scheduleEntryRepository,
+            BedRepository bedRepository, PatientService patientService) {
         this.nurseRepository = nurseRepository;
+        this.scheduleEntryRepository = scheduleEntryRepository;
+        this.bedRepository = bedRepository;
+        this.patientService = patientService;
     }
 
     public List<Nurse> getAllNurses() {
@@ -57,10 +61,12 @@ public class NurseService {
         return rooms;
     }
 
-
     public Nurse updateNurse(Long id, Nurse updatedNurse) {
         return nurseRepository.findById(id).map(existingNurse -> {
             existingNurse.setName(updatedNurse.getName());
+            existingNurse.setUsername(updatedNurse.getUsername());
+            existingNurse.setEmail(updatedNurse.getEmail());
+            existingNurse.setPassword(updatedNurse.getPassword());
             existingNurse.setSchedule(updatedNurse.getSchedule());
             return nurseRepository.save(existingNurse);
         }).orElseThrow(() -> new RuntimeException("Nurse not found with id: " + id));
@@ -104,6 +110,12 @@ public class NurseService {
         Optional<Nurse> nurseOpt = nurseRepository.findById(nurseId);
         if (nurseOpt.isPresent()) {
             Nurse nurse = nurseOpt.get();
+            Optional<ScheduleEntry> existingEntryOpt = scheduleEntryRepository.findById(newEntry.getId());
+            if (!existingEntryOpt.isPresent()) {
+                newEntry = scheduleEntryRepository.save(newEntry);
+            }
+
+            // Adicionar a newEntry ao enfermeiro
             nurse.addScheduleEntry(newEntry);
             return nurseRepository.save(nurse);
         } else {
@@ -128,6 +140,17 @@ public class NurseService {
 
         ScheduleEntry existingEntry = entryOpt.get();
 
+        List<Nurse> associatedNurses = existingEntry.getNurses();
+        if (associatedNurses.contains(nurse) && associatedNurses.size() == 1) {
+            existingEntry.setStart_time(updatedEntry.getStart_time());
+            existingEntry.setEnd_time(updatedEntry.getEnd_time());
+            existingEntry.setRoom(updatedEntry.getRoom());
+            scheduleEntryRepository.save(existingEntry);
+            return nurseRepository.save(nurse);
+        } else {
+            // por fazer (update a um calendário que está em várias nurses)
+        }
+
         existingEntry.setStart_time(updatedEntry.getStart_time());
         existingEntry.setEnd_time(updatedEntry.getEnd_time());
         existingEntry.setRoom(updatedEntry.getRoom());
@@ -137,15 +160,25 @@ public class NurseService {
 
     public Nurse removeScheduleEntryFromNurse(Long nurseId, Long entryId) {
         Optional<Nurse> nurseOpt = nurseRepository.findById(nurseId);
-        boolean scheduleDependencies = false;
 
         if (nurseOpt.isPresent()) {
             Nurse nurse = nurseOpt.get();
-            nurse.getSchedule().removeIf(entry -> entry.getId().equals(entryId));
-            return nurseRepository.save(nurse);
-        } else {
-            return null;
+
+            ScheduleEntry entryToRemove = nurse.getSchedule().stream()
+                    .filter(entry -> entry.getId().equals(entryId))
+                    .findFirst()
+                    .orElse(null);
+            if (entryToRemove != null) {
+                List<Nurse> associatedNurses = entryToRemove.getNurses();
+                if (associatedNurses.contains(nurse) && associatedNurses.size() == 1) {
+                    scheduleEntryRepository.delete(entryToRemove);
+                } else {
+                    nurse.getSchedule().remove(entryToRemove);
+                }
+                return nurseRepository.save(nurse);
+            }
         }
+        return null;
     }
 
     public Nurse newNurse(Nurse nurse) {
