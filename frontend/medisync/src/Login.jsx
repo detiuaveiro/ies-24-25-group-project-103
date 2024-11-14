@@ -19,38 +19,55 @@ function Login() {
 
   const handleLogin = async () => {
     try {
-      const response = await axios.post(`${baseUrl}/auth/login`, {
-        username,
-        password
-      });
+        const response = await axios.post(
+            `${baseUrl}/auth/login`,
+            {
+                username,
+                password
+            },
+            { withCredentials: true }
+        );
 
-      const { token, user } = response.data;
-      console.log('Login successful:', token, user);
-      navigate('/dashboard');
+        const { token, user } = response.data;
+        console.log('Login successful:', token, user);
 
-      localStorage.setItem('token', token);
-      localStorage.setItem('user', JSON.stringify(user));
+        localStorage.setItem('token', token);
+        localStorage.setItem('user', JSON.stringify(user));
+
+        navigate('/dashboard');
     } catch (error) {
-      console.error('Error logging in:', error);
-      setError('Invalid username or password');
+        console.error('Error logging in:', error);
+        setError('Invalid username or password');
     }
-  };
-  
-  const handleVisitorSubmit = async () => {
-    try {
-      const response = await axios.post(`${baseUrl}/visitors`, {
-        name: visitorName,
-        phoneNumber: visitorPhoneNumber,
-      });
+};
 
+
+const handleVisitorSubmit = async () => {
+  const token = localStorage.getItem('token'); // Retrieve the token from localStorage
+  console.log('Retrieved token:', token); // Log the token to ensure it’s fetched
+  
+  try {
+      const response = await axios.post(
+        `${baseUrl}/visitors`, 
+        {
+            name: visitorName,
+            phoneNumber: visitorPhoneNumber,
+        },
+        {
+        withCredentials: true 
+        }
+    );
+      console.log('Response:', response); // Log the response to see the data
+      console.log("aaa")
+      console.log('Visitor submission successful:', response.data); // Log the response for success
       setVisitorMessage(response.data);
       setVisitorError('');
-    } catch (error) {
-      console.error('Error submitting visitor information:', error);
+  } catch (error) {
+      console.error('Error submitting visitor information:', error); // Log the error details
       setVisitorError('Visitor not allowed');
       setVisitorMessage('');
-    }
-  };
+  }
+};
 
   return (
     <div className="page">

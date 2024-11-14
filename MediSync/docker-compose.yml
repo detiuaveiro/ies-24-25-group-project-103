@@ -23,16 +23,17 @@ services:
   influxdb:
     image: influxdb:2.7
     ports:
-      - "${INFLUXDB_PORT}:8086"
+      - "${INFLUXDB_PORT:-8086}:8086"                   # Port mapping for InfluxDB
     volumes:
-      - influxdb_data:/var/lib/influxdb2
+      - influxdb_data:/var/lib/influxdb2                # Persistent storage volume for InfluxDB data
     environment:
-      - DOCKER_INFLUXDB_INIT_MODE=setup
-      - DOCKER_INFLUXDB_INIT_USERNAME=${INFLUXDB_USERNAME}
-      - DOCKER_INFLUXDB_INIT_PASSWORD=${INFLUXDB_PASSWORD}
-      - DOCKER_INFLUXDB_INIT_ORG=${INFLUXDB_ORG}
-      - DOCKER_INFLUXDB_INIT_BUCKET=${INFLUXDB_BUCKET}
-      - DOCKER_INFLUXDB_INIT_ADMIN_TOKEN=${INFLUXDB_TOKEN}
+      - INFLUXDB_INIT_MODE=setup                        # Initial setup mode for InfluxDB 2.x
+      - INFLUXDB_INIT_USERNAME=${INFLUXDB_USERNAME}     # Admin username
+      - INFLUXDB_INIT_PASSWORD=${INFLUXDB_PASSWORD}     # Admin password
+      - INFLUXDB_INIT_ORG=${INFLUXDB_ORG}               # Organization name
+      - INFLUXDB_INIT_BUCKET=${INFLUXDB_BUCKET}         # Bucket name
+      - INFLUXDB_INIT_RETENTION=0                       # Retention policy (0 = unlimited)
+      - INFLUXDB_INIT_ADMIN_TOKEN=${INFLUXDB_TOKEN}     # Admin token for API access
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8086/health"]
       interval: 10s
@@ -40,6 +41,7 @@ services:
       retries: 10
     networks:
       - medisync-network
+
 
   app:
     depends_on:
