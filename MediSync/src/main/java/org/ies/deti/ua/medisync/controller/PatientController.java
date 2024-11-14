@@ -134,7 +134,7 @@ public class PatientController {
 
     @GetMapping("{id}/vitals")
     public ResponseEntity<Map<String, Object>> getVitals(@PathVariable Long id) {
-        Map<String, Object> lastVitals = patientService.getLastVitals(patientService.getPatientBed(patientService.getPatientById(id).get()).getId().toString());
+        Map<String, Object> lastVitals = patientService.getLastVitals(id.toString());
         return ResponseEntity.ok(lastVitals);
     }
 
