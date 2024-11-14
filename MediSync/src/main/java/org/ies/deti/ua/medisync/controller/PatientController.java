@@ -132,6 +132,8 @@ public class PatientController {
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
+
+    //THIS IS TEMPORARY FOR TESTING PURPOSES!!!!
     @GetMapping("{id}/vitals")
     public ResponseEntity<Map<String, Object>> getVitals(@PathVariable Long id) {
         Map<String, Object> lastVitals = patientService.getLastVitals(id.toString());
