@@ -62,7 +62,7 @@ public class VisitorService {
         Visitor visitor = visitorRepository.findByPhoneNumber(phoneNumber);
         String patientName = visitor.getPatient().getName();
         if (patientName.equalsIgnoreCase(name) && visitor.getPhoneNumber().equals(phoneNumber)) {
-            sendVisitorNotification(generateCode(visitor.getPatient(), phoneNumber), phoneNumber);
+           generateCode(visitor.getPatient(), phoneNumber);
             return true;
         }
         return false;
@@ -97,7 +97,22 @@ public class VisitorService {
 
     public Visitor addVisitor(Visitor visitor, Long id) {
         Patient patient = patientRepository.findPatientById(id);
-        visitor.setPatient(patient);
-        return visitorRepository.save(visitor);
+        String phoneNumber = visitor.getPhoneNumber();
+        Visitor existingVisitor = visitorRepository.findByPhoneNumber(phoneNumber);
+        if (existingVisitor != null) {
+            existingVisitor.setPatient(patient);
+            return visitorRepository.save(existingVisitor);
+        }
+        else {
+            visitor.setPatient(patient);
+            return visitorRepository.save(visitor);
+        }
+
+    }
+
+    public Visitor deleteVisitor(Long id) {
+        Visitor visitor = visitorRepository.findVisitorById(id);
+        visitorRepository.delete(visitor);
+        return visitor;
     }
 }

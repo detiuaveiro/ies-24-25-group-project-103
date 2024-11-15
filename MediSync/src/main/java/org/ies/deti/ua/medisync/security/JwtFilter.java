@@ -1,15 +1,17 @@
 package org.ies.deti.ua.medisync.security;
 
-import jakarta.servlet.*;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
+import java.io.IOException;
+
 import org.ies.deti.ua.medisync.service.UserService;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-import java.io.IOException;
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 @Component
 @Order(Ordered.HIGHEST_PRECEDENCE)
@@ -26,10 +28,13 @@ public class JwtFilter extends OncePerRequestFilter {
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) {
         String path = request.getRequestURI();
-        // Add the user creation endpoint to the list of unprotected endpoints
-        return path.contains("/api/v1/auth/login") || 
-               //path.contains("/api/v1/auth/register") || // If in the future we want a register endpoint
-               path.contains("/api/v1/users") && request.getMethod().equals("POST");
+        String method = request.getMethod();
+
+        return (path.contains("/api/v1/auth/login") || 
+        // path.contains("/api/v1/auth/register") || // If in the future we want a register endpoint
+        path.contains("/api/v1/users") && method.equals("POST")) || 
+        (path.contains("/api/v1/visitors") && method.equals("POST")) || 
+        method.equals("OPTIONS"); // Allow OPTIONS requests for CORS preflight
     }
 
     @Override
