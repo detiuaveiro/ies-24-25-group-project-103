@@ -3,6 +3,7 @@ package org.ies.deti.ua.medisync.service;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -16,6 +17,7 @@ import org.ies.deti.ua.medisync.model.Room;
 import org.ies.deti.ua.medisync.model.ScheduleEntry;
 import org.ies.deti.ua.medisync.repository.BedRepository;
 import org.ies.deti.ua.medisync.repository.NurseRepository;
+import org.ies.deti.ua.medisync.repository.RoomRepository;
 import org.ies.deti.ua.medisync.repository.ScheduleEntryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -26,16 +28,19 @@ public class NurseService {
     private final NurseRepository nurseRepository;
     private final BedRepository bedRepository;
     private final ScheduleEntryRepository scheduleEntryRepository;
+    private final RoomRepository roomRepository;
 
     @Autowired
     private final PatientService patientService;
 
-    public NurseService(NurseRepository nurseRepository, ScheduleEntryRepository scheduleEntryRepository,
+    public NurseService(NurseRepository nurseRepository, RoomRepository roomRepository,
+            ScheduleEntryRepository scheduleEntryRepository,
             BedRepository bedRepository, PatientService patientService) {
         this.nurseRepository = nurseRepository;
         this.scheduleEntryRepository = scheduleEntryRepository;
         this.bedRepository = bedRepository;
         this.patientService = patientService;
+        this.roomRepository = roomRepository;
     }
 
     public List<Nurse> getAllNurses() {
@@ -110,10 +115,14 @@ public class NurseService {
         Optional<Nurse> nurseOpt = nurseRepository.findById(nurseId);
         if (nurseOpt.isPresent()) {
             Nurse nurse = nurseOpt.get();
-            Optional<ScheduleEntry> existingEntryOpt = scheduleEntryRepository.findById(newEntry.getId());
-            if (!existingEntryOpt.isPresent()) {
-                newEntry = scheduleEntryRepository.save(newEntry);
+            Set<Room> attachedRooms = new HashSet<>();
+            for (Room room : newEntry.getRoom()) {
+                attachedRooms.add(roomRepository.findById(room.getId()).orElse(room));
             }
+            newEntry.setRoom(attachedRooms);
+
+            // Save the ScheduleEntry
+            newEntry = scheduleEntryRepository.save(newEntry);
 
             // Adicionar a newEntry ao enfermeiro
             nurse.addScheduleEntry(newEntry);

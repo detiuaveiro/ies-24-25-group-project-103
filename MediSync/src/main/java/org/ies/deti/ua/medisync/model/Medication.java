@@ -14,7 +14,6 @@ import jakarta.persistence.JoinColumn;
 
 @Entity
 @Table(name = "medication")
-@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 public class Medication {
 
     @Id
@@ -32,7 +31,6 @@ public class Medication {
 
     @ManyToOne
     @JoinColumn(name = "patient_id", nullable = false)
-    @JsonIdentityReference(alwaysAsId = true)
     private Patient patient;
 
     public Medication() {}
