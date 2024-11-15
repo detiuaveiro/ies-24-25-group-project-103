@@ -9,7 +9,7 @@ services:
       - MYSQL_USER=${MYSQL_USER}
       - MYSQL_PASSWORD=${MYSQL_PASSWORD}
     ports:
-      - "${MYSQL_PORT}:3306"
+      - "${MYSQL_PORT}"
     volumes:
       - db:/var/lib/mysql
     healthcheck:
@@ -23,7 +23,7 @@ services:
   influxdb:
     image: influxdb:2.7
     ports:
-      - "${INFLUXDB_PORT:-8086}:8086"                   # Port mapping for InfluxDB
+      - "${INFLUXDB_PORT}"                   # Port mapping for InfluxDB
     volumes:
       - influxdb_data:/var/lib/influxdb2                # Persistent storage volume for InfluxDB data
     environment:
