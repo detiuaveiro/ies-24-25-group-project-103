@@ -1,18 +1,26 @@
 import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
-import './Login.css';
 import Login from './Login';
+import './App.css'
 import axios from 'axios';
+import Header from './Header';
+import Patients from './Patients';
+import Dashboard from './Dashboard';
+
 
 
 function App() {
   
   return (
     <Router>
-      <div className="app-container">
         <Routes>
-          <Route path="/" element={<Login />} />
+            <Route path="/" element={<Login />} />
         </Routes>
-      </div>
+        <Header>
+            <Routes>
+                <Route path="/dashboard" element={<Dashboard />} />
+                <Route path="/patients" element={<Patients />} />
+            </Routes>
+        </Header>
     </Router>
   );
 }

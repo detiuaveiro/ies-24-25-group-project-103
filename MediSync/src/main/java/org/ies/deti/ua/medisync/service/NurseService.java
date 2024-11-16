@@ -6,7 +6,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
 
 import org.ies.deti.ua.medisync.model.Bed;
 import org.ies.deti.ua.medisync.model.Nurse;
@@ -193,6 +192,7 @@ public class NurseService {
     }
 
     public Nurse addNurse(Nurse nurse) {
+        nurse.setRole("NURSE");
         return nurseRepository.save(nurse);
     }
 }
