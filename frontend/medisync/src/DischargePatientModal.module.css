@@ -1,0 +1,10 @@
+.modal-dialog {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh; /* Ensure modal takes up full height for vertical centering */
+  }
+  
+  .modal-content {
+    margin: auto; /* Center the modal horizontally */
+  }

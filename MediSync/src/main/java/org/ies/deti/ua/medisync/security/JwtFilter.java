@@ -30,11 +30,11 @@ public class JwtFilter extends OncePerRequestFilter {
         String path = request.getRequestURI();
         String method = request.getMethod();
 
-        return (path.contains("/api/v1/auth/login") || 
+        return path.startsWith("/api/v1/visitors") || 
         // path.contains("/api/v1/auth/register") || // If in the future we want a register endpoint
-        path.contains("/api/v1/users") && method.equals("POST")) || 
-        (path.contains("/api/v1/visitors") && method.equals("POST")) || 
-        method.equals("OPTIONS"); // Allow OPTIONS requests for CORS preflight
+        path.equals("/api/v1/auth/login") || 
+        (path.equals("/api/v1/users") && method.equals("POST")) || 
+        method.equals("OPTIONS");
     }
 
     @Override

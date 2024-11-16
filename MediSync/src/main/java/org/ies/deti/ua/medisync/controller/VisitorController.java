@@ -1,5 +1,6 @@
 package org.ies.deti.ua.medisync.controller;
 
+import org.ies.deti.ua.medisync.model.CodeVerification;
 import org.ies.deti.ua.medisync.model.Visitor;
 import org.ies.deti.ua.medisync.model.VisitorDTO;
 import org.ies.deti.ua.medisync.service.VisitorService;
@@ -36,8 +37,8 @@ public class VisitorController {
     }
 
     @PostMapping("/checkcode")
-    public ResponseEntity<String> checkCode(@RequestBody String code) {
-        String bed = visitorService.verifyVisitorCode(code);
+    public ResponseEntity<String> checkCode(@RequestBody CodeVerification code) {
+        String bed = visitorService.verifyVisitorCode(code.getCode(), code.getPhoneNumber());
         if (bed == null) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Code not valid");
         }
