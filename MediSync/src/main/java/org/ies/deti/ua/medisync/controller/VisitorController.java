@@ -5,6 +5,8 @@ import org.ies.deti.ua.medisync.model.VisitorDTO;
 import org.ies.deti.ua.medisync.service.VisitorService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -21,6 +23,7 @@ public class VisitorController {
     }
 
     @PostMapping
+    @CrossOrigin(origins = "http://localhost:5173")
     public ResponseEntity<String> checkIfVisitorIsAllowed(@RequestBody VisitorDTO visitorDTO) {
         String name = visitorDTO.getName();
         String phoneNumber = visitorDTO.getPhoneNumber();
@@ -41,11 +44,15 @@ public class VisitorController {
         return ResponseEntity.ok(bed);
     }    
 
-    /*
     @PostMapping("/add/{id}")
     public ResponseEntity<Visitor> addVisitor( @RequestBody Visitor visitor, @PathVariable Long id) {
         return ResponseEntity.ok(visitorService.addVisitor(visitor, id));
     }
-    */
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteVisitor(@PathVariable Long id) {
+        visitorService.deleteVisitor(id);
+        return ResponseEntity.noContent().build();
+    }
 
 }

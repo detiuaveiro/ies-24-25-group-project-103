@@ -1,42 +1,70 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import './Login.css';
+import styles from './Login.module.css';
 
 function Login() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   
+  const [visitorPhoneNumber, setVisitorPhoneNumber] = useState('');
+  const [visitorName, setVisitorName] = useState('');
+  const [visitorError, setVisitorError] = useState('');
+  const [visitorMessage, setVisitorMessage] = useState('');
+
   const baseUrl = 'http://localhost:8080/api/v1';
+  const navigate = useNavigate();
 
   const handleLogin = async () => {
     try {
-      const response = await axios.post(baseUrl+'/auth/login', {
-        username,
-        password
-      });
+      const response = await axios.post(
+        `${baseUrl}/auth/login`,
+        { username, password },
+        { withCredentials: true }
+      );
 
-      const { token, user } = response.data;
-      console.log('Login successful:', token, user);
-
+      const { token, user, role } = response.data;
       localStorage.setItem('token', token);
+      localStorage.setItem('user', JSON.stringify(user));
+      localStorage.setItem('userRole', role);
+      console.log(role);
+      if (role === 'HOSPITAL_MANAGER') navigate('/manager');
+      else if (role === 'DOCTOR') navigate('/dashboard_doctor');
+      else navigate('/dashboard_nurse');
+
     } catch (error) {
-      console.error('Error logging in:', error);
       setError('Invalid username or password');
     }
   };
 
+  const handleVisitorSubmit = async () => {
+    try {
+      const response = await axios.post(
+        `${baseUrl}/visitors`,
+        { name: visitorName, phoneNumber: visitorPhoneNumber },
+        { withCredentials: true }
+      );
+
+      setVisitorMessage(response.data);
+      setVisitorError('');
+    } catch (error) {
+      setVisitorError('Visitor not allowed');
+      setVisitorMessage('');
+    }
+  };
+
   return (
-    <div className="page">
-      <div className="logo-container">
-        <img src='/media/medisync.png' alt="Medisync Logo" className="logo" />
+    <div className={styles.page}>
+      <div className={styles.logoContainer}>
+        <img src='/media/medisync.png' alt="Medisync Logo" className={styles.logo} />
       </div>
       
-      <div className="container">
-        <div className="form-container">
-          <div className="staff-login">
+      <div className={styles.container}>
+        <div className={styles.formContainer}>
+          <div className={styles.staffLogin}>
             <h2>FOR STAFF:</h2>
-            <div className="input-group">
+            <div className={styles.inputGroup}>
               <input 
                 type="text" 
                 placeholder="USERNAME" 
@@ -44,7 +72,7 @@ function Login() {
                 onChange={(e) => setUsername(e.target.value)}
               />
             </div>
-            <div className="input-group">
+            <div className={styles.inputGroup}>
               <input 
                 type="password" 
                 placeholder="PASSWORD" 
@@ -52,24 +80,38 @@ function Login() {
                 onChange={(e) => setPassword(e.target.value)}
               />
             </div>
-            <button className="login-button" onClick={handleLogin}>
+            <button className={styles.loginButton} onClick={handleLogin}>
               LOGIN
             </button>
-            {error && <p className="error-message">{error}</p>}
-            <p className="forgot-password">Forgot password?</p>
+            {error && <p className={styles.errorMessage}>{error}</p>}
+            <p className={styles.forgotPassword}>Forgot password?</p>
           </div>
 
-          <div className="divider"></div>
+          <div className={styles.divider}></div>
 
-          <div className="patient-visit">
+          <div className={styles.patientVisit}>
             <h2>TO VISIT A PATIENT:</h2>
-            <div className="input-group">
-              <input type="text" placeholder="YOUR PHONE NUMBER" />
+            <div className={styles.inputGroup}>
+              <input 
+                type="text" 
+                placeholder="YOUR PHONE NUMBER" 
+                value={visitorPhoneNumber}
+                onChange={(e) => setVisitorPhoneNumber(e.target.value)}
+              />
             </div>
-            <div className="input-group">
-              <input type="text" placeholder="PATIENT NAME" />
+            <div className={styles.inputGroup}>
+              <input 
+                type="text" 
+                placeholder="PATIENT NAME" 
+                value={visitorName}
+                onChange={(e) => setVisitorName(e.target.value)}
+              />
             </div>
-            <button className="submit-button">SUBMIT</button>
+            <button className={styles.submitButton} onClick={handleVisitorSubmit}>
+              SUBMIT
+            </button>
+            {visitorMessage && <p className={styles.successMessage}>{visitorMessage}</p>}
+            {visitorError && <p className={styles.errorMessage}>{visitorError}</p>}
           </div>
         </div>
       </div>

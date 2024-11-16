@@ -2,6 +2,7 @@ package org.ies.deti.ua.medisync.model;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -30,13 +31,21 @@ public class User {  // Removed 'abstract' keyword
     @Column(name = "password", nullable = false, length = 255)
     private String password;
 
+    @Column(name = "role", nullable = false, length = 50)
+    private String role;
+
+    @Column(name = "profile_picture_url", length = 255)
+    private String profilePictureUrl;
+
     public User() {}
 
-    public User(String username, String email, String password, String name) {
+    public User(String username, String email, String password, String name, String role, String profilePictureUrl) {
         this.username = username;
         this.email = email;
         this.password = password;
         this.name = name;
+        this.role = "";
+        this.profilePictureUrl = profilePictureUrl;
     }
     
     public Long getId() {
@@ -77,5 +86,21 @@ public class User {  // Removed 'abstract' keyword
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
+    }
+
+    public String getProfilePictureUrl() {
+        return profilePictureUrl;
+    }
+
+    public void setProfilePictureUrl(String profilePictureUrl) {
+        this.profilePictureUrl = profilePictureUrl;
     }
 }
