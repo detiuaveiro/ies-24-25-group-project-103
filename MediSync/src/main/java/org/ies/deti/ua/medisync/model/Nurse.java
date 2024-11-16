@@ -8,20 +8,21 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 import jakarta.persistence.Entity;
-import jakarta.persistence.ManyToMany;
+import jakarta.persistence.OneToMany;
 
 @Entity
 @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 public class Nurse extends User {
 
-    @OneToMany(mappedBy = "nurse", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "nurse")
     @JsonManagedReference
     private List<ScheduleEntry> schedule = new ArrayList<>();
 
     public Nurse() {
     }
 
-    public Nurse(String username, String email, String password, String name, List<ScheduleEntry> schedule, String profilePictureUrl) {
+    public Nurse(String username, String email, String password, String name, List<ScheduleEntry> schedule,
+            String profilePictureUrl) {
         super(username, email, password, name, "NURSE", profilePictureUrl);
         this.schedule = schedule;
     }
