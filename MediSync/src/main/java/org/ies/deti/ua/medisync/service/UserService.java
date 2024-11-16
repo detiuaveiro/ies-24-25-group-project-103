@@ -38,6 +38,7 @@ public class UserService {
     }
 
     public void updateProfilePicture(Long userId, String profilePictureUrl) {
+
         User user = userRepository.findById(userId)
             .orElseThrow(() -> new RuntimeException("User not found"));
         user.setProfilePictureUrl(profilePictureUrl);
