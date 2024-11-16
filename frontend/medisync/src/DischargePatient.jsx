@@ -23,10 +23,11 @@ export default function DischargePatient({showModal, setShowModal}) {
     
     return (
         <>
-            <Modal show={showModal} onHide={handleClose}>
+            <Modal show={showModal} onHide={handleClose} className="dischargeModal">
                 <h2>Discharge Patient</h2>
                 <p>Are you sure you want to discharge TEST?</p>
-                <button onClick={handleDischarge}>Discharge</button>
+                <button onClick={handleClose}>No, Cancel</button>
+                <button onClick={handleDischarge}>Yes, Discharge</button>
             </Modal>
         </>
     );
