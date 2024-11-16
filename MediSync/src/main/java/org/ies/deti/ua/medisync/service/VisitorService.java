@@ -77,6 +77,9 @@ public class VisitorService {
             sendVisitorNotification(code, phoneNumber);
         }
         else {
+            Code existingCode = codeRepository.findByPatientId(patient.getId());
+            existingCode.setCode(code);
+            codeRepository.save(existingCode);
             sendVisitorNotification(code, phoneNumber);   
         }
         return code;
@@ -87,8 +90,9 @@ public class VisitorService {
         sendSms(phoneNumber, message);
     }
 
-    public String verifyVisitorCode(String code) {
-        Code foundCode = codeRepository.findByCode(code);
+    public String verifyVisitorCode(String code, String phoneNumber) {
+        
+        Code foundCode = codeRepository.findByCodeAndPhoneNumber(code, phoneNumber);
         if (foundCode != null) {
             return patientService.getPatientBed(foundCode.getPatient()).toString();
         }

@@ -1,0 +1,88 @@
+.logoContainer {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+.page {
+  font-family: 'Montserrat', sans-serif;
+  background-color: #16195E;
+  color: white;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  margin: 0;
+}
+
+.medsyncContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.logo {
+  width: 150px;
+  margin-bottom: 1.5rem;
+}
+
+.medsyncInstruction {
+  font-size: 2.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.medsyncNumber {
+  font-size: 2.5rem;
+  font-weight: bold !important
+}
+
+.medsyncSubtitle {
+  font-size: 3.2rem;
+  margin-bottom: 1rem;
+}
+
+.medsyncInputContainer {
+  display: flex;
+  justify-content: center;
+  gap: 3rem; 
+}
+
+@keyframes typingAnimation {
+  0% {
+    border-bottom-color: white;
+  }
+  50% {
+    border-bottom-color: #636363; /* Golden effect */
+  }
+  100% {
+    border-bottom-color: white;
+  }
+}
+
+.inputBox {
+  width: 5rem;
+  height: 5rem;
+  font-size: 4.5rem;
+  text-align: center;
+  line-height: 4.5rem;
+  border-bottom: 2px solid white;
+  color: white;
+  background: transparent;
+  transition: border-bottom-color 0.2s ease-in-out;
+}
+
+.inputBox.active {
+  animation: typingAnimation 0.8s infinite;
+}
+
+.hiddenInput {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.medsyncInputContainer:hover {
+  cursor: pointer; 
+}

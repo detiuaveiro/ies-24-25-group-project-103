@@ -48,6 +48,7 @@ function Login() {
 
       setVisitorMessage(response.data);
       setVisitorError('');
+      navigate('/verify', { state: { phoneNumber: visitorPhoneNumber } });
     } catch (error) {
       setVisitorError('Visitor not allowed');
       setVisitorMessage('');
