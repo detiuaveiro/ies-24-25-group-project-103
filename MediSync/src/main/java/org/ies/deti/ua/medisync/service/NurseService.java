@@ -1,5 +1,6 @@
 package org.ies.deti.ua.medisync.service;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -44,6 +45,17 @@ public class NurseService {
     public List<Nurse> getAllNurses() {
         return nurseRepository.findAll();
     }
+    /*
+     * public List<Nurse> getAllActiveNurses() {
+     * List<Nurse> output = new ArrayList<>();
+     * for (Nurse nurse : nurseRepository.findAll()) {
+     * if (isactive(nurse.getId())) {
+     * output.add(nurse);
+     * }
+     * }
+     * return output;
+     * }
+     */
 
     public List<ScheduleEntry> getSchedules() {
         return scheduleEntryRepository.findAll();
@@ -55,11 +67,11 @@ public class NurseService {
 
     public List<Room> getRoomsByNurseId(Nurse nurse) {
         List<Room> rooms = new ArrayList<>();
-        Date now = new Date();
+        LocalDateTime now = LocalDateTime.now();
         for (ScheduleEntry entry : nurse.getSchedule()) {
             if (entry.getRoom() != null) {
                 if (entry.getStart_time() != null && entry.getEnd_time() != null) {
-                    if (entry.getStart_time().before(now) && entry.getEnd_time().after(now)) {
+                    if (entry.getStart_time().isBefore(now) && entry.getEnd_time().isAfter(now)) {
                         rooms.addAll(entry.getRoom());
                     }
                 }
@@ -69,6 +81,11 @@ public class NurseService {
     }
 
     public Nurse updateNurse(Long id, Nurse updatedNurse) {
+        /*
+         * if (!isactive(id)) {
+         * return null;
+         * }
+         */
         return nurseRepository.findById(id).map(existingNurse -> {
             existingNurse.setName(updatedNurse.getName());
             existingNurse.setUsername(updatedNurse.getUsername());
@@ -104,8 +121,7 @@ public class NurseService {
         Map<Bed, Patient> bedPatientMap = getAssignedBedsAndPatientsForNurse(nurse);
         List<PatientWithVitals> patientsWithVitals = new ArrayList<>();
 
-        for (Map.Entry<Bed, Patient> entry : bedPatientMap.entrySet()) {
-            Patient patient = entry.getValue();
+        for (Patient patient : bedPatientMap.values()) {
             Optional<PatientWithVitals> patientWithVitals = patientService.getPatientWithVitalsById(patient.getId());
             patientWithVitals.ifPresent(patientsWithVitals::add);
         }
@@ -114,33 +130,41 @@ public class NurseService {
     }
 
     public Nurse addScheduleEntryToNurse(Long nurseId, ScheduleEntry newEntry) {
+        /*
+         * if (!isactive(nurseId)) {
+         * return null;
+         * }
+         */
         Optional<Nurse> nurseOpt = nurseRepository.findById(nurseId);
         if (nurseOpt.isPresent()) {
             Nurse nurse = nurseOpt.get();
-            Optional<ScheduleEntry> existingEntryOpt = scheduleEntryRepository.findById(newEntry.getId());
 
-            if (!existingEntryOpt.isPresent()) {
-                // Handle rooms
-                List<Room> rooms = new ArrayList<>();
-                for (Room room : newEntry.getRoom()) {
-                    Optional<Room> roomOpt = roomRepository.findById(room.getId());
-                    roomOpt.ifPresentOrElse(
-                            rooms::add,
-                            () -> rooms.add(roomRepository.save(room)) // Save if room doesn't exist
-                    );
+            // Validate for overlapping schedules
+            for (ScheduleEntry existing : nurse.getSchedule()) {
+                boolean hasOverlap = !(newEntry.getEnd_time().isBefore(existing.getEnd_time()) ||
+                        newEntry.getEnd_time().isAfter(existing.getEnd_time()));
+                if (hasOverlap) {
+                    // Return null to indicate a conflict
+                    return null;
                 }
-                newEntry.setRoom(rooms);
-                newEntry = scheduleEntryRepository.save(newEntry);
-
-                // Update the bidirectional relationship
-                for (Room room : rooms) {
-                    room.getScheduleEntries().add(newEntry);
-                    roomRepository.save(room);
-                }
-            } else {
-                nurse.addScheduleEntry(existingEntryOpt.get());
             }
+            newEntry.setNurse(nurse);
 
+            // Associate Rooms
+            List<Room> associatedRooms = new ArrayList<>();
+            for (Room room : newEntry.getRoom()) {
+                Room existingRoom = roomRepository.findById(room.getId()).orElse(null);
+                if (existingRoom != null) {
+                    associatedRooms.add(existingRoom);
+                }
+            }
+            newEntry.setRoom(associatedRooms);
+            newEntry = scheduleEntryRepository.save(newEntry);
+            for (Room room : associatedRooms) {
+                room.getScheduleEntries().add(newEntry);
+                roomRepository.save(room);
+            }
+            nurse.addScheduleEntry(newEntry);
             return nurseRepository.save(nurse);
         } else {
             return null;
@@ -148,57 +172,82 @@ public class NurseService {
     }
 
     public Nurse updateScheduleEntryFromNurse(Long nurseId, Long before_entryId, ScheduleEntry updatedEntry) {
-        Optional<Nurse> nurseOpt = nurseRepository.findById(nurseId);
-        if (!nurseOpt.isPresent()) {
-            return null;
+        /*
+         * if (!isactive(nurseId)) {
+         * return null;
+         * }
+         */
+        Optional<Nurse> nurseOptional = nurseRepository.findById(nurseId);
+        if (nurseOptional.isEmpty()) {
+            return null; // Nurse not found
         }
-        Nurse nurse = nurseOpt.get();
+        Nurse nurse = nurseOptional.get();
 
-        Optional<ScheduleEntry> entryOpt = nurse.getSchedule().stream()
+        // Retrieve the schedule entry to be updated
+        Optional<ScheduleEntry> beforeEntryOptional = nurse.getSchedule().stream()
                 .filter(entry -> entry.getId().equals(before_entryId))
                 .findFirst();
+        if (beforeEntryOptional.isEmpty()) {
+            return null; // Schedule entry not found
+        }
+        ScheduleEntry beforeEntry = beforeEntryOptional.get();
 
-        if (!entryOpt.isPresent()) {
-            return null;
+        // Ensure no overlap with existing schedule entries (excluding the one being
+        // updated)
+        boolean hasOverlap = nurse.getSchedule().stream()
+                .filter(entry -> !entry.getId().equals(before_entryId)) // Exclude the current entry
+                .anyMatch(entry -> updatedEntry.getStart_time().isBefore(entry.getEnd_time()) &&
+                        updatedEntry.getEnd_time().isAfter(entry.getStart_time()));
+        if (hasOverlap) {
+            return null; // Return null to indicate schedule overlap
         }
 
-        ScheduleEntry existingEntry = entryOpt.get();
+        // Update the existing entry with new values
+        beforeEntry.setStart_time(updatedEntry.getStart_time());
+        beforeEntry.setEnd_time(updatedEntry.getEnd_time());
+        beforeEntry.setInterval(updatedEntry.isInterval());
 
-        List<Nurse> associatedNurses = existingEntry.getNurses();
-        if (associatedNurses.contains(nurse) && associatedNurses.size() == 1) {
-            existingEntry.setStart_time(updatedEntry.getStart_time());
-            existingEntry.setEnd_time(updatedEntry.getEnd_time());
-            existingEntry.setRoom(updatedEntry.getRoom());
-            scheduleEntryRepository.save(existingEntry);
-        } else {
-            existingEntry.removeNurse(nurse);
-            scheduleEntryRepository.save(existingEntry);
-            updatedEntry.addNurse(nurse);
-            scheduleEntryRepository.save(updatedEntry);
+        beforeEntry.setRoom(updatedEntry.getRoom());
+
+        // Save the rooms individually to ensure they are persisted
+        for (Room room1 : beforeEntry.getRoom()) {
+            Optional<Room> roomOpt = roomRepository.findById(room1.getId());
+            Room room = roomOpt.get();
+            if (!room.getScheduleEntries().contains(beforeEntry)) {
+                room.getScheduleEntries().add(beforeEntry); // Add the entry to the room's schedule entries
+                roomRepository.save(room);
+            }
         }
 
+        scheduleEntryRepository.save(beforeEntry);
+        // Save the nurse with the updated schedule
         return nurseRepository.save(nurse);
     }
 
-    public Nurse removeScheduleEntryFromNurse(Long nurseId, Long entryId) {
+    public Nurse removeScheduleEntryFromNurse(Long nurseId, Long before_entryId) {
         Optional<Nurse> nurseOpt = nurseRepository.findById(nurseId);
 
         if (nurseOpt.isPresent()) {
             Nurse nurse = nurseOpt.get();
 
-            ScheduleEntry entryToRemove = nurse.getSchedule().stream()
-                    .filter(entry -> entry.getId().equals(entryId))
-                    .findFirst()
-                    .orElse(null);
-            if (entryToRemove != null) {
-                List<Nurse> associatedNurses = entryToRemove.getNurses();
-                if (associatedNurses.contains(nurse) && associatedNurses.size() == 1) {
-                    scheduleEntryRepository.delete(entryToRemove);
-                } else {
-                    nurse.getSchedule().remove(entryToRemove);
-                }
-                return nurseRepository.save(nurse);
+            Optional<ScheduleEntry> beforeEntryOptional = nurse.getSchedule().stream()
+                    .filter(entry -> entry.getId().equals(before_entryId))
+                    .findFirst();
+            if (beforeEntryOptional.isEmpty()) {
+                return null; // Schedule entry not found
             }
+            ScheduleEntry beforeEntry = beforeEntryOptional.get();
+
+            for (Room room : beforeEntry.getRoom()) {
+                if (room.getScheduleEntries().contains(beforeEntry)) {
+                    room.getScheduleEntries().remove(beforeEntry);
+                    roomRepository.save(room);
+                }
+            }
+
+            nurse.getSchedule().remove(beforeEntry);
+            scheduleEntryRepository.delete(beforeEntry);
+            return nurseRepository.save(nurse);
         }
         return null;
     }
@@ -208,15 +257,24 @@ public class NurseService {
     }
 
     public void deleteNurse(Long nurseId) {
-        Nurse nurse = nurseRepository.findById(nurseId)
-                .orElseThrow(() -> new RuntimeException("Nurse not found"));
-
-        nurse.cleanupUnassociatedScheduleEntries();
-
-        nurseRepository.delete(nurse);
+        Optional<Nurse> nurseOpt = nurseRepository.findById(nurseId);
+        /*
+         * if (nurseOpt.isPresent()) {
+         * Nurse nurse = nurseOpt.get();
+         * if (nurse.isIsactive()) {
+         * nurse.setIsactive(false);
+         * }
+         * }
+         */
     }
 
     public Nurse addNurse(Nurse nurse) {
         return nurseRepository.save(nurse);
     }
+    /*
+     * public boolean isactive(Long nurseid) {
+     * Optional<Nurse> nurse = nurseRepository.findById(nurseid);
+     * return nurse.get().isIsactive();
+     * }
+     */
 }

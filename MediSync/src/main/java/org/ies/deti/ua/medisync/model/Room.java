@@ -30,7 +30,6 @@ public class Room {
 
     @ManyToMany
     @JoinTable(name = "schedule_rooms", joinColumns = @JoinColumn(name = "room_id"), inverseJoinColumns = @JoinColumn(name = "schedule_id"))
-    @JsonIgnore
     private List<ScheduleEntry> scheduleEntries;
 
     public Room() {

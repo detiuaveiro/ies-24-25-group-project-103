@@ -1,9 +1,11 @@
 package org.ies.deti.ua.medisync.model;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
@@ -15,6 +17,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
@@ -28,13 +31,11 @@ public class ScheduleEntry {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Temporal(TemporalType.DATE)
-    @Column(name = "start_time", nullable = false)
-    private Date start_time;
+    @Column(name = "start_time", nullable = false, columnDefinition = "TIMESTAMP")
+    private LocalDateTime start_time;
 
-    @Temporal(TemporalType.DATE)
-    @Column(name = "end_time", nullable = false)
-    private Date end_time;
+    @Column(name = "end_time", nullable = false, columnDefinition = "TIMESTAMP")
+    private LocalDateTime end_time;
 
     @Column(name = "is_interval", nullable = false)
     private boolean isInterval;
@@ -42,18 +43,17 @@ public class ScheduleEntry {
     @ManyToMany(mappedBy = "scheduleEntries")
     private List<Room> rooms;
 
-    @ManyToMany
-    @JoinTable(
-            name = "schedule_nurse",
-            joinColumns = @JoinColumn(name = "schedule_id"),
-            inverseJoinColumns = @JoinColumn(name = "nurse_id")
-    )
-    private List<Nurse> nurses = new ArrayList<>();
+    @ManyToOne
+    @JoinColumn(name = "nurse_id", nullable = false)
+    @JsonBackReference
+    private Nurse nurse;
 
     // Constructors
-    public ScheduleEntry() {}
+    public ScheduleEntry() {
+    }
 
-    public ScheduleEntry(String timeSlot, boolean isInterval, List<Room> rooms, Date startTime, Date endTime) {
+    public ScheduleEntry(String timeSlot, boolean isInterval, List<Room> rooms, LocalDateTime startTime,
+            LocalDateTime endTime) {
         this.start_time = startTime;
         this.end_time = endTime;
         this.isInterval = isInterval;
@@ -69,23 +69,28 @@ public class ScheduleEntry {
         this.id = id;
     }
 
-    public Date getStart_time() {
+    public LocalDateTime getStart_time() {
         return start_time;
     }
-    public void setStart_time(Date start_time) {
+
+    public void setStart_time(LocalDateTime start_time) {
         this.start_time = start_time;
     }
-    public Date getEnd_time() {
+
+    public LocalDateTime getEnd_time() {
         return end_time;
     }
-    public void setEnd_time(Date end_time) {
+
+    public void setEnd_time(LocalDateTime end_time) {
         this.end_time = end_time;
     }
-    public void setNurses(List<Nurse> nurses) {
-        this.nurses = nurses;
+
+    public Nurse getNurse() {
+        return nurse;
     }
-    public List<Nurse> getNurses() {
-        return nurses;
+
+    public void setNurse(Nurse nurse) {
+        this.nurse = nurse;
     }
 
     public boolean isInterval() {
@@ -96,22 +101,11 @@ public class ScheduleEntry {
         this.isInterval = isInterval;
     }
 
-
     public List<Room> getRoom() {
         return rooms;
     }
 
     public void setRoom(List<Room> rooms) {
         this.rooms = rooms;
-    }
-
-    public void addNurse(Nurse nurse) {
-        nurses.add(nurse);
-        nurse.getSchedule().add(this);
-    }
-
-    public void removeNurse(Nurse nurse) {
-        nurses.remove(nurse);
-        nurse.getSchedule().remove(this);
     }
 }

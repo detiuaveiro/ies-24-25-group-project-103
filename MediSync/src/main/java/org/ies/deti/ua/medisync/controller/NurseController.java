@@ -50,7 +50,21 @@ public class NurseController {
     @PostMapping("/{nurseId}/schedule") // Issue #154
     public ResponseEntity<Nurse> addScheduleEntry(@PathVariable Long nurseId, @RequestBody ScheduleEntry newEntry) {
         Nurse updatedNurse = nurseService.addScheduleEntryToNurse(nurseId, newEntry);
-        return updatedNurse != null ? ResponseEntity.ok(updatedNurse) : ResponseEntity.notFound().build();
+
+        if (updatedNurse == null) {
+            // Check if the null was due to an overlap or the nurse not being found
+            Optional<Nurse> nurseOpt = nurseService.getNurseById(nurseId);
+            if (nurseOpt.isPresent()) {
+                // Conflict due to schedule overlap
+                return ResponseEntity.status(HttpStatus.CONFLICT).build();
+            } else {
+                // Nurse not found
+                return ResponseEntity.notFound().build();
+            }
+        }
+
+        // Success
+        return ResponseEntity.ok(updatedNurse);
     }
 
     // Update a Schedule Entry from a specified nurse
@@ -91,11 +105,19 @@ public class NurseController {
     }
 
     // Get all nurses FEITO
-    @GetMapping // Issue #79
+    @GetMapping("/all") // Issue #79
     public ResponseEntity<List<Nurse>> getAllNurses() {
         List<Nurse> nurses = nurseService.getAllNurses();
         return ResponseEntity.ok(nurses);
     }
+
+    /*
+     * @GetMapping // Issue #79
+     * public ResponseEntity<List<Nurse>> getAllActiveNurses() {
+     * List<Nurse> nurses = nurseService.getAllActiveNurses();
+     * return ResponseEntity.ok(nurses);
+     * }
+     */
 
     // Get nurse by ID FEITO
     @GetMapping("/{id}") // Issue #80

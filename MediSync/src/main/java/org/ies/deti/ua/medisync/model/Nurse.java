@@ -1,6 +1,7 @@
 package org.ies.deti.ua.medisync.model;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
 
@@ -13,10 +14,12 @@ import java.util.Set;
 @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 public class Nurse extends User {
 
-    @ManyToMany(mappedBy = "nurses")
+    @OneToMany(mappedBy = "nurse", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
     private List<ScheduleEntry> schedule = new ArrayList<>();
 
-    public Nurse() {}
+    public Nurse() {
+    }
 
     public Nurse(String username, String email, String password, String name, List<ScheduleEntry> schedule) {
         super(username, email, password, name);
@@ -32,16 +35,12 @@ public class Nurse extends User {
     }
 
     public void addScheduleEntry(ScheduleEntry entry) {
-        this.schedule.add(entry);
-        entry.getNurses().add(this);
+        schedule.add(entry);
+        entry.setNurse(this);
     }
 
     public void removeScheduleEntry(ScheduleEntry entry) {
-        this.schedule.remove(entry);
-        entry.getNurses().remove(this);
-    }
-
-    public void cleanupUnassociatedScheduleEntries() {
-        schedule.removeIf(entry -> entry.getNurses().isEmpty());
+        schedule.remove(entry);
+        entry.setNurse(null);
     }
 }
