@@ -16,6 +16,7 @@ import org.ies.deti.ua.medisync.model.Room;
 import org.ies.deti.ua.medisync.model.ScheduleEntry;
 import org.ies.deti.ua.medisync.repository.BedRepository;
 import org.ies.deti.ua.medisync.repository.NurseRepository;
+import org.ies.deti.ua.medisync.repository.RoomRepository;
 import org.ies.deti.ua.medisync.repository.ScheduleEntryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -26,20 +27,26 @@ public class NurseService {
     private final NurseRepository nurseRepository;
     private final BedRepository bedRepository;
     private final ScheduleEntryRepository scheduleEntryRepository;
+    private final RoomRepository roomRepository;
 
     @Autowired
     private final PatientService patientService;
 
     public NurseService(NurseRepository nurseRepository, ScheduleEntryRepository scheduleEntryRepository,
-            BedRepository bedRepository, PatientService patientService) {
+            BedRepository bedRepository, PatientService patientService, RoomRepository roomRepository) {
         this.nurseRepository = nurseRepository;
         this.scheduleEntryRepository = scheduleEntryRepository;
         this.bedRepository = bedRepository;
         this.patientService = patientService;
+        this.roomRepository = roomRepository;
     }
 
     public List<Nurse> getAllNurses() {
         return nurseRepository.findAll();
+    }
+
+    public List<ScheduleEntry> getSchedules() {
+        return scheduleEntryRepository.findAll();
     }
 
     public Optional<Nurse> getNurseById(Long nurseId) {
@@ -111,12 +118,29 @@ public class NurseService {
         if (nurseOpt.isPresent()) {
             Nurse nurse = nurseOpt.get();
             Optional<ScheduleEntry> existingEntryOpt = scheduleEntryRepository.findById(newEntry.getId());
+
             if (!existingEntryOpt.isPresent()) {
+                // Handle rooms
+                List<Room> rooms = new ArrayList<>();
+                for (Room room : newEntry.getRoom()) {
+                    Optional<Room> roomOpt = roomRepository.findById(room.getId());
+                    roomOpt.ifPresentOrElse(
+                            rooms::add,
+                            () -> rooms.add(roomRepository.save(room)) // Save if room doesn't exist
+                    );
+                }
+                newEntry.setRoom(rooms);
                 newEntry = scheduleEntryRepository.save(newEntry);
+
+                // Update the bidirectional relationship
+                for (Room room : rooms) {
+                    room.getScheduleEntries().add(newEntry);
+                    roomRepository.save(room);
+                }
+            } else {
+                nurse.addScheduleEntry(existingEntryOpt.get());
             }
 
-            // Adicionar a newEntry ao enfermeiro
-            nurse.addScheduleEntry(newEntry);
             return nurseRepository.save(nurse);
         } else {
             return null;

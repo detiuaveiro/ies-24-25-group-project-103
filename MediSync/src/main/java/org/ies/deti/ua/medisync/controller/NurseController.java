@@ -40,6 +40,12 @@ public class NurseController {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
     }
 
+    @GetMapping("/schedules")
+    public ResponseEntity<List<ScheduleEntry>> getScheduleEntrys() {
+        List<ScheduleEntry> scheduleEntries = nurseService.getSchedules();
+        return ResponseEntity.ok(scheduleEntries);
+    }
+
     // Add a Schedule Entry to a specified Nurse
     @PostMapping("/{nurseId}/schedule") // Issue #154
     public ResponseEntity<Nurse> addScheduleEntry(@PathVariable Long nurseId, @RequestBody ScheduleEntry newEntry) {
