@@ -38,6 +38,8 @@ public class VisitorController {
 
     @PostMapping("/checkcode")
     public ResponseEntity<String> checkCode(@RequestBody CodeVerification code) {
+        System.out.println(code.getCode());
+        System.out.println(code.getPhoneNumber());
         String bed = visitorService.verifyVisitorCode(code.getCode(), code.getPhoneNumber());
         if (bed == null) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Code not valid");

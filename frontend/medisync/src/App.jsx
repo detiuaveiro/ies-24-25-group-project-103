@@ -31,7 +31,6 @@ function Main() {
           <Route path="/park" element={<DischargePatient showModal={showModal} setShowModal={setShowModal}/>} />
         </Routes>
       </Header>}
-
       <Routes>
         <Route path="/" element={<Login />} />
         <Route path="/verify" element={<CodeVerification />} />
