@@ -105,7 +105,7 @@ public class NurseController {
     }
 
     // Get all nurses FEITO
-    @GetMapping("/all") // Issue #79
+    @GetMapping // Issue #79
     public ResponseEntity<List<Nurse>> getAllNurses() {
         List<Nurse> nurses = nurseService.getAllNurses();
         return ResponseEntity.ok(nurses);
