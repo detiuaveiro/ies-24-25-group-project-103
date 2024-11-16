@@ -17,19 +17,21 @@ function App() {
 function Main() {
   const location = useLocation();
 
-  // Define routes where the Header should not appear
   const headerExcludedRoutes = ['/', '/verify'];
-
   const shouldShowHeader = !headerExcludedRoutes.includes(location.pathname);
 
   return (
     <>
-      {shouldShowHeader && <Header />}
+      {shouldShowHeader && <Header> {}
+        <Routes>
+          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/patients" element={<Patients />} />
+        </Routes>
+      </Header>}
+      
       <Routes>
         <Route path="/" element={<Login />} />
         <Route path="/verify" element={<CodeVerification />} />
-        <Route path="/dashboard" element={<Dashboard />} />
-        <Route path="/patients" element={<Patients />} />
       </Routes>
     </>
   );

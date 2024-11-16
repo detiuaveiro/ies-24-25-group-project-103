@@ -5,37 +5,36 @@ import styles from './CodeVerification.module.css';
 
 function CodeVerification() {
   const [code, setCode] = useState('');
-  const [errorMessage, setErrorMessage] = useState(''); // Track error message
+  const [activeIndex, setActiveIndex] = useState(0);
+
+  const [errorMessage, setErrorMessage] = useState('');
   const location = useLocation();
   const inputRef = useRef(null);
-  const phoneNumber = location.state?.phoneNumber || 'Unknown';
+  const phoneNumber = location.state?.phoneNumber || '';
 
   const handleInputChange = async (e) => {
-    const value = e.target.value.replace(/\D/g, ''); // Allow only digits
+    const value = e.target.value.replace(/\D/g, '');
     if (value.length <= 6) {
       setCode(value);
-      setErrorMessage(''); // Clear any previous error
+      setErrorMessage('');
+      setActiveIndex(value.length);
 
       if (value.length === 6) {
-        await checkCode(value); // Trigger API call when 6 digits are entered
+        await checkCode(value);
       }
     }
   };
 
   const handleContainerClick = () => {
-    inputRef.current?.focus(); // Ensure hidden input is focused when container is clicked
+    inputRef.current?.focus(); 
   };
 
   const checkCode = async (code) => {
     try {
       const response = await axios.post(
         'http://localhost:8080/api/v1/visitors/checkcode',
-        code,
-        {
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        }
+        { code: code, phoneNumber: phoneNumber },
+        { withCredentials: true }
       );
 
       console.log('Valid code, bed:', response.data); // Handle success as needed
@@ -63,9 +62,9 @@ function CodeVerification() {
           {[...Array(6)].map((_, index) => (
             <span
               key={index}
-              className={styles.inputBox}
+              className={`${styles.inputBox} ${activeIndex === index ? styles.active : ''}`}
             >
-              {code[index] || ''} {/* Show input character or placeholder */}
+              {code[index] || ''} {}
             </span>
           ))}
           <input
@@ -78,7 +77,6 @@ function CodeVerification() {
             autoFocus
           />
         </div>
-        {errorMessage && <p className={styles.errorMessage}>{errorMessage}</p>}
       </div>
     </div>
   );
