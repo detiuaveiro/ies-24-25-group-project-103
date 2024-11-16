@@ -30,11 +30,15 @@ public class JwtFilter extends OncePerRequestFilter {
         String path = request.getRequestURI();
         String method = request.getMethod();
 
-        return path.startsWith("/api/v1/visitors") || 
-        // path.contains("/api/v1/auth/register") || // If in the future we want a register endpoint
+        boolean shouldNotFilter = path.startsWith("/api/v1/visitors") || 
         path.equals("/api/v1/auth/login") || 
         (path.equals("/api/v1/users") && method.equals("POST")) || 
         method.equals("OPTIONS");
+        System.out.println("Request URI: " + path);
+        System.out.println("Method: " + method);
+        System.out.println("Should Not Filter: " + shouldNotFilter);
+
+        return shouldNotFilter;
     }
 
     @Override
