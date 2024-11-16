@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 import jakarta.persistence.Entity;
@@ -13,7 +14,8 @@ import jakarta.persistence.ManyToMany;
 @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 public class Nurse extends User {
 
-    @ManyToMany(mappedBy = "nurses")
+    @OneToMany(mappedBy = "nurse", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
     private List<ScheduleEntry> schedule = new ArrayList<>();
 
     public Nurse() {
@@ -37,16 +39,12 @@ public class Nurse extends User {
     }
 
     public void addScheduleEntry(ScheduleEntry entry) {
-        this.schedule.add(entry);
-        entry.getNurses().add(this);
+        schedule.add(entry);
+        entry.setNurse(this);
     }
 
     public void removeScheduleEntry(ScheduleEntry entry) {
-        this.schedule.remove(entry);
-        entry.getNurses().remove(this);
-    }
-
-    public void cleanupUnassociatedScheduleEntries() {
-        schedule.removeIf(entry -> entry.getNurses().isEmpty());
+        schedule.remove(entry);
+        entry.setNurse(null);
     }
 }
