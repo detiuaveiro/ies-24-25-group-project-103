@@ -1,0 +1,147 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@900&display=swap');
+
+.notification-widget-container {
+    width: 100%;
+    padding: 20px;
+    font-family: 'Montserrat', sans-serif; /* Default font for the container */
+    background-color: #f0f4ff;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    position: relative;
+}
+
+.notification-widget-header {
+    font-size: 24px;
+    color: #222;
+    margin-bottom: 10px;
+    font-family: 'Montserrat', sans-serif; /* Montserrat font */
+    font-weight: 900; /* Bold for emphasis */
+}
+
+.notification-widget-clean-all-btn {
+    background-color: #4a4a4a;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    font-size: 14px;
+    border-radius: 20px;
+    cursor: pointer;
+    text-transform: uppercase;
+    font-weight: bold;
+    margin-bottom: 10px;
+    width: auto;
+    float: right;
+    font-family: 'Montserrat', sans-serif; /* Montserrat font */
+    font-weight: 500; /* Medium weight for buttons */
+}
+
+.notification-widget-clean-all-btn:hover {
+    background-color: #333;
+}
+
+.notification-widget-button {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 15px;
+}
+
+.notification-widget-list {
+    margin-top: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.notification-widget-card {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    width: 100%;
+    padding: 15px;
+    border-radius: 8px;
+    background-color: #eef4ff;
+    border-left: 5px solid #669afc;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+    transition: all 0.3s ease;
+    position: relative;
+    font-family: 'Montserrat', sans-serif; /* Default for notification cards */
+}
+
+.notification-widget-card.warning {
+    background-color: #fff9e6;
+    border-left: 5px solid #f9d97a;
+}
+
+.notification-widget-card.cleanprep,
+.notification-widget-card.discharge {
+    background-color: #fff7e0;
+    border-left: 5px solid #f7c94d;
+}
+
+.notification-widget-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.notification-widget-header-content {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    gap: 10px;
+    margin-bottom: 8px;
+}
+
+.notification-widget-header-content h3 {
+    font-size: 18px;
+    margin: 0;
+    font-weight: 900; /* Bold weight for titles */
+    color: #222;
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    font-family: 'Montserrat', sans-serif;
+}
+
+.notification-widget-header-content h3 span {
+    font-size: 20px;
+    margin-right: 10px;
+    color: #007bff;
+}
+
+.notification-widget-card-description {
+    font-size: 16px;
+    color: #444;
+    line-height: 1.6;
+    margin: 0;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 300; /* Light weight for descriptions */
+}
+
+.notification-widget-close-btn {
+    background: none;
+    border: none;
+    font-size: 16px;
+    cursor: pointer;
+    color: #666;
+    padding: 5px;
+    margin-left: auto;
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    width: auto;
+    height: auto;
+}
+
+.notification-widget-close-btn:hover {
+    color: #333;
+}
+
+.notification-widget-error-message {
+    color: red;
+    text-align: center;
+    margin-top: 20px;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 500; /* Medium weight for error messages */
+}
