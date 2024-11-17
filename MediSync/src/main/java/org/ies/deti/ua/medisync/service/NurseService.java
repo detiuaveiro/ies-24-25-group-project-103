@@ -164,7 +164,9 @@ public class NurseService {
             newEntry.setRoom(associatedRooms);
             newEntry = scheduleEntryRepository.save(newEntry);
             for (Room room : associatedRooms) {
-                room.getScheduleEntries().add(newEntry);
+                if (!room.getScheduleEntries().contains(newEntry)) {
+                    room.getScheduleEntries().add(newEntry); // Add new schedule entry
+                }
                 roomRepository.save(room);
             }
             nurse.addScheduleEntry(newEntry);
