@@ -1,0 +1,31 @@
+.bmiContainer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #ffffff;
+    color:black;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    padding: 1rem;
+    margin: 2rem 2rem;
+  }
+  
+  .bmiDetails {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+  }
+  
+  .bmiLabel {
+    text-align: center;
+  }
+  
+  .bmiValue {
+    text-align: center;
+  }
+  
+  .bmiValue h2 {
+    font-size: 2rem;
+    color: #4CAF50;
+  }
+  

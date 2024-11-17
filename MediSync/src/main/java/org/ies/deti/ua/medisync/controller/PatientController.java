@@ -4,7 +4,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import org.ies.deti.ua.medisync.model.*;
+import org.ies.deti.ua.medisync.model.Bed;
+import org.ies.deti.ua.medisync.model.Doctor;
+import org.ies.deti.ua.medisync.model.Medication;
+import org.ies.deti.ua.medisync.model.Patient;
+import org.ies.deti.ua.medisync.model.PatientWithVitals;
 import org.ies.deti.ua.medisync.repository.PatientRepository;
 import org.ies.deti.ua.medisync.service.PatientService;
 import org.springframework.beans.factory.annotation.Autowired;
