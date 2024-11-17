@@ -24,7 +24,7 @@ export default function HeartRateAlert({ showModal, setShowModal, patient, value
 
     return (
         <>
-            <Modal show={showModal} onHide={handleClose} centered>
+            <Modal show={showModal} onHide={handleClose} className="heart-rate" centered>
                 <Modal.Body className="custom-modal-body">
                     <div className="alert-text">
                         <span className="heart-rate">{value}</span><span className="bpm">bpm</span>
