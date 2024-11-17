@@ -1,63 +1,140 @@
 .roomsContainer {
     padding: 20px;
+    width: 100%;
+}
+
+.headerContainer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+    padding: 20px;
+    width: 100%;
+    background: transparent;
+    box-shadow: none;
 }
 
 .title {
     color: #271E4A;
-    margin-bottom: 20px;
-    font-size: 24px;
+    font-size: 48px;
+    margin: 0;
+    font-weight: bold;
+}
+
+.searchContainer {
+    position: relative;
+    width: 400px;
+}
+
+.searchInput {
+    width: 100%;
+    padding: 12px 40px;
+    border: 2px solid #D5DEED;
+    border-radius: 8px;
+    font-size: 16px;
+    color: #271E4A;
+    background-color: white;
+    transition: border-color 0.3s ease;
+}
+
+.searchInput:focus {
+    outline: none;
+    border-color: #271E4A;
+}
+
+.searchInput::placeholder {
+    color: #8991A5;
+}
+
+.searchIcon {
+    position: absolute;
+    left: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #8991A5;
+    font-size: 18px;
 }
 
 .tableContainer {
-    background: white;
-    border-radius: 8px;
-    padding: 20px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    margin: 0 -20px;
+    width: calc(100% + 40px);
+    position: relative;
 }
 
 .roomsTable {
     width: 100%;
     border-collapse: collapse;
-    margin-top: 20px;
+}
+
+.roomsTable thead::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    height: 60px;
+    background-color: #E6EAF5;
+    z-index: 1;
+}
+
+.roomsTable thead tr {
+    position: relative;
+    z-index: 2;
 }
 
 .roomsTable th {
-    background-color: #F0F2F8;
     color: #271E4A;
-    padding: 12px;
-    text-align: left;
+    padding: 20px;
     font-weight: 600;
+    background: transparent;
+    text-align: center;
+    font-size: 16px;
 }
 
 .roomsTable td {
-    padding: 12px;
+    padding: 20px;
     border-bottom: 1px solid #eee;
     color: #271E4A;
+    text-align: center;
+    font-size: 16px;
+}
+
+.roomsTable td:last-child {
+    text-align: center; /* Center the last column */
+}
+
+.roomsTable tbody tr:hover {
+    background-color: #F8F9FC;
 }
 
 .moreInfoButton {
-    background-color: #D5DEED;
+    background-color: #E6EAF5;
     color: #271E4A;
     border: none;
-    padding: 8px 16px;
+    padding: 12px 20px;
     border-radius: 6px;
     cursor: pointer;
-    font-size: 14px;
+    font-size: 16px;
+    width: 200px;
+    text-align: center;
+    margin: 0 auto; /* Center the button in its cell */
+    display: block; /* Makes margin: 0 auto work */
 }
 
 .moreInfoButton:hover {
-    background-color: #c1cde6;
+    background-color: #d5d9e4;
 }
 
-.loading {
+.loadingContainer {
     text-align: center;
     padding: 20px;
+    font-size: 16px;
     color: #271E4A;
 }
 
-.error {
+.errorContainer {
     text-align: center;
     padding: 20px;
+    font-size: 16px;
     color: #dc3545;
     background-color: #f8d7da;
     border-radius: 4px;

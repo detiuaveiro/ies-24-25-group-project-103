@@ -1,13 +1,15 @@
+// Rooms.jsx
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import styles from './Rooms.module.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faBed } from '@fortawesome/free-solid-svg-icons';
+import { faBed, faSearch } from '@fortawesome/free-solid-svg-icons';
 
 function Rooms() {
     const [rooms, setRooms] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [searchTerm, setSearchTerm] = useState('');
     const token = localStorage.getItem('token');
 
     useEffect(() => {
@@ -35,18 +37,41 @@ function Rooms() {
         }
     }, [token]);
 
-    // Helper function to get floor number from room number
     const getFloor = (roomNumber) => roomNumber.charAt(0);
     
-    // Helper function to get room number (second digit)
     const getRoomNumber = (roomNumber) => roomNumber.charAt(1);
+
+    const filteredRooms = rooms.filter(room => {
+        const searchLower = searchTerm.toLowerCase();
+        const floor = getFloor(room.roomNumber);
+        const roomNum = getRoomNumber(room.roomNumber);
+        
+        // Match floor number or room number or combined search
+        return searchLower === '' || 
+               `floor ${floor}`.includes(searchLower) ||
+               `room ${roomNum}`.includes(searchLower) ||
+               `floor ${floor} room ${roomNum}`.includes(searchLower);
+    });
 
     if (loading) return <div className={styles.loadingContainer}>Loading rooms...</div>;
     if (error) return <div className={styles.errorContainer}>Error: {error}</div>;
 
     return (
         <div className={styles.roomsContainer}>
-            <h1 className={styles.title}>List of Rooms</h1>
+            <div className={styles.headerContainer}>
+                <h1 className={styles.title}>List of Rooms</h1>
+                <div className={styles.searchContainer}>
+                    <FontAwesomeIcon icon={faSearch} className={styles.searchIcon} />
+                    <input
+                        type="text"
+                        placeholder="Search by floor or room (e.g., 'floor 1' or 'room 3')"
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                        className={styles.searchInput}
+                    />
+                </div>
+            </div>
+
             <div className={styles.tableContainer}>
                 <table className={styles.roomsTable}>
                     <thead>
@@ -59,7 +84,7 @@ function Rooms() {
                         </tr>
                     </thead>
                     <tbody>
-                        {rooms.map(room => (
+                        {filteredRooms.map(room => (
                             <tr key={room.id}>
                                 <td>{getFloor(room.roomNumber)}</td>
                                 <td>{getRoomNumber(room.roomNumber)}</td>
