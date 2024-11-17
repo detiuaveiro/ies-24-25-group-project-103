@@ -60,6 +60,10 @@ public class NurseService {
         return scheduleEntryRepository.findAll();
     }
 
+    public List<ScheduleEntry> getScheduleEntriesFromNurse(Long id) {
+        return scheduleEntryRepository.findByNurseId(id);
+    }
+
     public Optional<Nurse> getNurseById(Long nurseId) {
         return nurseRepository.findById(nurseId);
     }
