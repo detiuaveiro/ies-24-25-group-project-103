@@ -1,15 +1,15 @@
 package org.ies.deti.ua.medisync.model;
 
 public class Vitals {
-    private Long HeartRate;
-    private Long BloodPressureDiastolic;
-    private Long BloodPressureSystolic;
-    private Long Temperature;
-    private Long OxygenSaturation;
+    private Double HeartRate;
+    private Double BloodPressureDiastolic;
+    private Double BloodPressureSystolic;
+    private Double Temperature;
+    private Double OxygenSaturation;
 
     public Vitals() {}
 
-    public Vitals(Long HeartRate, Long BloodPressureDiastolic, Long BloodPressureSystolic, Long Temperature, Long OxygenSaturation) {
+    public Vitals(Double HeartRate, Double BloodPressureDiastolic, Double BloodPressureSystolic, Double Temperature, Double OxygenSaturation) {
         this.HeartRate = HeartRate;
         this.BloodPressureDiastolic = BloodPressureDiastolic;
         this.BloodPressureSystolic = BloodPressureSystolic;
@@ -17,43 +17,43 @@ public class Vitals {
         this.OxygenSaturation = OxygenSaturation;
     }
 
-    public Long getHeartRate() {
+    public Double getHeartRate() {
         return HeartRate;
     }
 
-    public void setHeartRate(Long HeartRate) {
+    public void setHeartRate(Double HeartRate) {
         this.HeartRate = HeartRate;
     }
 
-    public Long getBloodPressureDiastolic() {
+    public Double getBloodPressureDiastolic() {
         return BloodPressureDiastolic;
     }
 
-    public void setBloodPressureDiastolic(Long BloodPressureDiastolic) {
+    public void setBloodPressureDiastolic(Double BloodPressureDiastolic) {
         this.BloodPressureDiastolic = BloodPressureDiastolic;
     }
 
-    public Long getBloodPressureSystolic() {
+    public Double getBloodPressureSystolic() {
         return BloodPressureSystolic;
     }
 
-    public void setBloodPressureSystolic(Long BloodPressureSystolic) {
+    public void setBloodPressureSystolic(Double BloodPressureSystolic) {
         this.BloodPressureSystolic = BloodPressureSystolic;
     }
 
-    public Long getTemperature() {
+    public Double getTemperature() {
         return Temperature;
     }
 
-    public void setTemperature(Long Temperature) {
+    public void setTemperature(Double Temperature) {
         this.Temperature = Temperature;
     }
 
-    public Long getOxygenSaturation() {
+    public Double getOxygenSaturation() {
         return OxygenSaturation;
     }
 
-    public void setOxygenSaturation(Long OxygenSaturation) {
+    public void setOxygenSaturation(Double OxygenSaturation) {
         this.OxygenSaturation = OxygenSaturation;
     }
 
