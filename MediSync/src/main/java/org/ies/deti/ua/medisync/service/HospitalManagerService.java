@@ -2,7 +2,10 @@ package org.ies.deti.ua.medisync.service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.time.LocalDateTime;
 
+import org.ies.deti.ua.medisync.model.RoomOccupancyDTO;
+import org.ies.deti.ua.medisync.model.ScheduleEntry;
 import org.ies.deti.ua.medisync.model.Bed;
 import org.ies.deti.ua.medisync.model.Doctor;
 import org.ies.deti.ua.medisync.model.Nurse;
@@ -148,6 +151,40 @@ public class HospitalManagerService {
 
     public Room getRoomByNumber(String roomNumber) {
         return roomRepository.findByRoomNumber(roomNumber).orElse(null);
+    }
+
+    public List<RoomOccupancyDTO> getRoomsOccupancy() {
+        List<Room> rooms = getAllRooms();
+        List<RoomOccupancyDTO> roomOccupancies = new ArrayList<>();
+
+        for (Room room : rooms) {
+            // Get beds and count patients
+            List<Bed> beds = bedRepository.findBedByRoom(room);
+            int patientCount = (int) beds.stream()
+                .filter(bed -> bed.getAssignedPatient() != null)
+                .count();
+
+            // Count current staff (nurses) from schedule entries
+            LocalDateTime now = LocalDateTime.now();
+            int staffCount = (int) room.getScheduleEntries().stream()
+                .filter(entry -> 
+                    entry.getStart_time().isBefore(now) && 
+                    entry.getEnd_time().isAfter(now))
+                .map(ScheduleEntry::getNurse)
+                .distinct()
+                .count();
+
+            RoomOccupancyDTO occupancy = new RoomOccupancyDTO(
+                room.getId(),
+                room.getRoomNumber(),
+                patientCount,
+                staffCount
+            );
+
+            roomOccupancies.add(occupancy);
+        }
+
+        return roomOccupancies;
     }
 
 }
