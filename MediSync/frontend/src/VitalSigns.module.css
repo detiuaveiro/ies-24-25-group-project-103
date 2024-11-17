@@ -1,0 +1,40 @@
+.vitalSigns {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1rem;
+    margin: 2rem 2rem;
+  }
+  
+  .vitalCard {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: #ffffff;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    padding: 1rem;
+    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+  }
+  
+  .vitalCard h3 {
+    font-size: 1rem;
+    margin-bottom: 0.5rem;
+  }
+  
+  .vitalCard p {
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin: 0.5rem 0;
+  }
+  
+  .status {
+    font-size: 0.9rem;
+    padding: 0.3rem 0.6rem;
+    border-radius: 5px;
+  }
+  
+  .status.normal {
+    background-color: #e6f7e6;
+    color: #4CAF50;
+  }
+  

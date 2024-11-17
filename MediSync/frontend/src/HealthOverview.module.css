@@ -1,0 +1,95 @@
+/* Main content wrapper */
+.mainContent {
+    display: flex;
+    flex-direction: column; /* Stack major sections vertically */
+    gap: 16px; /* Spacing between sections */
+}
+
+/* Wrapper for Patient Info and Vitals (side-by-side columns on larger screens) */
+.infoAndVitals {
+    display: flex;
+    flex-direction: row; /* Align left and right columns side-by-side */
+    gap: 16px;
+}
+
+/* Left column: Patient Info + HeightBox and BMI */
+.leftColumn {
+    display: flex;
+    flex-direction: column; /* Stack PatientInfo and Height/BMI vertically */
+    flex: 1; /* Occupy more space than the right column */
+    gap: 16px; /* Spacing between PatientInfo and Height/BMI */
+}
+
+/* Patient Info */
+.patientInfo {
+    flex: 1; /* Take up the full width of the left column */
+}
+
+/* Height and BMI Row (side-by-side under PatientInfo) */
+.heightAndBMIRow {
+    display: flex;
+    flex-direction: row; /* Align HeightBox and BMI side-by-side */
+    gap: 16px; /* Spacing between HeightBox and BMI */
+    flex: 1; /* Allow them to share equal space */
+}
+
+/* Right column: Vitals + Medication Table */
+.rightColumn {
+    display: flex;
+    flex-direction: column; /* Stack vitals and medication table vertically */
+    flex: 1.6; /* Occupy less space than the left column */
+    gap: 16px; /* Spacing between VitalsGrid and Medication Table */
+}
+
+/* Vitals Grid */
+.vitalsGrid {
+    display: grid;
+    grid-template-columns: 1fr 1fr; /* Two columns for vitals */
+    gap: 16px;
+}
+
+/* Medication Table */
+.medicationSection {
+    margin-top: 16px; /* Space from the VitalsGrid */
+    width: 95%; /* Stretch to the full width of the right column */
+    margin-left: 0; /* Remove extra margin for smaller screens */
+}
+
+/* Media Queries for Responsive Design */
+
+/* For screens smaller than 768px (tablets and phones) */
+@media (max-width: 768px) {
+    .infoAndVitals {
+        flex-direction: column; /* Stack columns vertically */
+    }
+
+    .leftColumn,
+    .rightColumn {
+        flex: 1; /* Make both columns take up equal space */
+    }
+
+    .vitalsGrid {
+        grid-template-columns: 1fr; /* One column layout for vitals */
+    }
+
+    .medicationSection {
+        width: 100%; /* Stretch to full width on smaller screens */
+        margin: 0 auto; /* Center the table */
+    }
+
+    .heightAndBMIRow {
+        flex-direction: column; /* Stack HeightBox and BMI vertically */
+    }
+}
+
+/* For screens smaller than 480px (small phones) */
+@media (max-width: 480px) {
+    .vitalsGrid {
+        gap: 8px; /* Reduce spacing for smaller screens */
+    }
+
+    .medicationSection {
+        width: 100%; /* Ensure the table fits the screen */
+        font-size: 14px; /* Adjust font size for readability */
+    }
+}

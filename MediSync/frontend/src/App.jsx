@@ -7,6 +7,8 @@ import Patients from './Patients';
 import Dashboard from './Dashboard';
 import CodeVerification from './CodeVerification';
 import DischargePatient from './DischargePatient';
+import PatientInfo from './PatientInfo';
+import HealthOverview from './HealthOverview';
 
 function App() {
   return (
@@ -28,6 +30,7 @@ function Main() {
         <Routes>
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/patients" element={<Patients />} />
+          <Route path="/patients/:id" element={<HealthOverview />} />
           <Route path="/park" element={<DischargePatient showModal={showModal} setShowModal={setShowModal}/>} />
         </Routes>
       </Header>}
