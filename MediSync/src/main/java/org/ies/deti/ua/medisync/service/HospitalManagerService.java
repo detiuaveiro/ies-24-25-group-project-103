@@ -105,10 +105,11 @@ public class HospitalManagerService {
                 roomRepository.save(room);
 
                 for (int bedNum = 1; bedNum <= 4; bedNum++) {
+                    Room newRoom = roomRepository.findById(room.getId()).orElse(null);
                     Bed bed = new Bed();
                     // Format: room_number+bed_number
                     String bedNumber = String.format("%s%d", roomNumber, bedNum);
-                    bed.setRoom(room);
+                    bed.setRoom(newRoom);
                     bed.setBedNumber(bedNumber);
                     bed.setAssignedPatient(null);
                     bedRepository.save(bed);
