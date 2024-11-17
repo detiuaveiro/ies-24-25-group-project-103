@@ -13,7 +13,7 @@ function Rooms() {
     useEffect(() => {
         const fetchRooms = async () => {
             try {
-                const response = await axios.get('http://localhost:8080/api/v1/hospital/rooms', {
+                const response = await axios.get('http://localhost:8080/api/v1/hospital/rooms/occupants', {
                     headers: {
                         'Authorization': `Bearer ${token}`
                     }
@@ -41,22 +41,8 @@ function Rooms() {
     // Helper function to get room number (second digit)
     const getRoomNumber = (roomNumber) => roomNumber.charAt(1);
 
-    if (loading) {
-        return (
-            <div className={styles.loadingContainer}>
-                <p>Loading rooms...</p>
-            </div>
-        );
-    }
-
-    if (error) {
-        return (
-            <div className={styles.errorContainer}>
-                <p>Error: {error}</p>
-                <p>Please try again later or contact support.</p>
-            </div>
-        );
-    }
+    if (loading) return <div className={styles.loadingContainer}>Loading rooms...</div>;
+    if (error) return <div className={styles.errorContainer}>Error: {error}</div>;
 
     return (
         <div className={styles.roomsContainer}>
@@ -77,8 +63,8 @@ function Rooms() {
                             <tr key={room.id}>
                                 <td>{getFloor(room.roomNumber)}</td>
                                 <td>{getRoomNumber(room.roomNumber)}</td>
-                                <td>0/4</td>
-                                <td>0/8</td>
+                                <td>{`${room.currentPatients}/4`}</td>
+                                <td>{`${room.currentStaff}/8`}</td>
                                 <td>
                                     <button className={styles.moreInfoButton}>
                                         More Information <FontAwesomeIcon icon={faBed} />
