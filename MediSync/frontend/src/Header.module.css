@@ -1,7 +1,7 @@
 .wrapper {
     display: flex;
     flex-direction: column;
-    height: 100vh; /* Make wrapper take full screen height */
+    min-height: 100vh; /* Make wrapper take full screen height */
     background: linear-gradient(128deg, #4D68AC -22.77%, #FFF 107.48%) !important;
     padding-top: 40px;
     padding-bottom: 40px;
