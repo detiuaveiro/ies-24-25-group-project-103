@@ -1,0 +1,65 @@
+.roomsContainer {
+    padding: 20px;
+}
+
+.title {
+    color: #271E4A;
+    margin-bottom: 20px;
+    font-size: 24px;
+}
+
+.tableContainer {
+    background: white;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.roomsTable {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+.roomsTable th {
+    background-color: #F0F2F8;
+    color: #271E4A;
+    padding: 12px;
+    text-align: left;
+    font-weight: 600;
+}
+
+.roomsTable td {
+    padding: 12px;
+    border-bottom: 1px solid #eee;
+    color: #271E4A;
+}
+
+.moreInfoButton {
+    background-color: #D5DEED;
+    color: #271E4A;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.moreInfoButton:hover {
+    background-color: #c1cde6;
+}
+
+.loading {
+    text-align: center;
+    padding: 20px;
+    color: #271E4A;
+}
+
+.error {
+    text-align: center;
+    padding: 20px;
+    color: #dc3545;
+    background-color: #f8d7da;
+    border-radius: 4px;
+    margin: 20px 0;
+}
