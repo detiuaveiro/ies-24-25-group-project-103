@@ -95,8 +95,10 @@ public class PatientService {
     public Bed setBed(Long id, Bed bed) {
         Optional<Patient> patient = this.getPatientById(id);
         if (patient.isPresent()) {
-            bed.setAssignedPatient(patient.get());
-            return bedRepository.save(bed);
+            Bed existingBed = bedRepository.findById(bed.getId()).get();
+            System.out.println(existingBed);
+            existingBed.setAssignedPatient(patient.get());
+            return bedRepository.save(existingBed);
         }
         return null;
     }
@@ -117,11 +119,11 @@ public class PatientService {
             Patient patient = patientOptional.get();
             Long bedId = bedRepository.getBedByAssignedPatient(patient).getId();
             Map<String, Object> lastVitals = this.getLastVitals(bedId.toString());
-            Long HeartRate = (Long) lastVitals.get("heartbeat");
-            Long o2 = (Long) lastVitals.get("o2");
-            Long temperature = (Long) lastVitals.get("temperature");
-            Long bloodPressure_systolic = (Long) lastVitals.get("bloodPressure_systolic");
-            Long bloodPressure_diastolic = (Long) lastVitals.get("bloodPressure_diastolic");
+            Double HeartRate = (Double) lastVitals.get("heartbeat");
+            Double o2 = (Double) lastVitals.get("o2");
+            Double temperature = (Double) lastVitals.get("temperature");
+            Double bloodPressure_systolic = (Double) lastVitals.get("bloodPressure_systolic");
+            Double bloodPressure_diastolic = (Double) lastVitals.get("bloodPressure_diastolic");
             Vitals vitals = new Vitals(HeartRate, bloodPressure_diastolic, bloodPressure_systolic, o2, temperature);
             PatientWithVitals patientWithVitals = new PatientWithVitals(patient, vitals);
             return Optional.of(patientWithVitals);
