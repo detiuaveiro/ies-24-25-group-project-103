@@ -2,11 +2,14 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import styles from './FloorOverview.module.css';
 import AddIcon from '@mui/icons-material/Add';
+import CreatePatient from './CreatePatient';
 
 function FloorOverview() {
     const [beds, setBeds] = useState([]);
+    const [doctors, setDoctors] = useState([]);
     const [selectedFloor, setSelectedFloor] = useState('1');
     const token = localStorage.getItem('token');
+    const [showPatientsModal, setShowPatientsModal] = useState(false);
 
     useEffect(() => {
         const fetchBeds = async () => {
@@ -21,10 +24,28 @@ function FloorOverview() {
                 console.error('Error fetching beds:', error);
             }
         };
+        const fetchDoctors = async () => {
+            try {
+                const response = await axios.get('http://localhost:8080/api/v1/doctors', {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+                setDoctors(response.data);
+            } catch (error) {
+                console.error('Error fetching doctors:', error);
+            }
+        };
+        fetchDoctors();
         fetchBeds();
     }, [token]);
 
     const floors = ['1', '2', '3'];
+
+    const addPatient = () => {
+        setShowPatientsModal(true);
+    };
+
 
     const getRoomsForFloor = () => {
         // Filter beds for selected floor and organize by room
@@ -88,7 +109,7 @@ function FloorOverview() {
                 </div>
 
                 <div className={styles.actionButtons}>
-                    <button className={styles.addButton}>
+                    <button className={styles.addButton} onClick={addPatient}>
                         <AddIcon /> Add Patient
                     </button>
                     <button className={styles.addButton}>
@@ -117,6 +138,8 @@ function FloorOverview() {
                     </div>
                 ))}
             </div>
+
+            <CreatePatient showModal={showPatientsModal} setShowModal={setShowPatientsModal} availableBeds = {beds.map((bed) => {return getBedStatus(bed) === "available"})} availableDoctors={doctors}/>
         </div>
     );
 }

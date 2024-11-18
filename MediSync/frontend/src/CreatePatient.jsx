@@ -3,7 +3,7 @@ import { Modal, Form, Button, Row, Col } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './CreatePatient.css';
 
-export default function CreatePatient({ showModal, setShowModal, availableRooms=[{id: 1, name: "Room 1"}], availableDoctors=[{id: 1, name: "Doctor Ricardo"}] }) {
+export default function CreatePatient({ showModal, setShowModal, availableBeds=[{id: 1, name: "Room 1"}], availableDoctors=[{id: 1, name: "Doctor Ricardo"}] }) {
     const [formData, setFormData] = useState({
         firstName: '',
         lastName: '',
@@ -12,9 +12,11 @@ export default function CreatePatient({ showModal, setShowModal, availableRooms=
         height: '',
         observations: '',
         conditions: '',
-        room: '',
+        bed: '',
         doctor: ''
     });
+
+    const token = localStorage.getItem('token');
 
     function handleClose() {
         setShowModal(false);
@@ -55,6 +57,7 @@ export default function CreatePatient({ showModal, setShowModal, availableRooms=
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
                 },
                 body: JSON.stringify(jsonBody),
             }).then(response => {
@@ -182,13 +185,13 @@ export default function CreatePatient({ showModal, setShowModal, availableRooms=
                             <Row>
                                 <Col md={6}>
                                     <Form.Group>
-                                        <Form.Label>Room</Form.Label>
+                                        <Form.Label>Bed</Form.Label>
                                         <Form.Select
-                                            name="room"
-                                            value={formData.room}
+                                            name="bed"
+                                            value={formData.bed}
                                             onChange={handleChange}
                                         >
-                                            {availableRoomsOptions}
+                                            {availableBedsOptions}
                                         </Form.Select>
                                     </Form.Group>
                                 </Col>
