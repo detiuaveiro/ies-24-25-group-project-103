@@ -1,0 +1,47 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@900&display=swap');
+
+
+.title{
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 500;
+  color: #333;
+}
+.formContainer {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    padding: 1rem 2rem;
+    background-color: #ffffff;
+    border: 1px solid #ddd;
+    font-family: 'Montserrat', sans-serif;
+    border-radius: 10px;
+    margin-bottom: 20px;
+  }
+  
+  .formContainer label {
+    display: flex;
+    flex-direction: column;
+    background-color: white;
+    font-weight: 500;
+    font-size: 0.9rem;
+    color: #333;
+  }
+  
+  .formContainer input,
+  .formContainer select,
+  .formContainer textarea {
+    background-color: white;
+    color: #333;
+    padding: 0.5rem;
+    font-size: 0.9rem;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+  }
+  
+  textarea {
+    resize: none;
+    height: 5rem; /* Adjust height as needed */
+  }
+  

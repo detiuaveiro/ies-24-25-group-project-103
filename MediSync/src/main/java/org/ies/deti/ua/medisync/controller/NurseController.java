@@ -82,6 +82,12 @@ public class NurseController {
         return updatedNurse != null ? ResponseEntity.ok(updatedNurse) : ResponseEntity.notFound().build();
     }
 
+    @GetMapping("/{nurseId}/schedule")
+    public ResponseEntity<List<ScheduleEntry>> getScheduleEntry(@PathVariable Long nurseId) {
+        List<ScheduleEntry> scheduleEntries = nurseService.getScheduleEntriesFromNurse(nurseId);
+        return scheduleEntries.isEmpty() ? ResponseEntity.notFound().build() : ResponseEntity.ok(scheduleEntries);
+    }
+
     // Delete nurse FEITO
     @DeleteMapping("/{id}") // Issue #156
     public ResponseEntity<Void> deleteNurse(@PathVariable Long id) {

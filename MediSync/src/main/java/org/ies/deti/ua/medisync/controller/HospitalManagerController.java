@@ -71,4 +71,10 @@ public class HospitalManagerController {
         return ResponseEntity.ok(hospitalManagerService.getAllBeds());
     }
 
+    @GetMapping("/rooms/occupants")
+    public ResponseEntity<List<RoomOccupancyDTO>> getRoomsOccupancy() {
+        List<RoomOccupancyDTO> occupancies = hospitalManagerService.getRoomsOccupancy();
+        return ResponseEntity.ok(occupancies);
+    }
+
 }

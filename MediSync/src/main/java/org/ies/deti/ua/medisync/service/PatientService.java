@@ -61,11 +61,12 @@ public class PatientService {
 
     @Autowired
     public PatientService(PatientRepository patientRepository, MedicationRepository medicationRepository,
-            BedRepository bedRepository, DoctorRepository doctorRepository) {
+            BedRepository bedRepository, DoctorRepository doctorRepository, InfluxDBClient influxDBClient) {
         this.patientRepository = patientRepository;
         this.medicationRepository = medicationRepository;
         this.bedRepository = bedRepository;
         this.doctorRepository = doctorRepository;
+        this.influxDBClient = influxDBClient;
     }
 
     @PostConstruct

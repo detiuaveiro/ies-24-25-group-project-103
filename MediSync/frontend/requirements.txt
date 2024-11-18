@@ -1,3 +1,4 @@
 react-router-dom
 react-bootstrap
 --save @fortawesome/fontawesome-svg-core @fortawesome/free-solid-svg-icons @fortawesome/react-fontawesome
+@mui/material @emotion/react @emotion/styled

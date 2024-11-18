@@ -1,0 +1,114 @@
+@import url('https://fonts.googleapis.com/css2?family=Karantina:wght@400;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;600&display=swap');
+
+
+
+/* Modal styling */
+.temperature {
+    .modal-content {
+        background-color: #F3E95ECC; /* Tamer red tone for the background */
+        color: #000; /* Black text for better contrast */
+        text-align: center; /* Center the modal content */
+        padding: 30px; /* Add more padding for better spacing */
+        width: 90%; /* Adjust width for phone screens */
+        max-width: 400px; /* Make the modal narrow */
+        height: 60vh; /* Make the modal longer in height */
+        max-height: 600px; /* Cap the height for responsiveness */
+        margin: auto; /* Center modal */
+        border-radius: 85px;
+        background: #F3E95ECC;
+        box-shadow: 0.687px 2.748px 14.291px 0px #fff34bcc;
+    }
+    
+    /* Modal body styling */
+    .custom-modal-body {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: space-evenly;
+        height: 100%; /* Ensure content is vertically distributed */
+    }
+    
+    /* Heart icon styling */
+    .temperature-icon {
+        margin-left: -15px; 
+    }
+    
+    /* Alert text styling */
+    .alert-text {
+        color: #b4ab25;
+        text-shadow: 1.98px 2.195px 0px rgba(0, 0, 0, 0.51);
+        font-family: Karantina;
+        font-size: 6em;
+        font-weight: 10em;
+        font-style: normal;
+        line-height: normal;
+    }
+    
+    .alert-text .c {
+        color: #b4ab25;
+        font-family: Karantina;
+        font-size: 0.6em;
+        font-style: normal;
+        line-height: normal;
+    }
+    
+    
+    
+    /* Patient info styling */
+    .patient-info {
+        font-size: 1.5em; /* Slightly larger than normal text */
+        
+        color: #000; /* Black text for readability */
+        text-transform: uppercase;
+    }
+    
+    .patient-status {
+        color: #FFF;
+        font-family: Kanit;
+        font-style: normal;
+        line-height: normal;
+        font-size: 0.9em; /* Larger size for the name */
+        margin-bottom: 5px; /* Add some space below */
+        text-transform: uppercase;
+    }
+    
+    /* Patient name styling */
+    .patient-name {
+        color: #FFF;
+        font-family: Kanit;
+        font-style: normal;
+        line-height: normal;
+        font-size: 1.5em; /* Larger size for the name */
+        margin-bottom: 5px; /* Add some space below */
+        text-transform: uppercase;
+    }
+    
+    /* Room info styling */
+    .patient-room {
+        color: #FFF;
+        text-align: center;
+        font-family: Kanit;
+        font-weight: bold; /* Bold text for prominence */
+        line-height: normal;
+        font-size: 1.5em; /* Slightly smaller than name but still prominent */
+        text-transform: uppercase;
+    }
+    
+    /* Ensure modal is responsive on smaller screens */
+    @media (max-width: 576px) {
+        .modal-content {
+            padding: 20px; /* Adjust padding for smaller screens */
+        }
+        .heart-icon {
+            font-size: 120px !important; /* Slightly smaller heart icon */
+        }
+        .alert-text {
+            font-size: 2em; /* Adjust text size for smaller screens */
+        }
+        .patient-info {
+            font-size: 1.3em; /* Adjust info size for smaller screens */
+        }
+    }
+    
+}

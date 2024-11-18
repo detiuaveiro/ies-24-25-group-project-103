@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import { Button, Modal, Form } from 'react-bootstrap';
-import style from './DischargePatientModal.module.css';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import './DischargePatientModal.css';
 
 export default function DischargePatient({ showModal, setShowModal, patient }) {
 
