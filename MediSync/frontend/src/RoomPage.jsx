@@ -29,94 +29,91 @@ const RoomPage = () => {
     },
   });
 
-  useEffect(() => {
-    const fetchDataAndMonitorVitals = async () => {
-      if (!nurseId) {
-        console.error("Nurse ID not found! Ensure localStorage is correctly set.");
-        return;
-      }
+  const fetchDataAndMonitorVitals = async () => {
+    if (!nurseId) {
+      console.error("Nurse ID not found! Ensure localStorage is correctly set.");
+      return;
+    }
 
-      try {
-        // Fetch nurse's schedule
-        const scheduleResponse = await axiosInstance.get(
-          `/nurses/${nurseId}/schedule`
-        );
-        const schedules = scheduleResponse.data;
-        const currentDateTime = new Date();
+    try {
+      // Fetch nurse's schedule
+      const scheduleResponse = await axiosInstance.get(
+        `/nurses/${nurseId}/schedule`
+      );
+      const schedules = scheduleResponse.data;
+      const currentDateTime = new Date();
 
-        const currentSchedule = schedules.find((schedule) => {
-          const startTime = new Date(schedule.start_time);
-          const endTime = new Date(schedule.end_time);
-          return currentDateTime >= startTime && currentDateTime <= endTime;
-        });
+      const currentSchedule = schedules.find((schedule) => {
+        const startTime = new Date(schedule.start_time);
+        const endTime = new Date(schedule.end_time);
+        return currentDateTime >= startTime && currentDateTime <= endTime;
+      });
 
-        const assignedRooms = currentSchedule
-          ? currentSchedule.roomsNumbers
-          : [];
-        setScheduledRooms(assignedRooms);
+      const assignedRooms = currentSchedule
+        ? currentSchedule.roomsNumbers
+        : [];
+      setScheduledRooms(assignedRooms);
 
-        // Fetch room details
-        const roomResponse = await axiosInstance.get(
-          `/nurses/${nurseId}/patients-by-room-with-beds`
-        );
-        const fetchedRooms = roomResponse.data;
-        setRooms(fetchedRooms);
+      // Fetch room details
+      const roomResponse = await axiosInstance.get(
+        `/nurses/${nurseId}/patients-by-room-with-beds`
+      );
+      const fetchedRooms = roomResponse.data;
+      setRooms(fetchedRooms);
 
-        // Monitor vitals for active rooms
-        const activeRooms = fetchedRooms.filter((room) =>
-          assignedRooms.includes(room.roomNumber)
-        );
+      // Monitor vitals for active rooms
+      const activeRooms = fetchedRooms.filter((room) =>
+        assignedRooms.includes(room.roomNumber)
+      );
 
-        for (const room of activeRooms) {
-          for (const bed of room.beds) {
-            if (bed && bed.patient) {
-              const { vitals, patient } = bed.patient;
+      for (const room of activeRooms) {
+        for (const bed of room.beds) {
+          if (bed && bed.patient) {
+            const { vitals, patient } = bed.patient;
 
-              // Check heart rate
-              if (vitals.heartRate >= 130 || vitals.heartRate < 40) {
-                setAlertPatient({ ...patient, roomNumber: room.roomNumber });
-                setAlertValue(vitals.heartRate);
-                setShowHeartRateAlert(true);
-                return; // Stop checking further once an alert is triggered
-              }
+            // Check heart rate
+            if (vitals.heartRate >= 130 || vitals.heartRate < 40) {
+              setAlertPatient({ ...patient, roomNumber: room.roomNumber });
+              setAlertValue(vitals.heartRate);
+              setShowHeartRateAlert(true);
+              return; // Stop checking further once an alert is triggered
+            }
 
-              // Check oxygen saturation
-              if (vitals.oxygenSaturation <= 94) {
-                setAlertPatient({ ...patient, roomNumber: room.roomNumber });
-                setAlertValue(vitals.oxygenSaturation);
-                setShowOxygenAlert(true);
-                return; // Stop checking further once an alert is triggered
-              }
+            // Check oxygen saturation
+            if (vitals.oxygenSaturation <= 94) {
+              setAlertPatient({ ...patient, roomNumber: room.roomNumber });
+              setAlertValue(vitals.oxygenSaturation);
+              setShowOxygenAlert(true);
+              return; // Stop checking further once an alert is triggered
+            }
 
-              // Check temperature
-              if (vitals.temperature >= 40 || vitals.temperature < 34) {
-                setAlertPatient({ ...patient, roomNumber: room.roomNumber });
-                setAlertTemperature(vitals.temperature);
-                setShowTemperatureAlert(true);
-                return; // Stop checking further once an alert is triggered
-              }
+            // Check temperature
+            if (vitals.temperature >= 40 || vitals.temperature < 34) {
+              setAlertPatient({ ...patient, roomNumber: room.roomNumber });
+              setAlertTemperature(vitals.temperature);
+              setShowTemperatureAlert(true);
+              return; // Stop checking further once an alert is triggered
+            }
 
-              // Check blood pressure
-              if (vitals.systolic >= 140 || vitals.diastolic >= 90) {
-                setAlertPatient({ ...patient, roomNumber: room.roomNumber });
-                setAlertBloodPressure([vitals.systolic, vitals.diastolic]);
-                setShowBloodPressureAlert(true);
-                return; // Stop checking further once an alert is triggered
-              }
+            // Check blood pressure
+            if (vitals.systolic >= 140 || vitals.diastolic >= 90) {
+              setAlertPatient({ ...patient, roomNumber: room.roomNumber });
+              setAlertBloodPressure([vitals.systolic, vitals.diastolic]);
+              setShowBloodPressureAlert(true);
+              return; // Stop checking further once an alert is triggered
             }
           }
         }
-      } catch (error) {
-        console.error("Error fetching data or monitoring vitals:", error);
       }
-    };
+    } catch (error) {
+      console.error("Error fetching data or monitoring vitals:", error);
+    }
+  };
 
-    // Initial fetch and polling
-    fetchDataAndMonitorVitals(); // Call immediately on mount
-    const intervalId = setInterval(fetchDataAndMonitorVitals, 1000); // Poll every second
-
-    return () => clearInterval(intervalId); // Cleanup on unmount
-  }, [axiosInstance, nurseId]);
+  // Fetch data on initial mount
+  useEffect(() => {
+    fetchDataAndMonitorVitals();
+  }, []); // Empty dependency array ensures it runs only once
 
   if (!nurseId) {
     return <div>Error: Nurse ID is not available.</div>;
@@ -129,6 +126,9 @@ const RoomPage = () => {
   return (
     <div className="room-container">
       <h1>Assigned Rooms:</h1>
+      <button onClick={fetchDataAndMonitorVitals} className="refresh-button">
+        Refresh
+      </button>
       {filteredRooms.length > 0 ? (
         <div className="room-grid">
           {filteredRooms.map((room) => (

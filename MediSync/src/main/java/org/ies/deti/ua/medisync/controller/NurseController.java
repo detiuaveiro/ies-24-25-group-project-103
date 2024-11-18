@@ -41,7 +41,7 @@ public class NurseController {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
     }
 
-    @GetMapping("/{nurse_id}/patients-by-room-with-beds")
+    @GetMapping("/{nurse_id}/roomswithpatients")
     public ResponseEntity<List<RoomWithPatientsDTO>> getRoomWithBedsAndPatientsDTO(@PathVariable Long nurse_id) {
         Optional<Nurse> nurseOpt = nurseService.getNurseById(nurse_id);
         if (nurseOpt.isPresent()) {
