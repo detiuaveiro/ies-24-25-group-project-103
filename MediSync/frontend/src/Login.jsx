@@ -30,7 +30,7 @@ function Login() {
       localStorage.setItem('userRole', role);
       console.log(role);
       if (role === 'HOSPITAL_MANAGER') navigate('/manager');
-      else if (role === 'DOCTOR') navigate('/dashboard_doctor');
+      else if (role === 'DOCTOR') navigate('/doctor/patients');
       else navigate('/dashboard_nurse');
 
     } catch (error) {
