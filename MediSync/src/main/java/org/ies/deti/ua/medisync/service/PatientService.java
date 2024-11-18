@@ -157,7 +157,9 @@ public class PatientService {
     }
 
     public void dischargePatient(Long id) {
-        patientRepository.deleteById(id);
+        Patient existingPatient = patientRepository.findById(id).get();
+        existingPatient.setDischarged(true);
+        patientRepository.save(existingPatient);
     }
 
     public List<Patient> getPatientsFromDoctor(Doctor doctor) {
