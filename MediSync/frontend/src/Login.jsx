@@ -30,8 +30,9 @@ function Login() {
       localStorage.setItem('userRole', role);
       console.log(role);
       if (role === 'HOSPITAL_MANAGER') navigate('/manager');
-      else if (role === 'DOCTOR') navigate('/dashboard_doctor');
-      else navigate('/dashboard_nurse');
+      else if (role === 'DOCTOR') navigate('/doctor/patients');
+      else if (role === 'NURSE') navigate('/nurse/patients');
+      else navigate('/patients');
 
     } catch (error) {
       setError('Invalid username or password');
