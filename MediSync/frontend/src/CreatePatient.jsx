@@ -2,7 +2,6 @@ import { useState } from 'react';
 import { Modal, Form, Button, Row, Col } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './CreatePatient.css';
-import axios from 'axios';
 
 export default function CreatePatient({ showModal, setShowModal, availableRooms=[{id: 1, name: "Room 1"}], availableDoctors=[{id: 1, name: "Doctor Ricardo"}] }) {
     const [formData, setFormData] = useState({
@@ -31,7 +30,6 @@ export default function CreatePatient({ showModal, setShowModal, availableRooms=
 
    
     const handleSave = () => {
-         /*
         if (!formData.firstName || !formData.lastName || !formData.height || !formData.weight || !formData.observations || !formData.room || !formData.doctor) {
             alert('Please fill all fields');
             return;
@@ -43,7 +41,7 @@ export default function CreatePatient({ showModal, setShowModal, availableRooms=
         const height = `${formData.height}`;
         const observations = `${formData.observations}`.split('\n');
         const conditions = `${formData.conditions}`.split('\n');
-        const json = {
+        const jsonBody = {
             name,
             gender,
             birthDate,
@@ -52,18 +50,22 @@ export default function CreatePatient({ showModal, setShowModal, availableRooms=
             observations,
             conditions,
         };
-        const postData = {
-            fetch(`/api/v1/patients`, {
+        const postData = () => {
+            fetch('/api/v1/patients', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify(formData),
-            })
-
-
-
-        */
+                body: JSON.stringify(jsonBody),
+            }).then(response => {
+                if (response.ok) {
+                    alert('Patient added successfully');
+                } else {
+                    alert('Failed to add patient');
+                }
+            });
+        };
+        postData();
         handleClose();
     };
   
