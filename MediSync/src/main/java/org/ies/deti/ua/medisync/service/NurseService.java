@@ -2,7 +2,6 @@ package org.ies.deti.ua.medisync.service;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -136,13 +135,6 @@ public class NurseService {
     }
 
     public List<RoomWithPatientsDTO> getRoomWithBedsAndPatientsDTO(Nurse nurse) {
-        // Fetch all rooms the nurse is assigned to
-        List<Room> nurseRooms = nurse.getSchedule().stream()
-                .flatMap(scheduleEntry -> scheduleEntry.getRoom().stream())
-                .distinct()
-                .toList();
-
-        // Fetch all beds and their patients
         Map<Bed, Patient> bedPatientMap = getAssignedBedsAndPatientsForNurse(nurse);
         Map<Room, List<BedWithPatientDTO>> roomToBedsMap = new HashMap<>();
 
@@ -165,13 +157,11 @@ public class NurseService {
             }
         }
 
-        roomToBedsMap.forEach((room, beds) -> beds.sort(Comparator.comparing(BedWithPatientDTO::getBedId)));
-
-        // Create the list of DTOs, ensuring every room is included
+        // Convert the map to a list of DTOs
         List<RoomWithPatientsDTO> roomWithPatientsDTOList = new ArrayList<>();
-        for (Room room : nurseRooms) {
-            List<BedWithPatientDTO> beds = roomToBedsMap.getOrDefault(room, new ArrayList<>()); // Default to empty list
-                                                                                                // if no beds
+        for (Map.Entry<Room, List<BedWithPatientDTO>> entry : roomToBedsMap.entrySet()) {
+            Room room = entry.getKey();
+            List<BedWithPatientDTO> beds = entry.getValue();
             RoomWithPatientsDTO dto = new RoomWithPatientsDTO(
                     room.getId(),
                     room.getRoomNumber(),
