@@ -145,7 +145,7 @@ const Schedule = () => {
               {entry.interval ? (
                 "Interval"
               ) : (
-                `Room ${entry.room.map((r) => r.roomNumber).join(" ")}`
+                `Room ${entry.roomsNumbers.map(String).join(" ")}`
               )}
             </div>
           );
