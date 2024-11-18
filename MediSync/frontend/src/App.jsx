@@ -12,6 +12,7 @@ import PatientInfo from './PatientInfo';
 import HealthOverview from './HealthOverview';
 import Notifications from './Notification';
 import Rooms from './Rooms';
+import FloorOverview from './FloorOverview';
 
 function App() {
   return (
@@ -38,6 +39,7 @@ function Main() {
           <Route path="/patients/:id" element={<HealthOverview />} />
           <Route path="/rooms" element={<Rooms />} />
           <Route path="/park" element={<DischargePatient showModal={showModal} setShowModal={setShowModal}/>} />
+          <Route path="/rooms/overview" element={<FloorOverview />} />
         </Routes>
       </Header>}
       <Routes>
