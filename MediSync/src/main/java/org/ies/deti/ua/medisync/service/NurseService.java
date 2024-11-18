@@ -8,6 +8,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import org.ies.deti.ua.medisync.dto.BedWithPatientDTO;
+import org.ies.deti.ua.medisync.dto.RoomWithPatientsDTO;
 import org.ies.deti.ua.medisync.model.Bed;
 import org.ies.deti.ua.medisync.model.Nurse;
 import org.ies.deti.ua.medisync.model.Patient;
@@ -130,6 +132,44 @@ public class NurseService {
         }
 
         return patientsWithVitals;
+    }
+
+    public List<RoomWithPatientsDTO> getRoomWithBedsAndPatientsDTO(Nurse nurse) {
+        Map<Bed, Patient> bedPatientMap = getAssignedBedsAndPatientsForNurse(nurse);
+        Map<Room, List<BedWithPatientDTO>> roomToBedsMap = new HashMap<>();
+
+        for (Map.Entry<Bed, Patient> entry : bedPatientMap.entrySet()) {
+            Bed bed = entry.getKey();
+            Patient patient = entry.getValue();
+            Room room = bed.getRoom(); // Assuming Bed has a reference to Room
+
+            Optional<PatientWithVitals> patientWithVitalsOpt = patientService.getPatientWithVitalsById(patient.getId());
+            if (patientWithVitalsOpt.isPresent()) {
+                PatientWithVitals patientWithVitals = patientWithVitalsOpt.get();
+                BedWithPatientDTO bedWithPatientDTO = new BedWithPatientDTO(
+                        bed.getId(),
+                        bed.getBedNumber(), // Assuming Bed has a getName() or similar method
+                        patientWithVitals);
+
+                roomToBedsMap
+                        .computeIfAbsent(room, r -> new ArrayList<>())
+                        .add(bedWithPatientDTO);
+            }
+        }
+
+        // Convert the map to a list of DTOs
+        List<RoomWithPatientsDTO> roomWithPatientsDTOList = new ArrayList<>();
+        for (Map.Entry<Room, List<BedWithPatientDTO>> entry : roomToBedsMap.entrySet()) {
+            Room room = entry.getKey();
+            List<BedWithPatientDTO> beds = entry.getValue();
+            RoomWithPatientsDTO dto = new RoomWithPatientsDTO(
+                    room.getId(),
+                    room.getRoomNumber(),
+                    beds);
+            roomWithPatientsDTOList.add(dto);
+        }
+
+        return roomWithPatientsDTOList;
     }
 
     public Nurse addScheduleEntryToNurse(Long nurseId, ScheduleEntry newEntry) {
