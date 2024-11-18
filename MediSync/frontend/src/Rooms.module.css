@@ -140,3 +140,27 @@
     border-radius: 4px;
     margin: 20px 0;
 }
+
+.controlsContainer {
+    display: flex;
+    align-items: center;
+}
+
+.overviewButton {
+    background-color: #E6EAF5 !important;
+    color: #271E4A !important;
+    padding: 10px 24px !important;
+    font-size: 20px !important;
+    font-weight: bold !important;
+    min-width: 10px !important;
+    text-transform: none !important;
+    margin-right: 20px !important;
+}
+
+.overviewButton:hover {
+    background-color: #d5d9e4 !important;
+}
+
+.buttonIcon {
+    font-size: 32px !important;
+}
