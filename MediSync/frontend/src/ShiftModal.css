@@ -1,0 +1,47 @@
+/* Modal Header */
+.add-staff-modal .modal-header {
+    background-color: #f8f9fa;
+    border-bottom: 1px solid #dee2e6;
+}
+
+/* Modal Title */
+.add-staff-modal .modal-title {
+    color: #54595E;
+    font-family: "Inter", sans-serif;
+    font-size: 28px;
+    font-weight: 700;
+    line-height: 36px;
+}
+
+/* Form Labels */
+.add-staff-modal .form-label {
+    font-weight: 500;
+    color: #333;
+}
+
+/* Form Controls */
+.add-staff-modal .form-control,
+.add-staff-modal .form-select {
+    border-radius: 5px;
+    margin-bottom: 15px;
+}
+
+/* Buttons */
+.add-staff-modal .cancel-button {
+    border-radius: 8px;
+    border: 1px solid #4F4F4F;
+    background-color: #FFF;
+    color: #4F4F4F;
+}
+
+.add-staff-modal .add-button {
+    border-radius: 8px;
+    border: none;
+    background-color: #4F4F4F;
+    color: #FFF;
+}
+
+/* Button Row */
+.add-staff-modal .button-row {
+    margin-top: 20px;
+}
