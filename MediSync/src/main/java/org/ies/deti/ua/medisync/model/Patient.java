@@ -59,6 +59,9 @@ public class Patient {
     @ManyToOne
     @JoinColumn(name = "doctor_id")
     private Doctor assignedDoctor;
+
+    @Column(name = "discharged")
+    private boolean discharged = false;
     
 
     public Patient() {}
@@ -154,6 +157,14 @@ public class Patient {
 
     public void setAssignedDoctor(Doctor assignedDoctor) {
         this.assignedDoctor = assignedDoctor;
+    }
+
+    public boolean isDischarged() {
+        return discharged;
+    }
+
+    public void setDischarged(boolean discharged) {
+        this.discharged = discharged;
     }
 
 }
