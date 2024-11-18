@@ -2,6 +2,7 @@ package org.ies.deti.ua.medisync.service;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -163,6 +164,8 @@ public class NurseService {
                         .add(bedWithPatientDTO);
             }
         }
+
+        roomToBedsMap.forEach((room, beds) -> beds.sort(Comparator.comparing(BedWithPatientDTO::getBedId)));
 
         // Create the list of DTOs, ensuring every room is included
         List<RoomWithPatientsDTO> roomWithPatientsDTOList = new ArrayList<>();

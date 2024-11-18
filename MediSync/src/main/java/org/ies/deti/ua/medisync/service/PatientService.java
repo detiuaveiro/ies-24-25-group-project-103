@@ -125,7 +125,7 @@ public class PatientService {
             Double temperature = (Double) lastVitals.get("temperature");
             Double bloodPressure_systolic = (Double) lastVitals.get("bloodPressure_systolic");
             Double bloodPressure_diastolic = (Double) lastVitals.get("bloodPressure_diastolic");
-            Vitals vitals = new Vitals(HeartRate, bloodPressure_diastolic, bloodPressure_systolic, o2, temperature);
+            Vitals vitals = new Vitals(HeartRate, bloodPressure_diastolic, bloodPressure_systolic, temperature, o2);
             PatientWithVitals patientWithVitals = new PatientWithVitals(patient, vitals);
             return Optional.of(patientWithVitals);
         } else {
