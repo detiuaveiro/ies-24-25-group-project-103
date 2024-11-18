@@ -263,14 +263,11 @@ public class NurseService {
 
     public void deleteNurse(Long nurseId) {
         Optional<Nurse> nurseOpt = nurseRepository.findById(nurseId);
-        /*
-         * if (nurseOpt.isPresent()) {
-         * Nurse nurse = nurseOpt.get();
-         * if (nurse.isIsactive()) {
-         * nurse.setIsactive(false);
-         * }
-         * }
-         */
+        if (nurseOpt.isPresent()) {
+            Nurse nurse = nurseOpt.get();
+            nurse.setEnabled(false);
+            nurseRepository.save(nurse);
+        }
     }
 
     public Nurse addNurse(Nurse nurse) {
