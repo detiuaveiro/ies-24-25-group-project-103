@@ -78,6 +78,7 @@ public class PatientController {
             @PathVariable String end) {
         String bedID = patientService.getPatientBed(patientService.getPatientById(Long.parseLong(id)).get()).getId()
                 .toString();
+        System.out.println(bedID);
         List<FluxTable> tables = patientService.getPatientVitals(bedID, start, end);
         return patientService.generateQuickChartUrl(bedID, type, start, end);
 

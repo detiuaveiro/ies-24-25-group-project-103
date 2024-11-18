@@ -271,7 +271,7 @@ public class PatientService {
                     + "}",
             labels.toString(), vitalType, dataPoints.toString(), vitalType
         );
-    
+      
         String encodedChart = URLEncoder.encode(chartJson, StandardCharsets.UTF_8);
         return "https://quickchart.io/chart?c=" + encodedChart;
     }
