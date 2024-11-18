@@ -3,6 +3,7 @@ package org.ies.deti.ua.medisync.controller;
 import java.util.List;
 import java.util.Optional;
 
+import org.ies.deti.ua.medisync.dto.RoomWithPatientsDTO;
 import org.ies.deti.ua.medisync.model.Nurse;
 import org.ies.deti.ua.medisync.model.PatientWithVitals;
 import org.ies.deti.ua.medisync.model.Room;
@@ -36,6 +37,17 @@ public class NurseController {
         if (nurseOpt.isPresent()) {
             List<PatientWithVitals> patientsWithVitals = nurseService.getPatientsWithVitalsForNurse(nurseOpt.get());
             return ResponseEntity.ok(patientsWithVitals);
+        }
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+    }
+
+    @GetMapping("/{nurse_id}/patients-by-room-with-beds")
+    public ResponseEntity<List<RoomWithPatientsDTO>> getRoomWithBedsAndPatientsDTO(@PathVariable Long nurse_id) {
+        Optional<Nurse> nurseOpt = nurseService.getNurseById(nurse_id);
+        if (nurseOpt.isPresent()) {
+            List<RoomWithPatientsDTO> roomWithPatientsDTOList = nurseService
+                    .getRoomWithBedsAndPatientsDTO(nurseOpt.get());
+            return ResponseEntity.ok(roomWithPatientsDTOList);
         }
         return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
     }
