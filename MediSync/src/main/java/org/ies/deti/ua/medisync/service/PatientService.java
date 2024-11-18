@@ -293,10 +293,11 @@ public class PatientService {
         List<Medication> medicationList = medicationRepository.findMedicationByPatientId(patientId);
         for (Medication medication : medicationList) {
             if (medication.getId().equals(medicationId)) {
-                System.out.println(medication.getPatient());
                 medication.setName(updatedMedication.getName());
                 medication.setDosage(updatedMedication.getDosage());
                 medication.setHourInterval(updatedMedication.getHourInterval());
+                medication.setDosage(updatedMedication.getDosage());
+                medication.setHasTaken(updatedMedication.isHasTaken());
                 return medicationRepository.save(medication);
             }
         }
