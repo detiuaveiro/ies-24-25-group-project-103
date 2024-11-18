@@ -77,12 +77,22 @@ function Header({ children }) {
                             <FontAwesomeIcon icon={faTimes} size="2x" />
                         </button>
                     )}
+                    {(role === 'DOCTOR' ) || role === 'HOSPITAL_MANAGER' ? (
                     <Link to={getPatientsLink()} style={{ textDecoration: "none" }}>
                     <div className={styles.navButton}>
                             <FontAwesomeIcon icon={faClipboardList} size="2x" />
                             <span className={styles.btnText}> List of Patients</span>
                         </div>
                     </Link>
+                    ) : null}
+                    {(role === 'NURSE' ) ? (
+                    <Link to="/dashboard_nurse" style={{ textDecoration: "none" }}>
+                    <div className={styles.navButton}>
+                            <FontAwesomeIcon icon={faClipboardList} size="2x" />
+                            <span className={styles.btnText}> List of Patients</span>
+                        </div>
+                    </Link>
+                    ) : null}
                     {(role === 'HOSPITAL_MANAGER') ? (
                     <Link to="/rooms" style={{ textDecoration: "none" }}>
                         <div className={styles.navButton}>
