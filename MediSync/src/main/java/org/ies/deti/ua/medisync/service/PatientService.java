@@ -161,7 +161,7 @@ public class PatientService {
         existingPatient.setDischarged(true);
         patientRepository.save(existingPatient);
     }
-
+    
     public List<Patient> getPatientsFromDoctor(Doctor doctor) {
         return patientRepository.findByAssignedDoctor(doctor);
     }

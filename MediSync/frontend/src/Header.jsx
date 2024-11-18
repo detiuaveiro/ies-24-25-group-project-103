@@ -4,6 +4,7 @@ import styles from './Header.module.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBars, faTimes, faClipboardList, faArrowRightFromBracket, faBedPulse, faComment } from '@fortawesome/free-solid-svg-icons';
 import axios from 'axios';
+import EventNoteIcon from '@mui/icons-material/EventNote';
 
 function Header({ children }) {
     const [profileImage, setProfileImage] = useState(null);
@@ -76,18 +77,29 @@ function Header({ children }) {
                             <FontAwesomeIcon icon={faTimes} size="2x" />
                         </button>
                     )}
-                    <Link to={getPatientsLink()}>
+                    <Link to={getPatientsLink()} style={{ textDecoration: "none" }}>
                     <div className={styles.navButton}>
                             <FontAwesomeIcon icon={faClipboardList} size="2x" />
                             <span className={styles.btnText}> List of Patients</span>
                         </div>
                     </Link>
+                    {(role === 'HOSPITAL_MANAGER') ? (
                     <Link to="/rooms" style={{ textDecoration: "none" }}>
                         <div className={styles.navButton}>
                             <FontAwesomeIcon icon={faBedPulse} size="2x" />
                             <span className={styles.btnText}> List of Rooms</span>
                         </div>
                     </Link>
+                    ) : null}
+                    {((role === 'NURSE'))? (
+                    <Link to = "/schedule" style={{ textDecoration: "none" }}>
+                        <div className={styles.navButton}>
+                            <EventNoteIcon fontSize="large" />
+                            <span className={styles.btnText}> Schedule</span>
+                        </div>
+                    </Link>
+                    ) : null}
+                    {((role === 'NURSE') || (role === 'HOSPITAL_MANAGER')) ? (
                     <Link to="/notifications" style={{ textDecoration: "none" }}>
                     
                         <div className={styles.alertButton}>
@@ -96,6 +108,7 @@ function Header({ children }) {
                             <span className={styles.notificationBadge}>2</span>
                         </div>
                     </Link>
+                    ) : null}
                     <div className={styles.logoutButton} onClick={handleLogout}>
                         <FontAwesomeIcon icon={faArrowRightFromBracket} size="2x" />
                     </div>
