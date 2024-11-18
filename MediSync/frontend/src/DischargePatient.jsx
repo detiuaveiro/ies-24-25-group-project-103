@@ -24,7 +24,7 @@ export default function DischargePatient({ showModal, setShowModal, patient }) {
 
     return (
         <>
-            <Modal show={showModal} onHide={handleClose} centered>
+            <Modal className="discharge-patient" show={showModal} onHide={handleClose} centered>
                 <Modal.Header closeButton>
                     <Modal.Title>Discharge Patient</Modal.Title>
                 </Modal.Header>
