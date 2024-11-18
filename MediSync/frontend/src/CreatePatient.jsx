@@ -2,8 +2,9 @@ import { useState } from 'react';
 import { Modal, Form, Button, Row, Col } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './CreatePatient.css';
+import axios from 'axios';
 
-export default function CreatePatient({ showModal, setShowModal }) {
+export default function CreatePatient({ showModal, setShowModal, availableRooms=[{id: 1, name: "Room 1"}], availableDoctors=[{id: 1, name: "Doctor Ricardo"}] }) {
     const [formData, setFormData] = useState({
         firstName: '',
         lastName: '',
@@ -11,9 +12,9 @@ export default function CreatePatient({ showModal, setShowModal }) {
         weight: '',
         height: '',
         observations: '',
+        conditions: '',
         room: '',
-        doctor: '',
-        contagious: false,
+        doctor: ''
     });
 
     function handleClose() {
@@ -28,10 +29,52 @@ export default function CreatePatient({ showModal, setShowModal }) {
         });
     };
 
+   
     const handleSave = () => {
-        console.log('Saving form data:', formData);
+         /*
+        if (!formData.firstName || !formData.lastName || !formData.height || !formData.weight || !formData.observations || !formData.room || !formData.doctor) {
+            alert('Please fill all fields');
+            return;
+        }
+        const name = `${formData.firstName} ${formData.lastName}`;
+        const gender = `${formData.gender}`;
+        const birthDate = `${formData.birthDate}`;
+        const weight = `${formData.weight}`;
+        const height = `${formData.height}`;
+        const observations = `${formData.observations}`.split('\n');
+        const conditions = `${formData.conditions}`.split('\n');
+        const json = {
+            name,
+            gender,
+            birthDate,
+            weight,
+            height,
+            observations,
+            conditions,
+        };
+        const postData = {
+            fetch(`/api/v1/patients`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(formData),
+            })
+
+
+
+        */
         handleClose();
     };
+  
+
+    const availableRoomsOptions = availableRooms.map(room => (
+        <option key={room.id} value={room.id}>{room.name}</option>
+    ));
+
+    const availableDoctorsOptions = availableDoctors.map(doctor => (
+        <option key={doctor.id} value={doctor.id}>{doctor.name}</option>
+    ));
 
     return (
         <Modal show={showModal} onHide={handleClose} centered className="create-patient">
@@ -41,7 +84,7 @@ export default function CreatePatient({ showModal, setShowModal }) {
             <Modal.Body>
                 <Form>
                     <Row>
-                        <Col md={6}>
+                        <Col md={4}>
                             <Form.Group>
                                 <Form.Label>First Name</Form.Label>
                                 <Form.Control
@@ -53,7 +96,7 @@ export default function CreatePatient({ showModal, setShowModal }) {
                                 />
                             </Form.Group>
                         </Col>
-                        <Col md={6}>
+                        <Col md={4}>
                             <Form.Group>
                                 <Form.Label>Last Name</Form.Label>
                                 <Form.Control
@@ -61,6 +104,17 @@ export default function CreatePatient({ showModal, setShowModal }) {
                                     placeholder="Last Name"
                                     name="lastName"
                                     value={formData.lastName}
+                                    onChange={handleChange}
+                                />
+                            </Form.Group>
+                        </Col>
+                        <Col md={4}>
+                            <Form.Group>
+                                <Form.Label>Birth Date</Form.Label>
+                                <Form.Control
+                                    type="date"
+                                    name="birthDate"
+                                    value={formData.birthDate}
                                     onChange={handleChange}
                                 />
                             </Form.Group>
@@ -75,7 +129,6 @@ export default function CreatePatient({ showModal, setShowModal }) {
                                     value={formData.gender}
                                     onChange={handleChange}
                                 >
-                                    <option value="">Male/Female</option>
                                     <option value="male">Male</option>
                                     <option value="female">Female</option>
                                 </Form.Select>
@@ -108,17 +161,20 @@ export default function CreatePatient({ showModal, setShowModal }) {
                     </Row>
                     <Row>
                         <Col md={6}>
-                            <Form.Group>
-                                <Form.Label>Observations</Form.Label>
-                                <Form.Control
-                                    as="textarea"
-                                    placeholder="Observations"
-                                    rows={16}
-                                    name="observations"
-                                    value={formData.observations}
-                                    onChange={handleChange}
-                                />
-                            </Form.Group>
+                            <Row>
+                                <Col md={12}>
+                                    <Form.Group>
+                                        <Form.Label>Conditions</Form.Label>
+                                        <Form.Control
+                                            as="textarea"
+                                            placeholder="Conditions"
+                                            name="conditions"
+                                            value={formData.conditions}
+                                            onChange={handleChange}
+                                        />
+                                    </Form.Group>
+                                </Col>
+                            </Row>
                         </Col>
                         <Col md={6}>
                             <Row>
@@ -130,9 +186,7 @@ export default function CreatePatient({ showModal, setShowModal }) {
                                             value={formData.room}
                                             onChange={handleChange}
                                         >
-                                            <option value="">Room</option>
-                                            <option value="room1">Room 1</option>
-                                            <option value="room2">Room 2</option>
+                                            {availableRoomsOptions}
                                         </Form.Select>
                                     </Form.Group>
                                 </Col>
@@ -144,40 +198,37 @@ export default function CreatePatient({ showModal, setShowModal }) {
                                             value={formData.doctor}
                                             onChange={handleChange}
                                         >
-                                            <option value="">Doctor</option>
-                                            <option value="doctor1">Dr. Smith</option>
-                                            <option value="doctor2">Dr. Brown</option>
+                                            {availableDoctorsOptions}
                                         </Form.Select>
                                     </Form.Group>
                                 </Col>
                             </Row>
-                            <Row>
-                                <Col md={12}>
-                                    <Form.Group className="mt-3 d-flex align-items-center">
-                                        <Form.Check
-                                            type="checkbox"
-                                            label="Patient has a contagious disease."
-                                            name="contagious"
-                                            checked={formData.contagious}
-                                            onChange={handleChange}
-                                        />
-                                    </Form.Group>
-                                </Col>
-                            </Row>
-                            <Row>
-                                <Col md={6}>
-                                    <Button className="cancel" onClick={handleClose}>
-                                        Cancel
-                                    </Button>
-                                </Col>
-                                <Col md={6}>
-                                    <Button className="add" onClick={handleSave}>
-                                        Add Patient
-                                    </Button>
-                                </Col>
-                            </Row>
                         </Col>
                     </Row>
+                    <Row>
+                            <Col md={6}>
+                                <Form.Group>
+                                    <Form.Label>Observations</Form.Label>
+                                    <Form.Control
+                                        as="textarea"
+                                        placeholder="Observations"
+                                        name="observations"
+                                        value={formData.observations}
+                                        onChange={handleChange}
+                                    />
+                                </Form.Group>
+                            </Col>
+                            <Col md={3}>
+                                <Button className="cancel" onClick={handleClose}>
+                                    Cancel
+                                </Button>
+                            </Col>
+                            <Col md={3}>
+                                <Button className="add" onClick={handleSave}>
+                                    Add Patient
+                                </Button>
+                            </Col>
+                        </Row>
                 </Form>
             </Modal.Body>
         </Modal>
