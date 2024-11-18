@@ -135,6 +135,13 @@ public class NurseService {
     }
 
     public List<RoomWithPatientsDTO> getRoomWithBedsAndPatientsDTO(Nurse nurse) {
+        // Fetch all rooms the nurse is assigned to
+        List<Room> nurseRooms = nurse.getSchedule().stream()
+                .flatMap(scheduleEntry -> scheduleEntry.getRoom().stream())
+                .distinct()
+                .toList();
+
+        // Fetch all beds and their patients
         Map<Bed, Patient> bedPatientMap = getAssignedBedsAndPatientsForNurse(nurse);
         Map<Room, List<BedWithPatientDTO>> roomToBedsMap = new HashMap<>();
 
@@ -157,11 +164,11 @@ public class NurseService {
             }
         }
 
-        // Convert the map to a list of DTOs
+        // Create the list of DTOs, ensuring every room is included
         List<RoomWithPatientsDTO> roomWithPatientsDTOList = new ArrayList<>();
-        for (Map.Entry<Room, List<BedWithPatientDTO>> entry : roomToBedsMap.entrySet()) {
-            Room room = entry.getKey();
-            List<BedWithPatientDTO> beds = entry.getValue();
+        for (Room room : nurseRooms) {
+            List<BedWithPatientDTO> beds = roomToBedsMap.getOrDefault(room, new ArrayList<>()); // Default to empty list
+                                                                                                // if no beds
             RoomWithPatientsDTO dto = new RoomWithPatientsDTO(
                     room.getId(),
                     room.getRoomNumber(),
