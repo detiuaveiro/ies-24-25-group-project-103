@@ -23,7 +23,7 @@ export default function DischargePatient({ showModal, setShowModal, patient }) {
                 }
             );
 
-            if (response.status === 200) {
+            if (response.status === 204) {
                 alert('Patient discharged successfully');
                 setShowModal(false);
             } else {
