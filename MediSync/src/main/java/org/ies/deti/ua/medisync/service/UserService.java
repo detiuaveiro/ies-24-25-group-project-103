@@ -35,6 +35,12 @@ public class UserService {
         return user;
     }
 
+    public void deleteUser() {
+        if (hospitalManagerService.hasHospitalManager()) {
+            hospitalManagerService.deleteHospitalManager();
+        }
+    }
+
     public User getUserById(Long id) {
         return userRepository.findById(id).orElse(null);
     }

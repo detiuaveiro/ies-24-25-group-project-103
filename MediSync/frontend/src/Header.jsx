@@ -25,7 +25,7 @@ function Header({ children }) {
                     },
                 });
                 const blob = response.data;
-                setProfileImage(URL.createObjectURL(blob)); // Convert the Blob to a local URL
+                setProfileImage(URL.createObjectURL(blob));
             } catch (error) {
                 console.error('Error fetching profile image:', error.response ? error.response.data : error.message);
             }
@@ -34,12 +34,19 @@ function Header({ children }) {
         fetchProfileImage();
     }, [fullImageUrl, token]);
     
+    const getPatientsLink = () => {
+        if (role === 'DOCTOR') {
+            return '/doctor/patients';
+        }
+        return '/patients';
+    };
+
     return (
         <div className={styles.wrapper}>
             <header className={styles.header}>
                 <div className={styles.profile}>
                     <img
-                        src={profileImage || 'placeholder.jpg'} // Fallback to a placeholder if the image isn't loaded
+                        src={profileImage || 'placeholder.jpg'}
                         alt="Profile"
                         className={styles.profileImage}
                     />
@@ -50,10 +57,12 @@ function Header({ children }) {
                 </div>
 
                 <div className={styles.navButtons}>
-                    <Link to="/patients">
+                    <Link to={getPatientsLink()}>
                         <div className={styles.navButton}>
                             <FontAwesomeIcon icon={faClipboardList} size="2x" />
-                            <span className={styles.btnText}> List of Patients</span>
+                            <span className={styles.btnText}> 
+                                {role === 'DOCTOR' ? 'My Patients' : 'List of Patients'}
+                            </span>
                         </div>
                     </Link>
                     <Link to="/rooms">
@@ -71,7 +80,11 @@ function Header({ children }) {
                 </div>
 
                 <div className={styles.logoutButton}>
-                    <FontAwesomeIcon icon={faArrowRightFromBracket} size="2x" />
+                    <Link to="/">
+                        <div className={styles.navButton}>
+                            <FontAwesomeIcon icon={faArrowRightFromBracket} size="2x" />
+                        </div>
+                    </Link>
                 </div>
             </header>
 

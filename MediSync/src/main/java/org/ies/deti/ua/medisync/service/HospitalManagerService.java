@@ -65,6 +65,12 @@ public class HospitalManagerService {
         return hospitalManagerRepository.findAll().size() > 0;
     }
 
+    public HospitalManager deleteHospitalManager() {
+        HospitalManager hospitalManager = hospitalManagerRepository.findAll().get(0);
+        hospitalManagerRepository.delete(hospitalManager);
+        return hospitalManager;
+    }
+
     public void dischargePatient(Long patientId) {
         patientService.dischargePatient(patientId);
     }
