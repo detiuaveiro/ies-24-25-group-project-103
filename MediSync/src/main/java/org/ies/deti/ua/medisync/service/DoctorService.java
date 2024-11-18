@@ -53,6 +53,8 @@ public class DoctorService {
 
     public void deleteDoctor(Long doctorId) {
         Optional<Doctor> doctorOptional = doctorRepository.findById(doctorId);
-        doctorOptional.ifPresent(doctorRepository::delete);
+        if (doctorOptional.isPresent()) {
+            doctorOptional.get().setActive(false);
+        }
     }
 }
