@@ -1,7 +1,7 @@
-// FloorOverview.jsx
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import styles from './FloorOverview.module.css';
+import AddIcon from '@mui/icons-material/Add';
 
 function FloorOverview() {
     const [beds, setBeds] = useState([]);
@@ -56,33 +56,44 @@ function FloorOverview() {
             <h1 className={styles.title}>Floor Overview</h1>
             
             <div className={styles.controlsRow}>
-                <div className={styles.floorControl}>
-                    <select 
-                        value={selectedFloor} 
-                        onChange={(e) => setSelectedFloor(e.target.value)}
-                        className={styles.floorSelect}
-                    >
-                        {floors.map(floor => (
-                            <option key={floor} value={floor}>
-                                Floor {floor}
-                            </option>
-                        ))}
-                    </select>
+                <div className={styles.leftControls}>
+                    <div className={styles.floorControl}>
+                        <select 
+                            value={selectedFloor} 
+                            onChange={(e) => setSelectedFloor(e.target.value)}
+                            className={styles.floorSelect}
+                        >
+                            {floors.map(floor => (
+                                <option key={floor} value={floor}>
+                                    Floor {floor}
+                                </option>
+                            ))}
+                        </select>
+                    </div>
+
+                    <div className={styles.legend}>
+                        <div className={styles.legendItem}>
+                            <div className={`${styles.bed} ${styles.occupied}`}></div>
+                            <span>Occupied Bed</span>
+                        </div>
+                        <div className={styles.legendItem}>
+                            <div className={`${styles.bed} ${styles.available}`}></div>
+                            <span>Free Bed</span>
+                        </div>
+                        <div className={styles.legendItem}>
+                            <div className={`${styles.bed} ${styles['needs-cleaning']}`}></div>
+                            <span>Needs to be Cleaned</span>
+                        </div>
+                    </div>
                 </div>
 
-                <div className={styles.legend}>
-                    <div className={styles.legendItem}>
-                        <div className={`${styles.bed} ${styles.occupied}`}></div>
-                        <span>Occupied Bed</span>
-                    </div>
-                    <div className={styles.legendItem}>
-                        <div className={`${styles.bed} ${styles.available}`}></div>
-                        <span>Free Bed</span>
-                    </div>
-                    <div className={styles.legendItem}>
-                        <div className={`${styles.bed} ${styles['needs-cleaning']}`}></div>
-                        <span>Needs to be Cleaned</span>
-                    </div>
+                <div className={styles.actionButtons}>
+                    <button className={styles.addButton}>
+                        <AddIcon /> Add Patient
+                    </button>
+                    <button className={styles.addButton}>
+                        <AddIcon /> Add Staff
+                    </button>
                 </div>
             </div>
 

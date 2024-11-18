@@ -14,9 +14,15 @@
 
 .controlsRow {
     display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+}
+
+.leftControls {
+    display: flex;
     align-items: center;
     gap: 40px;
-    margin-bottom: 30px;
 }
 
 .floorControl {
@@ -55,6 +61,39 @@
     height: 20px;
     border-radius: 4px;
     margin: 0;
+}
+
+.actionButtons {
+    display: flex;
+    gap: 10px;
+}
+
+.addButton {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 24px;
+    background-color: #E6EAF5;
+    border: none;
+    border-radius: 8px;
+    color: #271E4A;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    min-width: 170px;
+}
+
+.addButton:hover {
+    background-color: #d5d9e4;
+}
+
+.addButton svg {
+    font-size: 20px;
+}
+
+.addButton span {
+    font-size: 18px;
+    font-weight: bold;
 }
 
 .floorPlan {
