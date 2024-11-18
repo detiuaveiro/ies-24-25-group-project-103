@@ -1,6 +1,5 @@
 package org.ies.deti.ua.medisync.service;
 
-import org.ies.deti.ua.medisync.model.HospitalManager;
 import org.ies.deti.ua.medisync.model.User;
 import org.ies.deti.ua.medisync.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;

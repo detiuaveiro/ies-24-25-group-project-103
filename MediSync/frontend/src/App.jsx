@@ -12,6 +12,7 @@ import PatientInfo from './PatientInfo';
 import HealthOverview from './HealthOverview';
 import Notifications from './Notification';
 import Rooms from './Rooms';
+import RoomPage from './RoomPage';
 import DoctorPatients from "./DoctorPatients";
 import FloorOverview from './FloorOverview';
 
@@ -33,6 +34,7 @@ function Main() {
     <>
       {shouldShowHeader && <Header> {}
         <Routes>
+          <Route path="/dashboard_nurse" element={<RoomPage />} />
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/schedule" element={<Schedule />} />
           <Route path="/patients" element={<Patients />} />

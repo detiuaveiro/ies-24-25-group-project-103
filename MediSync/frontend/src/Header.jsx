@@ -2,11 +2,13 @@ import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import styles from './Header.module.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faClipboardList, faArrowRightFromBracket, faBedPulse, faComment } from '@fortawesome/free-solid-svg-icons';
+import { faBars, faTimes, faClipboardList, faArrowRightFromBracket, faBedPulse, faComment } from '@fortawesome/free-solid-svg-icons';
 import axios from 'axios';
+import EventNoteIcon from '@mui/icons-material/EventNote';
 
 function Header({ children }) {
     const [profileImage, setProfileImage] = useState(null);
+    const [isMenuOpen, setIsMenuOpen] = useState(false); // State to manage mobile menu
     const role = localStorage.getItem('userRole');
     const name = JSON.parse(localStorage.getItem('user')).name;
     const user = JSON.parse(localStorage.getItem('user'));
@@ -17,7 +19,6 @@ function Header({ children }) {
     useEffect(() => {
         const fetchProfileImage = async () => {
             try {
-                console.log('Fetching image from:', fullImageUrl);
                 const response = await axios.get(fullImageUrl, {
                     responseType: 'blob',
                     headers: {
@@ -25,22 +26,32 @@ function Header({ children }) {
                     },
                 });
                 const blob = response.data;
-                setProfileImage(URL.createObjectURL(blob));
+                setProfileImage(URL.createObjectURL(blob)); // Convert the Blob to a local URL
             } catch (error) {
                 console.error('Error fetching profile image:', error.response ? error.response.data : error.message);
             }
         };
-    
+
         fetchProfileImage();
     }, [fullImageUrl, token]);
-    
+
+    const toggleMenu = () => {
+        console.log('Menu toggle clicked, current state:', isMenuOpen);
+        setIsMenuOpen(!isMenuOpen);
+    };
+
+    const handleLogout = () => {
+        localStorage.removeItem('user');
+        localStorage.removeItem('userRole');
+        localStorage.removeItem('token');
+        window.location.href = '/';
+    };
     const getPatientsLink = () => {
         if (role === 'DOCTOR') {
             return '/doctor/patients';
         }
         return '/patients';
     };
-
     return (
         <div className={styles.wrapper}>
             <header className={styles.header}>
@@ -56,36 +67,52 @@ function Header({ children }) {
                     </div>
                 </div>
 
-                <div className={styles.navButtons}>
-                    <Link to={getPatientsLink()}>
-                        <div className={styles.navButton}>
+                <div className={styles.hamburger} onClick={toggleMenu}>
+                    <FontAwesomeIcon icon={isMenuOpen ? faTimes : faBars} size="2x" />
+                </div>
+
+                <nav className={`${styles.nav} ${isMenuOpen ? styles.navOpen : ''}`}>
+                    {isMenuOpen && (
+                        <button className={styles.closeButton} onClick={toggleMenu}>
+                            <FontAwesomeIcon icon={faTimes} size="2x" />
+                        </button>
+                    )}
+                    <Link to={getPatientsLink()} style={{ textDecoration: "none" }}>
+                    <div className={styles.navButton}>
                             <FontAwesomeIcon icon={faClipboardList} size="2x" />
-                            <span className={styles.btnText}> 
-                                {role === 'DOCTOR' ? 'My Patients' : 'List of Patients'}
-                            </span>
+                            <span className={styles.btnText}> List of Patients</span>
                         </div>
                     </Link>
-                    <Link to="/rooms">
+                    {(role === 'HOSPITAL_MANAGER') ? (
+                    <Link to="/rooms" style={{ textDecoration: "none" }}>
                         <div className={styles.navButton}>
                             <FontAwesomeIcon icon={faBedPulse} size="2x" />
                             <span className={styles.btnText}> List of Rooms</span>
                         </div>
                     </Link>
-
-                    <div className={styles.alertButton}>
-                        <FontAwesomeIcon icon={faComment} size="2x" />
-                        <span className={styles.btnText}> Alerts</span>
-                        <span className={styles.notificationBadge}>2</span>
-                    </div>
-                </div>
-
-                <div className={styles.logoutButton}>
-                    <Link to="/">
+                    ) : null}
+                    {((role === 'NURSE'))? (
+                    <Link to = "/schedule" style={{ textDecoration: "none" }}>
                         <div className={styles.navButton}>
-                            <FontAwesomeIcon icon={faArrowRightFromBracket} size="2x" />
+                            <EventNoteIcon fontSize="large" />
+                            <span className={styles.btnText}> Schedule</span>
                         </div>
                     </Link>
-                </div>
+                    ) : null}
+                    {((role === 'NURSE') || (role === 'HOSPITAL_MANAGER')) ? (
+                    <Link to="/notifications" style={{ textDecoration: "none" }}>
+                    
+                        <div className={styles.alertButton}>
+                            <FontAwesomeIcon icon={faComment} size="2x" />
+                            <span className={styles.btnText}> Alerts</span>
+                            <span className={styles.notificationBadge}>2</span>
+                        </div>
+                    </Link>
+                    ) : null}
+                    <div className={styles.logoutButton} onClick={handleLogout}>
+                        <FontAwesomeIcon icon={faArrowRightFromBracket} size="2x" />
+                    </div>
+                </nav>
             </header>
 
             <div className={styles.mainContent}>
