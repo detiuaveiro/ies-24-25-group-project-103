@@ -30,8 +30,11 @@ public class UserController {
     }
 
     @PostMapping
-    public ResponseEntity<User> createUser(@RequestBody User user) {
-        User createdUser = userService.createUser(user);
+    public ResponseEntity<User> createUser(@RequestBody User user, @RequestParam String password) {
+        User createdUser = userService.createUser(user, password);
+        if (createdUser == null) {
+            return ResponseEntity.status(HttpStatus.SC_CONFLICT).build();
+        }
         return ResponseEntity.ok(createdUser);
     }
 

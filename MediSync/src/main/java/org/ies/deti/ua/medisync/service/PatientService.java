@@ -107,8 +107,8 @@ public class PatientService {
     public Patient setDoctor(Long id, Doctor doctor) {
         Optional<Patient> patient = this.getPatientById(id);
         if (patient.isPresent()) {
-            patient.get().setAssignedDoctor(doctor);
-            doctorRepository.save(doctor);
+            Doctor actualDoctor = doctorRepository.findById(doctor.getId()).get();
+            patient.get().setAssignedDoctor(actualDoctor);
             return patientRepository.save(patient.get());
         }
         return null;
@@ -311,6 +311,7 @@ public class PatientService {
         Optional<Patient> patientOptional = patientRepository.findById(patientId);
         if (patientOptional.isPresent()) {
             Patient patient = patientOptional.get();
+            System.out.println(patient);
             medication.setPatient(patient);
             medicationRepository.save(medication);
             return patient;
@@ -322,11 +323,10 @@ public class PatientService {
         List<Medication> medicationList = medicationRepository.findMedicationByPatientId(patientId);
         for (Medication medication : medicationList) {
             if (medication.getId().equals(medicationId)) {
+                System.out.println(medication.getPatient());
                 medication.setName(updatedMedication.getName());
                 medication.setDosage(updatedMedication.getDosage());
                 medication.setHourInterval(updatedMedication.getHourInterval());
-                medication.setLastTaken(updatedMedication.getLastTaken());
-                medication.setHasTaken(updatedMedication.isHasTaken());
                 return medicationRepository.save(medication);
             }
         }

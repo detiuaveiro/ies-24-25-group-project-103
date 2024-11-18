@@ -2,12 +2,16 @@ package org.ies.deti.ua.medisync.service;
 
 import org.ies.deti.ua.medisync.model.User;
 import org.ies.deti.ua.medisync.repository.UserRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
 public class UserService {
     
     private final UserRepository userRepository;
+
+    @Autowired
+    private HospitalManagerService hospitalManagerService;
 
     public UserService(UserRepository userRepository) {
         this.userRepository = userRepository;
@@ -21,8 +25,13 @@ public class UserService {
         return null;
     }
 
-    public User createUser(User user) {
-        return userRepository.save(user);
+    public User createUser(User user, String password) {
+        user.setPassword(password);
+        if (hospitalManagerService.hasHospitalManager()) {
+            return null;
+        }
+        hospitalManagerService.convertToHospitalManager(user);
+        return user;
     }
 
     public User getUserById(Long id) {

@@ -7,8 +7,8 @@ const BloodPressureCard = () => {
     
     <Box
     sx={{
-      width: 370,
-      height: 220,
+      width: 380,
+      height: 250,
       position: "relative",
       backgroundColor: "white",
       borderRadius: "16.81px",

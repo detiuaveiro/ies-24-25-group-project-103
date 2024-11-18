@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import axios from "axios"; // Import axios
 import styles from "./MedicationTable.module.css"; // Import the CSS module
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEdit, faTrash } from "@fortawesome/free-solid-svg-icons";
@@ -7,59 +8,50 @@ import axios from "axios";
 
 const MedicationTableNurse = () => {
   const [medications, setMedications] = useState([]);
-  const { id } = useParams();
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
+  const [lastAdministered, setLastAdministered] = useState({});
+  const { id } = useParams(); // Get user ID from route parameters
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     const fetchMedications = async () => {
-      const token = localStorage.getItem("token"); // Retrieve token from localStorage
-
-      if (!token) {
-        setError("Authentication token not found");
-        setLoading(false);
-        return;
-      }
-
       try {
-        const response = await axios.get(`http://localhost:8080/api/v1/patients/${id}/medications`, {
-          headers: {
-            Authorization: `Bearer ${token}`, // Attach the token to the Authorization header
-          },
-        });
+        const token = localStorage.getItem("token");
+        if (!token) throw new Error("Authentication token not found.");
+
+        const response = await axios.get(
+          `http://localhost:8080/api/v1/patients/${id}/medications`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
         setMedications(response.data);
-        setLoading(false);
       } catch (err) {
-        setError("Failed to load medications");
-        setLoading(false);
+        console.error("Error fetching medications:", err);
+        setError("Failed to load medications.");
       }
     };
 
     fetchMedications();
   }, [id]);
 
-  const handleToggleCheck = async (medication) => {
-    const token = localStorage.getItem("token");
+  const handleToggleCheck = async (medication, index) => {
     const now = new Date();
-
-    // Calculate the next due time
-    const lastTaken = new Date(medication.lastTaken || 0); // Handle null `lastTaken`
-    const nextDue = new Date(lastTaken.getTime() + medication.hourInterval * 60 * 60 * 1000);
-
-    // Check if the medication is still within the due interval
-    if (now < nextDue && medication.hasTaken) {
-      console.log("Medication is still within the interval. No update required.");
-      return;
-    }
-
+    const isTaken = !isCheckActive(index); // Determine new state
+    const updatedMedication = {
+      ...medication,
+      hasTaken: isTaken,
+      lastTaken: isTaken ? now.toISOString() : null, // Set `lastTaken` or clear it
+      patientId: id, // Ensure the patientId is included in the request
+    };
+  
     try {
-      // Toggle the medication status
-      const updatedMedication = {
-        ...medication,
-        hasTaken: now < nextDue, // Untoggle if overdue, otherwise set to true
-        lastTaken: now < nextDue ? medication.lastTaken : now.toISOString(),
-      };
-
+      const token = localStorage.getItem("token");
+      if (!token) throw new Error("Authentication token not found.");
+  
+      // Perform PUT request to update the medication
       await axios.put(
         `http://localhost:8080/api/v1/patients/${id}/medications/${medication.id}`,
         updatedMedication,
@@ -69,16 +61,28 @@ const MedicationTableNurse = () => {
           },
         }
       );
-
-      // Update the state locally
-      setMedications((prev) =>
-        prev.map((item) =>
-          item.id === medication.id ? updatedMedication : item
-        )
-      );
+  
+      // Update local state
+      setLastAdministered((prev) => ({
+        ...prev,
+        [index]: isTaken
+          ? { time: now, duration: medication.hourInterval * 60 * 60 * 1000 }
+          : null,
+      }));
     } catch (err) {
-      setError("Failed to update medication status");
+      console.error("Error updating medication:", err);
+      setError("Failed to update medication.");
     }
+  };
+  
+
+  const isCheckActive = (index) => {
+    const entry = lastAdministered[index];
+    if (!entry) return false;
+
+    const { time, duration } = entry;
+    const now = new Date();
+    return now - time < duration; // Check if within the interval
   };
 
   const calculateTimeUntilNext = (medication) => {
@@ -101,47 +105,57 @@ const MedicationTableNurse = () => {
 
   return (
     <div className={styles.tableContainer}>
-      <table className={styles.table}>
-        <thead>
-          <tr>
-            <th style={{ width: "5%" }}>✔</th>
-            <th>Name</th>
-            <th>Dosage</th>
-            <th>Frequency (hours)</th>
-            <th>Last Administered</th>
-            <th>Time Until Next</th>
-          </tr>
-        </thead>
-        <tbody>
-          {medications.map((medication) => {
-            const lastTime = medication.lastTaken
-              ? new Date(medication.lastTaken).toLocaleTimeString()
-              : "Not given yet";
+      {error ? (
+        <div className={styles.error}>{error}</div>
+      ) : (
+        <table className={styles.table}>
+          <thead>
+            <tr>
+              <th style={{ width: "5%" }}>✔</th>
+              <th>Name</th>
+              <th>Quantity</th>
+              <th>Frequency</th>
+              <th>Last Administered</th>
+              <th>Time Until Next</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {medications.map((medication, index) => {
+              const entry = lastAdministered[index];
+              const lastTime = entry
+                ? new Date(entry.time).toLocaleTimeString()
+                : "Not given yet";
 
-            return (
-              <tr key={medication.id}>
-                <td>
-                  <input
-                    type="checkbox"
-                    checked={medication.hasTaken}
-                    onChange={() => handleToggleCheck(medication)}
-                    style={{
-                      width: "20px",
-                      height: "20px",
-                      accentColor: medication.hasTaken ? "#34c759" : "#ccc",
-                    }}
-                  />
-                </td>
-                <td>{medication.name}</td>
-                <td>{medication.dosage}</td>
-                <td>{medication.hourInterval}</td>
-                <td>{lastTime}</td>
-                <td>{calculateTimeUntilNext(medication)}</td>
-              </tr>
-            );
-          })}
-        </tbody>
-      </table>
+              return (
+                <tr key={medication.id}>
+                  <td>
+                    <input
+                      type="checkbox"
+                      checked={isCheckActive(index)}
+                      onChange={() => handleToggleCheck(medication, index)}
+                      style={{
+                        width: "20px",
+                        height: "20px",
+                        accentColor: isCheckActive(index) ? "#34c759" : "#ccc",
+                      }}
+                    />
+                  </td>
+                  <td>{medication.name}</td>
+                  <td>{medication.dosage}</td>
+                  <td>{medication.hourInterval}</td>
+                  <td>{lastTime}</td>
+                  <td>{calculateTimeUntilNext(index)}</td>
+                  <td className={styles.actions}>
+                    <FontAwesomeIcon icon={faEdit} className={styles.icon} />
+                    <FontAwesomeIcon icon={faTrash} className={styles.icon} />
+                  </td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      )}
     </div>
   );
 };

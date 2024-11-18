@@ -37,6 +37,9 @@ public class User {  // Removed 'abstract' keyword
     @Column(name = "profile_picture_url", length = 255)
     private String profilePictureUrl;
 
+    @Column(name = "enabled", nullable = false)
+    private boolean enabled = true;
+
     public User() {}
 
     public User(String username, String email, String password, String name, String role, String profilePictureUrl) {
@@ -102,5 +105,13 @@ public class User {  // Removed 'abstract' keyword
 
     public void setProfilePictureUrl(String profilePictureUrl) {
         this.profilePictureUrl = profilePictureUrl;
+    }
+
+    public boolean isEnabled() {
+        return enabled;
+    }
+
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
     }
 }
