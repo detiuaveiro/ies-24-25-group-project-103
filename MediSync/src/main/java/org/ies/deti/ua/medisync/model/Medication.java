@@ -1,6 +1,6 @@
 package org.ies.deti.ua.medisync.model;
 
-import java.sql.Date;
+import java.time.LocalDateTime;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIdentityReference;
@@ -37,7 +37,7 @@ public class Medication {
     private boolean hasTaken = false;
 
     @Column(name = "last_taken")
-    private Date lastTaken;
+    private LocalDateTime lastTaken;
 
     @ManyToOne
     @JoinColumn(name = "patient_id", nullable = false)
@@ -46,7 +46,7 @@ public class Medication {
 
     public Medication() {}
 
-    public Medication(String name, String hourInterval, String dosage, Patient patient, Date lastTaken, boolean hasTaken) {
+    public Medication(String name, String hourInterval, String dosage, Patient patient, LocalDateTime lastTaken, boolean hasTaken) {
         this.name = name;
         this.hourInterval = hourInterval;
         this.dosage = dosage;
@@ -95,11 +95,11 @@ public class Medication {
         this.patient = patient;
     }
 
-    public Date getLastTaken() {
+    public LocalDateTime getLastTaken() {
         return lastTaken;
     }
 
-    public void setLastTaken(Date lastTaken) {
+    public void setLastTaken(LocalDateTime lastTaken) {
         this.lastTaken = lastTaken;
     }
 

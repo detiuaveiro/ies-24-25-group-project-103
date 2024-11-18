@@ -107,8 +107,8 @@ public class PatientService {
     public Patient setDoctor(Long id, Doctor doctor) {
         Optional<Patient> patient = this.getPatientById(id);
         if (patient.isPresent()) {
-            patient.get().setAssignedDoctor(doctor);
-            doctorRepository.save(doctor);
+            Doctor actualDoctor = doctorRepository.findById(doctor.getId()).get();
+            patient.get().setAssignedDoctor(actualDoctor);
             return patientRepository.save(patient.get());
         }
         return null;
@@ -125,7 +125,7 @@ public class PatientService {
             Double temperature = (Double) lastVitals.get("temperature");
             Double bloodPressure_systolic = (Double) lastVitals.get("bloodPressure_systolic");
             Double bloodPressure_diastolic = (Double) lastVitals.get("bloodPressure_diastolic");
-            Vitals vitals = new Vitals(HeartRate, bloodPressure_diastolic, bloodPressure_systolic, o2, temperature);
+            Vitals vitals = new Vitals(HeartRate, bloodPressure_diastolic, bloodPressure_systolic, temperature, o2);
             PatientWithVitals patientWithVitals = new PatientWithVitals(patient, vitals);
             return Optional.of(patientWithVitals);
         } else {
@@ -148,6 +148,7 @@ public class PatientService {
             existingPatient.setConditions(updatedPatient.getConditions());
             existingPatient.setObservations(updatedPatient.getObservations());
             existingPatient.setAssignedDoctor(updatedPatient.getAssignedDoctor());
+            existingPatient.setDischarged(updatedPatient.isDischarged());
             return patientRepository.save(existingPatient);
         }).orElseThrow(() -> new RuntimeException("Patient not found with id: " + id));
     }
@@ -157,7 +158,9 @@ public class PatientService {
     }
 
     public void dischargePatient(Long id) {
-        patientRepository.deleteById(id);
+        Patient existingPatient = patientRepository.findById(id).get();
+        existingPatient.setDischarged(true);
+        patientRepository.save(existingPatient);
     }
 
     public List<Patient> getPatientsFromDoctor(Doctor doctor) {
@@ -268,8 +271,7 @@ public class PatientService {
                     + "}",
             labels.toString(), vitalType, dataPoints.toString(), vitalType
         );
-    
-        // Encode the chart JSON and construct the URL
+      
         String encodedChart = URLEncoder.encode(chartJson, StandardCharsets.UTF_8);
         return "https://quickchart.io/chart?c=" + encodedChart;
     }
@@ -312,6 +314,7 @@ public class PatientService {
         Optional<Patient> patientOptional = patientRepository.findById(patientId);
         if (patientOptional.isPresent()) {
             Patient patient = patientOptional.get();
+            System.out.println(patient);
             medication.setPatient(patient);
             medicationRepository.save(medication);
             return patient;
@@ -323,10 +326,13 @@ public class PatientService {
         List<Medication> medicationList = medicationRepository.findMedicationByPatientId(patientId);
         for (Medication medication : medicationList) {
             if (medication.getId().equals(medicationId)) {
+                System.out.println(medication.getPatient());
                 medication.setName(updatedMedication.getName());
                 medication.setDosage(updatedMedication.getDosage());
                 medication.setHourInterval(updatedMedication.getHourInterval());
-                medication.setPatient(updatedMedication.getPatient());
+                medication.setLastTaken(updatedMedication.getLastTaken());
+                medication.setHasTaken(updatedMedication.isHasTaken());
+                
                 return medicationRepository.save(medication);
             }
         }

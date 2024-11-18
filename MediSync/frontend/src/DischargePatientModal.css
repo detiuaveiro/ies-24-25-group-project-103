@@ -1,75 +1,81 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@600&display=swap');
 /* Scoped styles for the modal */
   /* Modal container styling */
-  .modal-content {
-    border: 10px solid #a10000 !important; /* Red border matching the second image */
-    background-color: #ffffff !important; /* Ensure white background */
+  .discharge-patient {
+      .modal-content {
+        border: 10px solid #a10000 !important; /* Red border matching the second image */
+        background-color: #ffffff !important; /* Ensure white background */
+        font-family: 'Montserrat', sans-serif !important; /* Use Montserrat font */
+      }
+    
+      /* Header styling */
+      .modal-header {
+        border-bottom: none !important;
+        text-align: center !important; /* Center the title */
+        color: #000000 !important; /* Black text */
+      }
+    
+      /* Body styling */
+      .modal-body {
+        text-align: center !important; /* Center content */
+      }
+    
+      /* Checkbox styling */
+      .form-check {
+        text-align: center !important; /* Center checkbox with label */
+        margin-top: 20px;
+      }
+    
+      /* Footer styling for buttons alignment */
+      .modal-footer {
+        display: flex !important; /* Flex for horizontal layout */
+        justify-content: space-between !important; /* Space buttons evenly */
+        padding: 15px !important;
+      }
+    
+      /* Cancel button styling */
+      .modal-footer .btn-secondary {
+        background-color: #000000 !important; /* Black background */
+        color: #ffffff !important; /* White text */
+        border: 2px solid #000000 !important; /* Black border */
+        padding: 10px 20px !important; /* Adjust padding */
+        width: 45% !important; /* Set button width */
+        display: inline-block !important; /* Ensures inline-block behavior */
+        box-sizing: border-box !important; /* Ensure width includes padding */
+      }
+    
+      /* Discharge button styling */
+      .modal-footer .btn-danger {
+        background-color: #ffffff !important; /* White background */
+        color: #000000 !important; /* Black text */
+        border: 2px solid #000000 !important; /* Black border */
+        padding: 10px 20px !important; /* Adjust padding */
+        width: 45% !important; /* Set button width */
+        display: inline-block !important; /* Ensures inline-block behavior */
+        box-sizing: border-box !important; /* Ensure width includes padding */
+      }
+    
+      /* Bold text for patient name */
+      strong {
+        font-weight: bold !important;
+        color: #000000 !important; /* Black text */
+      }
+    
+    /* Adjust the checkbox input size and position it more to the right */
+    .form-check-input {
+      width: 28px !important;  /* Smaller checkbox */
+      height: 28px !important; /* Smaller checkbox */
+      border-radius: 2px !important; /* Square-like appearance */
+      padding: 0 !important;    /* Remove any inner padding */
+      margin-left: 4px !important; /* Move checkbox more to the right */
+    }
+    
+    /* Adjust the label text size and keep it close to the checkbox */
+    .form-check-label {
+      font-size: 16px !important; /* Smaller text size */
+      padding-left: 8px !important; /* Space between checkbox and label */
+    }
   }
 
-  /* Header styling */
-  .modal-header {
-    border-bottom: none !important;
-    text-align: center !important; /* Center the title */
-    color: #000000 !important; /* Black text */
-  }
-
-  /* Body styling */
-  .modal-body {
-    text-align: center !important; /* Center content */
-  }
-
-  /* Checkbox styling */
-  .form-check {
-    text-align: center !important; /* Center checkbox with label */
-    margin-top: 20px;
-  }
-
-  /* Footer styling for buttons alignment */
-  .modal-footer {
-    display: flex !important; /* Flex for horizontal layout */
-    justify-content: space-between !important; /* Space buttons evenly */
-    padding: 15px !important;
-  }
-
-  /* Cancel button styling */
-  .modal-footer .btn-secondary {
-    background-color: #000000 !important; /* Black background */
-    color: #ffffff !important; /* White text */
-    border: 2px solid #000000 !important; /* Black border */
-    padding: 10px 20px !important; /* Adjust padding */
-    width: 45% !important; /* Set button width */
-    display: inline-block !important; /* Ensures inline-block behavior */
-    box-sizing: border-box !important; /* Ensure width includes padding */
-  }
-
-  /* Discharge button styling */
-  .modal-footer .btn-danger {
-    background-color: #ffffff !important; /* White background */
-    color: #000000 !important; /* Black text */
-    border: 2px solid #000000 !important; /* Black border */
-    padding: 10px 20px !important; /* Adjust padding */
-    width: 45% !important; /* Set button width */
-    display: inline-block !important; /* Ensures inline-block behavior */
-    box-sizing: border-box !important; /* Ensure width includes padding */
-  }
-
-  /* Bold text for patient name */
-  strong {
-    font-weight: bold !important;
-    color: #000000 !important; /* Black text */
-  }
-
-/* Adjust the checkbox input size and position it more to the right */
-.form-check-input {
-  width: 28px !important;  /* Smaller checkbox */
-  height: 28px !important; /* Smaller checkbox */
-  border-radius: 2px !important; /* Square-like appearance */
-  padding: 0 !important;    /* Remove any inner padding */
-  margin-left: 4px !important; /* Move checkbox more to the right */
-}
-
-/* Adjust the label text size and keep it close to the checkbox */
-.form-check-label {
-  font-size: 14px !important; /* Smaller text size */
-  padding-left: 8px !important; /* Space between checkbox and label */
-}
 

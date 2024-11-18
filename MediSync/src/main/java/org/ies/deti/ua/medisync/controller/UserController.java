@@ -8,6 +8,7 @@ import org.ies.deti.ua.medisync.model.User;
 import org.ies.deti.ua.medisync.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -32,7 +33,18 @@ public class UserController {
     @PostMapping
     public ResponseEntity<User> createUser(@RequestBody User user, @RequestParam String password) {
         User createdUser = userService.createUser(user, password);
+        if (createdUser == null) {
+            return ResponseEntity.status(HttpStatus.SC_CONFLICT).build();
+        }
         return ResponseEntity.ok(createdUser);
+    }
+
+    // Created this in case we need to delete the existing hospital manager (should never be needed)
+    @DeleteMapping
+    public ResponseEntity<User> deleteUser() {
+        userService.deleteUser();
+
+        return ResponseEntity.ok().build();
     }
 
     /*
