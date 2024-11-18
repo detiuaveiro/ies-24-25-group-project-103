@@ -136,7 +136,7 @@ function HealthOverview() {
 
                     <div className={styles.rightColumn}>
                         <div className={styles.medicationSection}>
-                            <DischargePatient patient={patient} />
+                            <DischargePatientButton />
                         </div>
                     </div>
                 </div>
