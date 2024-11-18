@@ -20,6 +20,12 @@ public class HospitalManagerController {
         this.hospitalManagerService = hospitalManagerService;
     }
 
+    @PostMapping
+    public ResponseEntity<HospitalManager> createHospitalManager() {
+        HospitalManager createdHospitalManager = hospitalManagerService.createHospitalManager();
+        return ResponseEntity.ok(createdHospitalManager);
+    }
+
     // End point das salas
 
     @PostMapping("/rooms")

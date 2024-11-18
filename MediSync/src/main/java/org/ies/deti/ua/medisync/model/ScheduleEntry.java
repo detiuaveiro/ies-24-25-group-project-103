@@ -4,9 +4,12 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 import jakarta.persistence.Column;
@@ -41,7 +44,13 @@ public class ScheduleEntry {
     private boolean isInterval;
 
     @ManyToMany(mappedBy = "scheduleEntries")
+    @JsonIgnoreProperties({ "scheduleEntries" })
     private List<Room> rooms;
+
+    @JsonProperty("roomsNumbers")
+    public List<String> getRoomRoomNumbers() {
+        return rooms.stream().map(Room::getRoomNumber).collect(Collectors.toList());
+    }
 
     @ManyToOne
     @JoinColumn(name = "nurse_id", nullable = false)

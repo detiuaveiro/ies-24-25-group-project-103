@@ -2,12 +2,15 @@ package org.ies.deti.ua.medisync.service;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import org.ies.deti.ua.medisync.dto.BedWithPatientDTO;
+import org.ies.deti.ua.medisync.dto.RoomWithPatientsDTO;
 import org.ies.deti.ua.medisync.model.Bed;
 import org.ies.deti.ua.medisync.model.Nurse;
 import org.ies.deti.ua.medisync.model.Patient;
@@ -132,6 +135,53 @@ public class NurseService {
         return patientsWithVitals;
     }
 
+    public List<RoomWithPatientsDTO> getRoomWithBedsAndPatientsDTO(Nurse nurse) {
+        // Fetch all rooms the nurse is assigned to
+        List<Room> nurseRooms = nurse.getSchedule().stream()
+                .flatMap(scheduleEntry -> scheduleEntry.getRoom().stream())
+                .distinct()
+                .toList();
+
+        // Fetch all beds and their patients
+        Map<Bed, Patient> bedPatientMap = getAssignedBedsAndPatientsForNurse(nurse);
+        Map<Room, List<BedWithPatientDTO>> roomToBedsMap = new HashMap<>();
+
+        for (Map.Entry<Bed, Patient> entry : bedPatientMap.entrySet()) {
+            Bed bed = entry.getKey();
+            Patient patient = entry.getValue();
+            Room room = bed.getRoom(); // Assuming Bed has a reference to Room
+
+            Optional<PatientWithVitals> patientWithVitalsOpt = patientService.getPatientWithVitalsById(patient.getId());
+            if (patientWithVitalsOpt.isPresent()) {
+                PatientWithVitals patientWithVitals = patientWithVitalsOpt.get();
+                BedWithPatientDTO bedWithPatientDTO = new BedWithPatientDTO(
+                        bed.getId(),
+                        bed.getBedNumber(), // Assuming Bed has a getName() or similar method
+                        patientWithVitals);
+
+                roomToBedsMap
+                        .computeIfAbsent(room, r -> new ArrayList<>())
+                        .add(bedWithPatientDTO);
+            }
+        }
+
+        roomToBedsMap.forEach((room, beds) -> beds.sort(Comparator.comparing(BedWithPatientDTO::getBedId)));
+
+        // Create the list of DTOs, ensuring every room is included
+        List<RoomWithPatientsDTO> roomWithPatientsDTOList = new ArrayList<>();
+        for (Room room : nurseRooms) {
+            List<BedWithPatientDTO> beds = roomToBedsMap.getOrDefault(room, new ArrayList<>()); // Default to empty list
+                                                                                                // if no beds
+            RoomWithPatientsDTO dto = new RoomWithPatientsDTO(
+                    room.getId(),
+                    room.getRoomNumber(),
+                    beds);
+            roomWithPatientsDTOList.add(dto);
+        }
+
+        return roomWithPatientsDTOList;
+    }
+
     public Nurse addScheduleEntryToNurse(Long nurseId, ScheduleEntry newEntry) {
         /*
          * if (!isactive(nurseId)) {
@@ -164,7 +214,9 @@ public class NurseService {
             newEntry.setRoom(associatedRooms);
             newEntry = scheduleEntryRepository.save(newEntry);
             for (Room room : associatedRooms) {
-                room.getScheduleEntries().add(newEntry);
+                if (!room.getScheduleEntries().contains(newEntry)) {
+                    room.getScheduleEntries().add(newEntry); // Add new schedule entry
+                }
                 roomRepository.save(room);
             }
             nurse.addScheduleEntry(newEntry);
@@ -261,14 +313,11 @@ public class NurseService {
 
     public void deleteNurse(Long nurseId) {
         Optional<Nurse> nurseOpt = nurseRepository.findById(nurseId);
-        /*
-         * if (nurseOpt.isPresent()) {
-         * Nurse nurse = nurseOpt.get();
-         * if (nurse.isIsactive()) {
-         * nurse.setIsactive(false);
-         * }
-         * }
-         */
+        if (nurseOpt.isPresent()) {
+            Nurse nurse = nurseOpt.get();
+            nurse.setEnabled(false);
+            nurseRepository.save(nurse);
+        }
     }
 
     public Nurse addNurse(Nurse nurse) {
