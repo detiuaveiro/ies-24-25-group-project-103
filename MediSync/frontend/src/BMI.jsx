@@ -1,13 +1,40 @@
 import { Box, Chip, Typography } from "@mui/material";
 import React from "react";
 
-const BMI = ({patient}) => {
-  const bmi = patient.weight /(patient.height * patient.height);
+const BMI = ({ patient }) => {
+  const bmi = (patient.weight / (patient.height * patient.height)).toFixed(1); // Round to 1 decimal
+  const minBMI = 15;
+  const maxBMI = 40;
+  const healthyMin = 18.5;
+  const healthyMax = 24.9;
+  const gradientWidth = 254; // Total width of the gradient bar
+
+  // Calculate the position of the red circle based on BMI
+  const calculateLeftPosition = (bmi) => {
+    if (bmi < minBMI) return 0; // Clamp to the start
+    if (bmi > maxBMI) return gradientWidth; // Clamp to the end
+    return ((bmi - minBMI) / (maxBMI - minBMI)) * gradientWidth;
+  };
+
+  const circleLeftPosition = calculateLeftPosition(bmi);
+
+  // Determine the chip label and color
+  let chipLabel = "Healthy";
+  let chipColor = { backgroundColor: "#d5ffdd", color: "black" };
+
+  if (bmi < healthyMin) {
+    chipLabel = "Too Low";
+    chipColor = { backgroundColor: "#ff6b6b", color: "white" };
+  } else if (bmi > healthyMax) {
+    chipLabel = "Too High";
+    chipColor = { backgroundColor: "#ff6b6b", color: "white" };
+  }
+
   return (
     <Box
       sx={{
-        width: 276,
-        height: 185,
+        width: 296,
+        height: 205,
         position: "relative",
         backgroundColor: "#4a4949",
         borderRadius: 2,
@@ -41,13 +68,12 @@ const BMI = ({patient}) => {
       </Typography>
 
       <Chip
-        label="Healthy"
+        label={chipLabel}
         sx={{
           position: "absolute",
           top: 69,
           left: 169,
-          backgroundColor: "#d5ffdd",
-          color: "black",
+          ...chipColor, // Apply dynamic background and text color
           fontFamily: "Mulish, Helvetica",
         }}
       />
@@ -136,7 +162,7 @@ const BMI = ({patient}) => {
             position: "absolute",
             top: 14,
             left: 0,
-            width: 254,
+            width: gradientWidth,
             height: 15,
             borderRadius: 21,
             background:
@@ -148,12 +174,13 @@ const BMI = ({patient}) => {
           sx={{
             position: "absolute",
             top: -2,
-            left: 118,
+            left: circleLeftPosition,
             width: 9,
             height: 9,
             backgroundColor: "#d16564",
             borderRadius: 19,
             border: "1px solid white",
+            transform: "translateX(-50%)", // Center the circle horizontally
           }}
         />
       </Box>

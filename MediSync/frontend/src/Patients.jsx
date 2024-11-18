@@ -3,6 +3,7 @@ import axios from 'axios';
 import styles from './Patients.module.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSearch, faChartLine } from '@fortawesome/free-solid-svg-icons';
+import { Link } from 'react-router-dom';
 
 function Patients() {
     const [patients, setPatients] = useState([]);
@@ -88,32 +89,37 @@ function Patients() {
             </div>
 
             <div className={styles.tableContainer}>
-                <table className={styles.patientsTable}>
-                    <thead>
-                        <tr>
-                            <th>#</th>
-                            <th>Patient Name</th>
-                            <th>Room</th>
-                            <th>Estimated Discharge Date</th>
-                            <th></th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {patients.map((patient, index) => (
-                            <tr key={patient.id}>
-                                <td>{String(index + 1).padStart(2, '0')}</td>
-                                <td>{patient.name}</td>
-                                <td>{getPatientRoom(patient.id)}</td>
-                                <td>{new Date(patient.estimatedDischargeDate).toLocaleDateString('en-GB')}</td>
-                                <td>
+            <table className={styles.patientsTable}>
+                <thead>
+                    <tr>
+                        <th className={styles.hideOnMobile}>#</th>
+                        <th>Patient Name</th>
+                        <th>Room</th>
+                        <th className={styles.hideOnMobile}>Estimated Discharge Date</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {patients.map((patient, index) => (
+                        <tr key={patient.id}>
+                            <td className={styles.hideOnMobile}>{String(index + 1).padStart(2, '0')}</td>
+                            <td>{patient.name}</td>
+                            <td>{getPatientRoom(patient.id)}</td>
+                            <td className={styles.hideOnMobile}>
+                                {new Date(patient.estimatedDischargeDate).toLocaleDateString('en-GB')}
+                            </td>
+                            <td>
+                                <Link to={`/patients/${patient.id}`} style={{ textDecoration: 'none' }}>
                                     <button className={styles.moreInfoButton}>
                                         More Information <FontAwesomeIcon icon={faChartLine} />
                                     </button>
-                                </td>
-                            </tr>
-                        ))}
-                    </tbody>
-                </table>
+                                </Link>
+                            </td>
+                        </tr>
+                    ))}
+                </tbody>
+            </table>
+
             </div>
         </div>
     );

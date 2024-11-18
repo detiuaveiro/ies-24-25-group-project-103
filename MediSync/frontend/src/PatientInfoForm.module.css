@@ -45,3 +45,71 @@
     height: 5rem; /* Adjust height as needed */
   }
   
+  input[type="date"] {
+    padding-right: 40px; /* Space for the calendar icon */
+  }
+  
+  .calendarIcon {
+    position: absolute;
+    right: 10px;
+    color: #6c757d;
+    pointer-events: none; /* Prevent clicking on the icon */
+  }
+
+  .datePickerContainer {
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    width: 100%; /* Ensure it spans the full width of the parent */
+  }
+  
+  .inputWithIcon {
+    position: relative;
+    display: flex;
+    align-items: center;
+    width: 100%; /* Expand to full width */
+  }
+  
+  .dateInput {
+    width: 100%; /* Make DatePicker's input full-width */
+    padding-right: 2.5rem; /* Adjust padding for the calendar icon */
+    box-sizing: border-box; /* Include padding and borders in width calculation */
+  }
+  
+  .calendarIcon {
+    position: absolute;
+    right: 10px;
+    color: #6c757d;
+    pointer-events: none;
+  }
+  
+  .datePickerWrapper {
+    width: 100%; /* Full-width wrapper */
+  }
+
+  .observationsContainer {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    margin: 16px 0; /* Adds space around the container */
+  }
+  
+  .observationsLabel {
+    font-size: 16px;
+    font-weight: bold;
+    margin-bottom: 8px;
+  }
+  
+  .observationsInput {
+    width: 100%; /* Ensures it fills the container's width */
+    height: 120px; /* Gives enough space for longer text */
+    resize: none; /* Prevents manual resizing by the user */
+    padding: 12px; /* Adds padding inside the textarea */
+    font-size: 14px; /* Makes the text easier to read */
+    border: 1px solid #ccc; /* Adds a subtle border */
+    border-radius: 8px; /* Rounds the corners */
+    background-color: #f9f9f9; /* Light background for readability */
+    color: #333; /* Standard text color */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Optional shadow for depth */
+  }
+  

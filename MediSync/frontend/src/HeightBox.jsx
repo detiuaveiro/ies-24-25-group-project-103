@@ -1,17 +1,19 @@
 import { Box, Typography } from "@mui/material";
+
 const HeightWidthBox = ({patient}) => {
     return (
       <div>
       <Box
         sx={{
-          width: 196,
-          height: 85,
+          width: 226,
+          height: 96,
           position: "relative",
           top: 0,
           left: 0,
           bgcolor: "#f7debc",
           borderRadius: 2,
           margin: "10px",
+          marginTop: "5px",
           p: 1,
         }}
       >
@@ -164,8 +166,8 @@ const HeightWidthBox = ({patient}) => {
     </Box>
     <Box
         sx={{
-          width: 196,
-          height: 85,
+          width: 226,
+          height: 96,
           position: "relative",
           top: 0,
           left: 0,

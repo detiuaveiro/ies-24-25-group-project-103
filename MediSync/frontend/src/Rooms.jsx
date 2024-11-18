@@ -4,8 +4,12 @@ import axios from 'axios';
 import styles from './Rooms.module.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBed, faSearch } from '@fortawesome/free-solid-svg-icons';
+import { Button } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
+import GridViewIcon from '@mui/icons-material/GridView';
 
 function Rooms() {
+    const navigate = useNavigate();
     const [rooms, setRooms] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -46,7 +50,6 @@ function Rooms() {
         const floor = getFloor(room.roomNumber);
         const roomNum = getRoomNumber(room.roomNumber);
         
-        // Match floor number or room number or combined search
         return searchLower === '' || 
                `floor ${floor}`.includes(searchLower) ||
                `room ${roomNum}`.includes(searchLower) ||
@@ -60,15 +63,25 @@ function Rooms() {
         <div className={styles.roomsContainer}>
             <div className={styles.headerContainer}>
                 <h1 className={styles.title}>List of Rooms</h1>
-                <div className={styles.searchContainer}>
-                    <FontAwesomeIcon icon={faSearch} className={styles.searchIcon} />
-                    <input
-                        type="text"
-                        placeholder="Search by floor or room (e.g., 'floor 1' or 'room 3')"
-                        value={searchTerm}
-                        onChange={(e) => setSearchTerm(e.target.value)}
-                        className={styles.searchInput}
-                    />
+                <div className={styles.controlsContainer}>
+                    <Button 
+                        variant="contained" 
+                        startIcon={<GridViewIcon className={styles.buttonIcon}/>}
+                        onClick={() => navigate('/rooms/overview')}
+                        className={styles.overviewButton}
+                    >
+                        Room Overview
+                    </Button>
+                    <div className={styles.searchContainer}>
+                        <FontAwesomeIcon icon={faSearch} className={styles.searchIcon} />
+                        <input
+                            type="text"
+                            placeholder="Search by floor or room (e.g., 'floor 1' or 'room 3')"
+                            value={searchTerm}
+                            onChange={(e) => setSearchTerm(e.target.value)}
+                            className={styles.searchInput}
+                        />
+                    </div>
                 </div>
             </div>
 

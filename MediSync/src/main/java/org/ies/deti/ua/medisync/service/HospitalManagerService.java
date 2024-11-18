@@ -11,6 +11,8 @@ import org.ies.deti.ua.medisync.model.Doctor;
 import org.ies.deti.ua.medisync.model.Nurse;
 import org.ies.deti.ua.medisync.model.Patient;
 import org.ies.deti.ua.medisync.model.Room;
+import org.ies.deti.ua.medisync.model.HospitalManager;
+import org.ies.deti.ua.medisync.model.User;
 import org.ies.deti.ua.medisync.repository.BedRepository;
 import org.ies.deti.ua.medisync.repository.HospitalManagerRepository;
 import org.ies.deti.ua.medisync.repository.RoomRepository;
@@ -52,6 +54,26 @@ public class HospitalManagerService {
 
     public Patient createPatient(Patient patient) {
         return patientService.createPatient(patient);
+    }
+
+    public HospitalManager convertToHospitalManager(User user) {
+        HospitalManager hospitalManager = new HospitalManager(user.getUsername(), user.getPassword(), user.getPassword(), user.getName(), "HOSPITAL_MANAGER", user.getProfilePictureUrl());
+        return hospitalManagerRepository.save(hospitalManager);
+    }
+
+    public HospitalManager createHospitalManager() {
+        HospitalManager hospitalManager = new HospitalManager("ieslover", "ieslover@ua.pt", "ieslover", "IES LOVER", "HOSPITAL_MANAGER", null);
+        return hospitalManagerRepository.save(hospitalManager);
+    }
+
+    public boolean hasHospitalManager() {
+        return hospitalManagerRepository.findAll().size() > 0;
+    }
+
+    public HospitalManager deleteHospitalManager() {
+        HospitalManager hospitalManager = hospitalManagerRepository.findAll().get(0);
+        hospitalManagerRepository.delete(hospitalManager);
+        return hospitalManager;
     }
 
     public void dischargePatient(Long patientId) {

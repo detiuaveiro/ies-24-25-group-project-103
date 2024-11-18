@@ -10,7 +10,7 @@ const TemperatureCard = ({patient}) => {
     <Box
       sx={{
         width: 380,
-        height: 220,
+        height: 250,
         position: "relative",
         backgroundColor: "white",
         borderRadius: "16.81px",
