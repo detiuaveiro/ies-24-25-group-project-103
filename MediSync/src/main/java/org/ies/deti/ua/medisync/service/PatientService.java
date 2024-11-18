@@ -162,7 +162,7 @@ public class PatientService {
         existingPatient.setDischarged(true);
         patientRepository.save(existingPatient);
     }
-    
+
     public List<Patient> getPatientsFromDoctor(Doctor doctor) {
         return patientRepository.findByAssignedDoctor(doctor);
     }
@@ -330,6 +330,9 @@ public class PatientService {
                 medication.setName(updatedMedication.getName());
                 medication.setDosage(updatedMedication.getDosage());
                 medication.setHourInterval(updatedMedication.getHourInterval());
+                medication.setLastTaken(updatedMedication.getLastTaken());
+                medication.setHasTaken(updatedMedication.isHasTaken());
+                
                 return medicationRepository.save(medication);
             }
         }

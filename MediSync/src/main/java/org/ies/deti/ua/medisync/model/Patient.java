@@ -14,7 +14,6 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
@@ -61,7 +60,7 @@ public class Patient {
     private Doctor assignedDoctor;
 
     @Column(name = "discharged")
-    private boolean discharged = false;
+    private Boolean discharged = false;
     
 
     public Patient() {}
@@ -159,11 +158,11 @@ public class Patient {
         this.assignedDoctor = assignedDoctor;
     }
 
-    public boolean isDischarged() {
+    public Boolean isDischarged() {
         return discharged;
     }
 
-    public void setDischarged(boolean discharged) {
+    public void setDischarged(Boolean discharged) {
         this.discharged = discharged;
     }
 
