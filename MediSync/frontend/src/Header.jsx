@@ -56,10 +56,12 @@ function Header({ children }) {
                             <span className={styles.btnText}> List of Patients</span>
                         </div>
                     </Link>
-                    <div className={styles.navButton}>
-                        <FontAwesomeIcon icon={faBedPulse} size="2x" />
-                        <span className={styles.btnText}> List of Rooms</span>
-                    </div>
+                    <Link to="/rooms">
+                        <div className={styles.navButton}>
+                            <FontAwesomeIcon icon={faBedPulse} size="2x" />
+                            <span className={styles.btnText}> List of Rooms</span>
+                        </div>
+                    </Link>
 
                     <div className={styles.alertButton}>
                         <FontAwesomeIcon icon={faComment} size="2x" />
