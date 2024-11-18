@@ -14,6 +14,7 @@ import { AddMedicationButton } from './AddMedicationButton';
 import MedicationTableNurse from './MedicationTableNurse';
 import { DischargePatientButton } from './DischargePatientButton';
 import { Observations } from './Observations';
+import DischargePatient from './DischargePatient';
 
 function HealthOverview() {
     const [patient, setPatient] = useState(null);
@@ -21,7 +22,11 @@ function HealthOverview() {
     const [error, setError] = useState(null);
     const user = JSON.parse(localStorage.getItem('user'));
     const { id } = useParams(); 
+    const [showModal, setShowModal] = useState(false);
 
+    function handleButtonClick() {
+        setShowModal(true);
+    }
     useEffect(() => {
         const fetchPatientData = async () => {
             try {
@@ -135,11 +140,18 @@ function HealthOverview() {
                                 <HeightBox patient={patient} />
                                 <BMI patient={patient} />
                             </div>
+                            <div onClick={handleButtonClick}>
+                            <DischargePatientButton />
+                        </div>
                         </div>
     
                         <div className={styles.rightColumn}>
-                        <DischargePatientButton patient={patient} />
 
+                        <DischargePatient 
+                            showModal={showModal} 
+                            setShowModal={setShowModal} 
+                            patient={patient} 
+                        />
                         </div>
                     </div>
                 </div>

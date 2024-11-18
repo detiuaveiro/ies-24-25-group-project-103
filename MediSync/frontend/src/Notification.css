@@ -5,11 +5,14 @@
 .notification-widget-container {
     width: 100%;
     padding: 20px;
-    font-family: 'Montserrat', sans-serif; /* Default font for the container */
+    font-family: 'Montserrat', sans-serif;
     background-color: #f0f4ff;
     border-radius: 10px;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
     position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 16px; 
 }
 
 .notification-widget-header {
