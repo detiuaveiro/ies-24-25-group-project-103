@@ -80,7 +80,11 @@ function Header({ children }) {
                 </div>
 
                 <div className={styles.logoutButton}>
-                    <FontAwesomeIcon icon={faArrowRightFromBracket} size="2x" />
+                    <Link to="/">
+                        <div className={styles.navButton}>
+                            <FontAwesomeIcon icon={faArrowRightFromBracket} size="2x" />
+                        </div>
+                    </Link>
                 </div>
             </header>
 
