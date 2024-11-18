@@ -12,6 +12,7 @@ import MedicationTable from './MedicationTable';
 import styles from './HealthOverview.module.css'; 
 import { AddMedicationButton } from './AddMedicationButton';
 import MedicationTableNurse from './MedicationTableNurse';
+import DischargePatient from './DischargePatient';
 
 function HealthOverview() {
     const [patient, setPatient] = useState(null);
@@ -54,7 +55,71 @@ function HealthOverview() {
     if (error) {
         return <div>Error: {error}</div>;
     }
+    const user = JSON.parse(localStorage.getItem('user'));
+    if (user.role === 'NURSE') {
+        return (
+            <div className="app">
+                <div className={styles.mainContent}>
+                    <div className={styles.infoAndVitals}>
+                        <div className={styles.leftColumn}>
+                            <div className={styles.patientInfo}>
+                                <PatientInfo patient={patient} />
+                            </div>
+                            <div className={styles.heightAndBMIRow}>
+                                <HeightBox patient={patient} />
+                                <BMI patient={patient} />
+                            </div>
+                        </div>
 
+                        <div className={styles.rightColumn}>
+                            <div className={styles.vitalsGrid}>
+                                <HeartRate patient={patient} />
+                                <OxygenCard patient={patient} />
+                                <BloodPressureCard patient={patient} />
+                                <TemperatureCard patient={patient} />
+                            </div>
+                            <div className={styles.medicationSection}>
+                                <MedicationTableNurse patient={patient} />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        );
+    }
+    else if (user.role === 'DOCTOR') {
+        return (
+            <div className="app">
+                <div className={styles.mainContent}>
+                    <div className={styles.infoAndVitals}>
+                        <div className={styles.leftColumn}>
+                            <div className={styles.patientInfo}>
+                                <PatientInfo patient={patient} />
+                            </div>
+                            <div className={styles.heightAndBMIRow}>
+                                <HeightBox patient={patient} />
+                                <BMI patient={patient} />
+                            </div>
+                        </div>
+
+                        <div className={styles.rightColumn}>
+                            <div className={styles.vitalsGrid}>
+                                <HeartRate patient={patient} />
+                                <OxygenCard patient={patient} />
+                                <BloodPressureCard patient={patient} />
+                                <TemperatureCard patient={patient} />
+                            </div>
+                            <div className={styles.medicationSection}>
+                                <MedicationTable patient={patient} />
+                                <AddMedicationButton />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        );
+    }
+    else {
     return (
         <div className="app">
             <div className={styles.mainContent}>
@@ -70,22 +135,15 @@ function HealthOverview() {
                     </div>
 
                     <div className={styles.rightColumn}>
-                        <div className={styles.vitalsGrid}>
-                            <HeartRate patient={patient} />
-                            <OxygenCard patient={patient} />
-                            <BloodPressureCard patient={patient} />
-                            <TemperatureCard patient={patient} />
-                        </div>
                         <div className={styles.medicationSection}>
-                            <MedicationTableNurse patient={patient} />
-                            <MedicationTable patient={patient} />
-                            <AddMedicationButton />
+                            <DischargePatient patient={patient} />
                         </div>
                     </div>
                 </div>
             </div>
         </div>
     );
+}
 }
 
 export default HealthOverview;

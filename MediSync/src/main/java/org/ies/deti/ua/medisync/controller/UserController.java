@@ -30,8 +30,8 @@ public class UserController {
     }
 
     @PostMapping
-    public ResponseEntity<User> createUser(@RequestBody User user, @RequestParam String password) {
-        User createdUser = userService.createUser(user, password);
+    public ResponseEntity<User> createUser(@RequestBody User user) {
+        User createdUser = userService.createUser(user);
         return ResponseEntity.ok(createdUser);
     }
 

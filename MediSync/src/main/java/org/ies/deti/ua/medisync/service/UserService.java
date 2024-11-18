@@ -21,8 +21,7 @@ public class UserService {
         return null;
     }
 
-    public User createUser(User user, String password) {
-        user.setPassword(password);
+    public User createUser(User user) {
         return userRepository.save(user);
     }
 

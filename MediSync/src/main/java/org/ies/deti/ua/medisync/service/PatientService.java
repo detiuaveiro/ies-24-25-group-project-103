@@ -198,53 +198,83 @@ public class PatientService {
                 "from(bucket: \"%s\") " +
                         "|> range(start: %s, stop: %s) " +
                         "|> filter(fn: (r) => r[\"bedId\"] == \"%s\") " +
-                        "|> filter(fn: (r) => r[\"_measurement\"] == \"vitals\") " +
-                        "|> pivot(rowKey: [\"_time\"], columnKey: [\"bedId\"], valueColumn: \"_value\")",
-                bucket, startTime, endTime, bedId);
-
+                        "|> filter(fn: (r) => r[\"_measurement\"] == \"vitals\")",
+                bucket, startTime, endTime, bedId);  
+    
         QueryApi queryApi = influxDBClient.getQueryApi();
         return queryApi.query(fluxQuery);
     }
-
-    public String generateQuickChartUrl(List<FluxTable> vitalsRecords, String bedId, String vitalType) {
+    
+    public String generateQuickChartUrl(String bedId, String vitalType, String startTime, String endTime) {
+        List<FluxTable> vitalsRecords = getPatientVitals(bedId, startTime, endTime);
+    
         StringBuilder labels = new StringBuilder();
         StringBuilder dataPoints = new StringBuilder();
-
+        vitalType = "o2";
+    
         for (FluxTable table : vitalsRecords) {
             for (FluxRecord record : table.getRecords()) {
+                System.out.println("Record: " + record.toString());
+                System.out.println("Record Field: " + record.getValueByKey("_field"));
+                System.out.println("Record Value: " + record.getValue());
+    
                 String field = (String) record.getValueByKey("_field");
-                Number value = (Number) record.getValue();
-
-                if (value == null || !vitalType.equals(field))
+    
+                if (!vitalType.equals(field)) {
                     continue;
-
+                }
+    
+                Number value = (Number) record.getValue();
+                if (value == null) {
+                    System.out.println("Record value is null, skipping...");
+                    continue;
+                }
+    
                 String timeLabel = record.getTime().toString();
+                System.out.println("Time Label: " + timeLabel);
+                System.out.println("Value: " + value);
+    
                 labels.append("\"").append(timeLabel).append("\",");
                 dataPoints.append(value.toString()).append(",");
             }
         }
-
-        if (labels.length() > 0)
+    
+        if (labels.length() > 0) {
             labels.setLength(labels.length() - 1);
-        if (dataPoints.length() > 0)
+        }
+        if (dataPoints.length() > 0) {
             dataPoints.setLength(dataPoints.length() - 1);
-
+        }
+    
+        System.out.println("Final Labels: " + labels.toString());
+        System.out.println("Final Data Points: " + dataPoints.toString());
+    
         String chartJson = String.format(
-                "{"
-                        + "\"type\":\"line\","
-                        + "\"data\":{"
-                        + "\"labels\":[%s],"
-                        + "\"datasets\":[{\"label\":\"%s\",\"data\":[%s]}]"
-                        + "},"
-                        + "\"options\":{"
-                        + "\"title\":{\"display\":true,\"text\":\"%s\"}"
-                        + "}"
-                        + "}",
-                labels.toString(), vitalType, dataPoints.toString(), vitalType);
-
+            "{"
+                    + "\"type\":\"line\","
+                    + "\"data\":{"
+                    + "\"labels\":[%s],"
+                    + "\"datasets\":[{\"label\":\"%s\",\"data\":[%s]}]"
+                    + "},"
+                    + "\"options\":{"
+                    + "\"title\":{\"display\":true,\"text\":\"%s\"},"
+                    + "\"scales\":{"
+                    + "\"y\":{"
+                    + "\"min\":60,"
+                    + "\"max\":90"
+                    + "}"
+                    + "}"
+                    + "}"
+                    + "}",
+            labels.toString(), vitalType, dataPoints.toString(), vitalType
+        );
+    
         String encodedChart = URLEncoder.encode(chartJson, StandardCharsets.UTF_8);
         return "https://quickchart.io/chart?c=" + encodedChart;
     }
+    
+    
+    
 
     public Map<String, Object> getLastVitals(String bedId) {
         String fluxQuery = String.format(
@@ -295,7 +325,8 @@ public class PatientService {
                 medication.setName(updatedMedication.getName());
                 medication.setDosage(updatedMedication.getDosage());
                 medication.setHourInterval(updatedMedication.getHourInterval());
-                medication.setPatient(updatedMedication.getPatient());
+                medication.setLastTaken(updatedMedication.getLastTaken());
+                medication.setHasTaken(updatedMedication.isHasTaken());
                 return medicationRepository.save(medication);
             }
         }

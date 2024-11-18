@@ -58,11 +58,13 @@
     font-size: 1rem;
     cursor: pointer;
     color: #271E4A;
+    text-decoration: none;
 }
 
 .btnText{
     margin-left: 8px;
     margin-top: 3px;
+    text-decoration: none;
 }
 
 .alertButton {
@@ -73,6 +75,8 @@
     background-color: #ffffff;
     border-radius: 8px;
     cursor: pointer;
+    color: #271E4A;
+    text-decoration: none;
 }
 
 .notificationBadge {

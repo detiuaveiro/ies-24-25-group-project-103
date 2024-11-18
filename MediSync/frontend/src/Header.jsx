@@ -50,24 +50,25 @@ function Header({ children }) {
                 </div>
 
                 <div className={styles.navButtons}>
-                    <Link to="/patients">
+                    <Link to="/patients"  style={{ textDecoration: "none" }}>
                         <div className={styles.navButton}>
                             <FontAwesomeIcon icon={faClipboardList} size="2x" />
                             <span className={styles.btnText}> List of Patients</span>
                         </div>
                     </Link>
-                    <Link to="/rooms">
+                    <Link to="/rooms" style={{ textDecoration: "none" }}>
                         <div className={styles.navButton}>
                             <FontAwesomeIcon icon={faBedPulse} size="2x" />
                             <span className={styles.btnText}> List of Rooms</span>
                         </div>
                     </Link>
-
+                    <Link to="/notifications"  style={{ textDecoration: "none" }}>
                     <div className={styles.alertButton}>
                         <FontAwesomeIcon icon={faComment} size="2x" />
                         <span className={styles.btnText}> Alerts</span>
                         <span className={styles.notificationBadge}>2</span>
                     </div>
+                    </Link>
                 </div>
 
                 <div className={styles.logoutButton}>

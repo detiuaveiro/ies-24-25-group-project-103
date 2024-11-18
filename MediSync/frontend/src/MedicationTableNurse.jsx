@@ -3,53 +3,101 @@ import styles from "./MedicationTable.module.css"; // Import the CSS module
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEdit, faTrash } from "@fortawesome/free-solid-svg-icons";
 import { useParams } from "react-router-dom";
+import axios from "axios";
 
-const MedicationTableNurse = ({ medications = [] }) => {
-  const [lastAdministered, setLastAdministered] = useState({});
+const MedicationTableNurse = () => {
+  const [medications, setMedications] = useState([]);
   const { id } = useParams();
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
 
-  const defaultMedications = [
-    { name: "Benuron", quantity: "1mg", frequency: "5 in 5 hours" },
-    { name: "Lisinopril", quantity: "1000mg", frequency: "4 in 4 hours" },
-    { name: "Metformin", quantity: "2000mg", frequency: "5 in 5 hours" },
-    { name: "Amoxicillin", quantity: "50mg", frequency: "8 in 8 hours" },
-    { name: "Atorvastatin", quantity: "500mg", frequency: "8 in 8 hours" },
-  ];
+  useEffect(() => {
+    const fetchMedications = async () => {
+      const token = localStorage.getItem("token"); // Retrieve token from localStorage
 
-  const rows = medications.length > 0 ? medications : defaultMedications;
+      if (!token) {
+        setError("Authentication token not found");
+        setLoading(false);
+        return;
+      }
 
-  const handleToggleCheck = (index, frequency) => {
+      try {
+        const response = await axios.get(`http://localhost:8080/api/v1/patients/${id}/medications`, {
+          headers: {
+            Authorization: `Bearer ${token}`, // Attach the token to the Authorization header
+          },
+        });
+        setMedications(response.data);
+        setLoading(false);
+      } catch (err) {
+        setError("Failed to load medications");
+        setLoading(false);
+      }
+    };
+
+    fetchMedications();
+  }, [id]);
+
+  const handleToggleCheck = async (medication) => {
+    const token = localStorage.getItem("token");
     const now = new Date();
-    const [hours] = frequency.split(" in ").map(Number);
 
-    setLastAdministered((prev) => ({
-      ...prev,
-      [index]: { time: now, duration: hours * 60 * 60 * 1000 }, // Save duration in ms
-    }));
+    // Calculate the next due time
+    const lastTaken = new Date(medication.lastTaken || 0); // Handle null `lastTaken`
+    const nextDue = new Date(lastTaken.getTime() + medication.hourInterval * 60 * 60 * 1000);
+
+    // Check if the medication is still within the due interval
+    if (now < nextDue && medication.hasTaken) {
+      console.log("Medication is still within the interval. No update required.");
+      return;
+    }
+
+    try {
+      // Toggle the medication status
+      const updatedMedication = {
+        ...medication,
+        hasTaken: now < nextDue, // Untoggle if overdue, otherwise set to true
+        lastTaken: now < nextDue ? medication.lastTaken : now.toISOString(),
+      };
+
+      await axios.put(
+        `http://localhost:8080/api/v1/patients/${id}/medications/${medication.id}`,
+        updatedMedication,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      // Update the state locally
+      setMedications((prev) =>
+        prev.map((item) =>
+          item.id === medication.id ? updatedMedication : item
+        )
+      );
+    } catch (err) {
+      setError("Failed to update medication status");
+    }
   };
 
-  const isCheckActive = (index) => {
-    const entry = lastAdministered[index];
-    if (!entry) return false;
+  const calculateTimeUntilNext = (medication) => {
+    const { lastTaken, hourInterval } = medication;
+    if (!lastTaken) return "Not given yet";
 
-    const { time, duration } = entry;
+    const lastTime = new Date(lastTaken);
+    const nextDue = new Date(lastTime.getTime() + hourInterval * 60 * 60 * 1000);
     const now = new Date();
-    return now - time < duration; // Check if the time since last given is within the duration
-  };
-
-  const calculateTimeUntilNext = (index) => {
-    const entry = lastAdministered[index];
-    if (!entry) return "Not given yet";
-
-    const { time, duration } = entry;
-    const now = new Date();
-    const remaining = duration - (now - time);
+    const remaining = nextDue - now;
 
     if (remaining <= 0) return "Due now";
     const minutes = Math.floor((remaining / 1000 / 60) % 60);
     const hours = Math.floor(remaining / 1000 / 60 / 60);
     return `${hours}h ${minutes}m`;
   };
+
+  if (loading) return <p>Loading medications...</p>;
+  if (error) return <p className={styles.error}>{error}</p>;
 
   return (
     <div className={styles.tableContainer}>
@@ -58,41 +106,37 @@ const MedicationTableNurse = ({ medications = [] }) => {
           <tr>
             <th style={{ width: "5%" }}>✔</th>
             <th>Name</th>
-            <th>Quantity</th>
-            <th>Frequency</th>
+            <th>Dosage</th>
+            <th>Frequency (hours)</th>
             <th>Last Administered</th>
             <th>Time Until Next</th>
-            <th>Actions</th>
           </tr>
         </thead>
         <tbody>
-          {rows.map((medication, index) => {
-            const entry = lastAdministered[index];
-            const lastTime = entry ? new Date(entry.time).toLocaleTimeString() : "Not given yet";
+          {medications.map((medication) => {
+            const lastTime = medication.lastTaken
+              ? new Date(medication.lastTaken).toLocaleTimeString()
+              : "Not given yet";
 
             return (
-              <tr key={index}>
+              <tr key={medication.id}>
                 <td>
                   <input
                     type="checkbox"
-                    checked={isCheckActive(index)}
-                    onChange={() => handleToggleCheck(index, medication.frequency)}
+                    checked={medication.hasTaken}
+                    onChange={() => handleToggleCheck(medication)}
                     style={{
                       width: "20px",
                       height: "20px",
-                      accentColor: isCheckActive(index) ? "#34c759" : "#ccc",
+                      accentColor: medication.hasTaken ? "#34c759" : "#ccc",
                     }}
                   />
                 </td>
                 <td>{medication.name}</td>
-                <td>{medication.quantity}</td>
-                <td>{medication.frequency}</td>
+                <td>{medication.dosage}</td>
+                <td>{medication.hourInterval}</td>
                 <td>{lastTime}</td>
-                <td>{calculateTimeUntilNext(index)}</td>
-                <td className={styles.actions}>
-                  <FontAwesomeIcon icon={faEdit} className={styles.icon} />
-                  <FontAwesomeIcon icon={faTrash} className={styles.icon} />
-                </td>
+                <td>{calculateTimeUntilNext(medication)}</td>
               </tr>
             );
           })}

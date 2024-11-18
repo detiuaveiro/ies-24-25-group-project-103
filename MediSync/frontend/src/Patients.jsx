@@ -3,6 +3,7 @@ import axios from 'axios';
 import styles from './Patients.module.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSearch, faChartLine } from '@fortawesome/free-solid-svg-icons';
+import { Link } from 'react-router-dom';
 
 function Patients() {
     const [patients, setPatients] = useState([]);
@@ -106,9 +107,11 @@ function Patients() {
                                 <td>{getPatientRoom(patient.id)}</td>
                                 <td>{new Date(patient.estimatedDischargeDate).toLocaleDateString('en-GB')}</td>
                                 <td>
+                                    <Link to={`/patients/${patient.id}`} style={{ textDecoration: 'none' }}>
                                     <button className={styles.moreInfoButton}>
                                         More Information <FontAwesomeIcon icon={faChartLine} />
                                     </button>
+                                    </Link>
                                 </td>
                             </tr>
                         ))}
