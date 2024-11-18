@@ -180,7 +180,24 @@ export default function CreatePatient({ showModal, setShowModal, availableRooms=
                         </Col>
                         <Col md={6}>
                             <Row>
-                                <Col md={6}>
+                            <Col md={12}>
+                                <Form.Group>
+                                    <Form.Label>Observations</Form.Label>
+                                    <Form.Control
+                                        as="textarea"
+                                        placeholder="Observations"
+                                        name="observations"
+                                        value={formData.observations}
+                                        onChange={handleChange}
+
+                                    />
+                                </Form.Group>
+                            </Col>
+                            </Row>
+                        </Col>
+                    </Row>
+                    <Row>
+                            <Col md={6}>
                                     <Form.Group>
                                         <Form.Label>Room</Form.Label>
                                         <Form.Select
@@ -192,7 +209,10 @@ export default function CreatePatient({ showModal, setShowModal, availableRooms=
                                         </Form.Select>
                                     </Form.Group>
                                 </Col>
-                                <Col md={6}>
+
+                        </Row>
+                        <Row>
+                        <Col md={6}>
                                     <Form.Group>
                                         <Form.Label>Doctor</Form.Label>
                                         <Form.Select
@@ -204,23 +224,7 @@ export default function CreatePatient({ showModal, setShowModal, availableRooms=
                                         </Form.Select>
                                     </Form.Group>
                                 </Col>
-                            </Row>
-                        </Col>
-                    </Row>
-                    <Row>
-                            <Col md={6}>
-                                <Form.Group>
-                                    <Form.Label>Observations</Form.Label>
-                                    <Form.Control
-                                        as="textarea"
-                                        placeholder="Observations"
-                                        name="observations"
-                                        value={formData.observations}
-                                        onChange={handleChange}
-                                    />
-                                </Form.Group>
-                            </Col>
-                            <Col md={3}>
+                                <Col md={3}>
                                 <Button className="cancel" onClick={handleClose}>
                                     Cancel
                                 </Button>
@@ -230,7 +234,7 @@ export default function CreatePatient({ showModal, setShowModal, availableRooms=
                                     Add Patient
                                 </Button>
                             </Col>
-                        </Row>
+                                </Row>
                 </Form>
             </Modal.Body>
         </Modal>
