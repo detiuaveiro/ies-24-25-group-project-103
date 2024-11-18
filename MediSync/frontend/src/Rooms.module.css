@@ -1,5 +1,8 @@
 .roomsContainer {
     padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px; 
     width: 100%;
 }
 
@@ -87,7 +90,7 @@
     font-weight: 600;
     background: transparent;
     text-align: center;
-    font-size: 16px;
+    font-size: 22px;
 }
 
 .roomsTable td {
@@ -95,7 +98,7 @@
     border-bottom: 1px solid #eee;
     color: #271E4A;
     text-align: center;
-    font-size: 16px;
+    font-size: 22px;
 }
 
 .roomsTable td:last-child {
@@ -139,4 +142,28 @@
     background-color: #f8d7da;
     border-radius: 4px;
     margin: 20px 0;
+}
+
+.controlsContainer {
+    display: flex;
+    align-items: center;
+}
+
+.overviewButton {
+    background-color: #E6EAF5 !important;
+    color: #271E4A !important;
+    padding: 10px 24px !important;
+    font-size: 20px !important;
+    font-weight: bold !important;
+    min-width: 10px !important;
+    text-transform: none !important;
+    margin-right: 20px !important;
+}
+
+.overviewButton:hover {
+    background-color: #d5d9e4 !important;
+}
+
+.buttonIcon {
+    font-size: 32px !important;
 }

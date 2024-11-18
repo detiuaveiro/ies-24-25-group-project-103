@@ -13,7 +13,7 @@ const MedicationTableNurse = () => {
 
   useEffect(() => {
     const fetchMedications = async () => {
-      const token = localStorage.getItem("token"); // Retrieve token from localStorage
+      const token = localStorage.getItem("token");
 
       if (!token) {
         setError("Authentication token not found");
@@ -24,7 +24,7 @@ const MedicationTableNurse = () => {
       try {
         const response = await axios.get(`http://localhost:8080/api/v1/patients/${id}/medications`, {
           headers: {
-            Authorization: `Bearer ${token}`, // Attach the token to the Authorization header
+            Authorization: `Bearer ${token}`, 
           },
         });
         setMedications(response.data);
@@ -41,28 +41,26 @@ const MedicationTableNurse = () => {
   const handleToggleCheck = async (medication) => {
     const token = localStorage.getItem("token");
     const now = new Date();
-
-    // Calculate the next due time
-    const lastTaken = new Date(medication.lastTaken || 0); // Handle null `lastTaken`
+    const lastTaken = new Date(medication.lastTaken || 0);
     const nextDue = new Date(lastTaken.getTime() + medication.hourInterval * 60 * 60 * 1000);
-
-    // Check if the medication is still within the due interval
-    if (now < nextDue && medication.hasTaken) {
-      console.log("Medication is still within the interval. No update required.");
+  
+    const canToggle = now >= nextDue || !medication.hasTaken;
+  
+    if (!canToggle) {
+      console.log("Cannot toggle; medication still within interval.");
       return;
     }
-
+  
+    const updatedMedication = {
+      id : medication.id,
+      name: medication.name,
+      dosage: medication.dosage,
+      hourInterval: medication.hourInterval,
+      hasTaken: !medication.hasTaken,
+      lastTaken: !medication.hasTaken ? now.toISOString() : medication.lastTaken,
+    };
+  
     try {
-      // Toggle the medication status
-      const updatedMedication = {
-        id : medication.id,
-        name: medication.name,
-        dosage: medication.dosage,
-        hourInterval: medication.hourInterval,
-        hasTaken: now < nextDue, // Untoggle if overdue, otherwise set to true
-        lastTaken: now < nextDue ? medication.lastTaken : now.toISOString(),
-      };
-
       await axios.put(
         `http://localhost:8080/api/v1/patients/${id}/medications/${medication.id}`,
         updatedMedication,
@@ -72,8 +70,7 @@ const MedicationTableNurse = () => {
           },
         }
       );
-
-      // Update the state locally
+  
       setMedications((prev) =>
         prev.map((item) =>
           item.id === medication.id ? updatedMedication : item
@@ -83,7 +80,7 @@ const MedicationTableNurse = () => {
       setError("Failed to update medication status");
     }
   };
-
+  
   const calculateTimeUntilNext = (medication) => {
     const { lastTaken, hourInterval } = medication;
     if (!lastTaken) return "Not given yet";
@@ -127,8 +124,18 @@ const MedicationTableNurse = () => {
                 <td>
                   <input
                     type="checkbox"
-                    checked={medication.hasTaken}
-                    onChange={() => handleToggleCheck(medication)}
+                    checked={medication.hasTaken && calculateTimeUntilNext(medication) !== "Due now"}
+                    onChange={async () => {
+                      const canToggle = calculateTimeUntilNext(medication) === "Due now" || !medication.hasTaken;
+
+                      if (!canToggle) {
+                        console.log("Cannot toggle; medication is still within its interval.");
+                        return;
+                      }
+
+                      // Perform the update only if the toggle is valid
+                      await handleToggleCheck(medication);
+                    }}
                     style={{
                       width: "20px",
                       height: "20px",
@@ -149,6 +156,7 @@ const MedicationTableNurse = () => {
             );
           })}
         </tbody>
+
       </table>
     </div>
   );
