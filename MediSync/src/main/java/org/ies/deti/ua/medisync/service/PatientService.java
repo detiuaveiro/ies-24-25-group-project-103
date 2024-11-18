@@ -198,53 +198,95 @@ public class PatientService {
                 "from(bucket: \"%s\") " +
                         "|> range(start: %s, stop: %s) " +
                         "|> filter(fn: (r) => r[\"bedId\"] == \"%s\") " +
-                        "|> filter(fn: (r) => r[\"_measurement\"] == \"vitals\") " +
-                        "|> pivot(rowKey: [\"_time\"], columnKey: [\"bedId\"], valueColumn: \"_value\")",
-                bucket, startTime, endTime, bedId);
-
+                        "|> filter(fn: (r) => r[\"_measurement\"] == \"vitals\")",
+                bucket, startTime, endTime, bedId);  // Ensure all placeholders are replaced correctly.
+    
         QueryApi queryApi = influxDBClient.getQueryApi();
         return queryApi.query(fluxQuery);
     }
-
-    public String generateQuickChartUrl(List<FluxTable> vitalsRecords, String bedId, String vitalType) {
+    
+    public String generateQuickChartUrl(String bedId, String vitalType, String startTime, String endTime) {
+        // Step 1: Fetch the vitals data from InfluxDB using getPatientVitals
+        List<FluxTable> vitalsRecords = getPatientVitals(bedId, startTime, endTime);
+    
+        // Step 2: Initialize the labels and data points for the chart
         StringBuilder labels = new StringBuilder();
         StringBuilder dataPoints = new StringBuilder();
-
+        vitalType = "o2";
+    
+        // Step 3: Iterate through the vitalsRecords and process each record
         for (FluxTable table : vitalsRecords) {
             for (FluxRecord record : table.getRecords()) {
+                // Log the full record and values
+                System.out.println("Record: " + record.toString());
+                System.out.println("Record Field: " + record.getValueByKey("_field"));
+                System.out.println("Record Value: " + record.getValue());
+    
                 String field = (String) record.getValueByKey("_field");
-                Number value = (Number) record.getValue();
-
-                if (value == null || !vitalType.equals(field))
+    
+                // Skip if the field doesn't match the vitalType
+                if (!vitalType.equals(field)) {
                     continue;
-
+                }
+    
+                // Fetch the value and log
+                Number value = (Number) record.getValue();
+                if (value == null) {
+                    System.out.println("Record value is null, skipping...");
+                    continue;
+                }
+    
+                // Process and log the time and value
                 String timeLabel = record.getTime().toString();
+                System.out.println("Time Label: " + timeLabel);
+                System.out.println("Value: " + value);
+    
+                // Append labels and data points
                 labels.append("\"").append(timeLabel).append("\",");
                 dataPoints.append(value.toString()).append(",");
             }
         }
-
-        if (labels.length() > 0)
+    
+        // Remove trailing commas from labels and dataPoints
+        if (labels.length() > 0) {
             labels.setLength(labels.length() - 1);
-        if (dataPoints.length() > 0)
+        }
+        if (dataPoints.length() > 0) {
             dataPoints.setLength(dataPoints.length() - 1);
-
+        }
+    
+        // Debug final data
+        System.out.println("Final Labels: " + labels.toString());
+        System.out.println("Final Data Points: " + dataPoints.toString());
+    
+        // Step 4: Build the chart JSON with Y-axis range from 0 to 1
         String chartJson = String.format(
-                "{"
-                        + "\"type\":\"line\","
-                        + "\"data\":{"
-                        + "\"labels\":[%s],"
-                        + "\"datasets\":[{\"label\":\"%s\",\"data\":[%s]}]"
-                        + "},"
-                        + "\"options\":{"
-                        + "\"title\":{\"display\":true,\"text\":\"%s\"}"
-                        + "}"
-                        + "}",
-                labels.toString(), vitalType, dataPoints.toString(), vitalType);
-
+            "{"
+                    + "\"type\":\"line\","
+                    + "\"data\":{"
+                    + "\"labels\":[%s],"
+                    + "\"datasets\":[{\"label\":\"%s\",\"data\":[%s]}]"
+                    + "},"
+                    + "\"options\":{"
+                    + "\"title\":{\"display\":true,\"text\":\"%s\"},"
+                    + "\"scales\":{"
+                    + "\"y\":{"
+                    + "\"min\":60,"
+                    + "\"max\":90"
+                    + "}"
+                    + "}"
+                    + "}"
+                    + "}",
+            labels.toString(), vitalType, dataPoints.toString(), vitalType
+        );
+    
+        // Encode the chart JSON and construct the URL
         String encodedChart = URLEncoder.encode(chartJson, StandardCharsets.UTF_8);
         return "https://quickchart.io/chart?c=" + encodedChart;
     }
+    
+    
+    
 
     public Map<String, Object> getLastVitals(String bedId) {
         String fluxQuery = String.format(
