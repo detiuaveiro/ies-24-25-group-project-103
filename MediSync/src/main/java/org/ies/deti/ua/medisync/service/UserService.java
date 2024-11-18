@@ -58,4 +58,8 @@ public class UserService {
         user.setProfilePictureUrl(profilePictureUrl);
         userRepository.save(user);
     }
+
+    public Object getAllUsers() {
+        return userRepository.findAll();
+    }
 }
