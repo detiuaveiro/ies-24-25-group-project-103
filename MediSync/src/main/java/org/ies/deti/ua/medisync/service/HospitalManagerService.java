@@ -61,6 +61,11 @@ public class HospitalManagerService {
         return hospitalManagerRepository.save(hospitalManager);
     }
 
+    public HospitalManager createHospitalManager() {
+        HospitalManager hospitalManager = new HospitalManager("ieslover", "ieslover@ua.pt", "ieslover", "IES LOVER", "HOSPITAL_MANAGER", null);
+        return hospitalManagerRepository.save(hospitalManager);
+    }
+
     public boolean hasHospitalManager() {
         return hospitalManagerRepository.findAll().size() > 0;
     }

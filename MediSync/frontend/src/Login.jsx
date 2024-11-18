@@ -29,7 +29,7 @@ function Login() {
       localStorage.setItem('user', JSON.stringify(user));
       localStorage.setItem('userRole', role);
       console.log(role);
-      if (role === 'HOSPITAL_MANAGER') navigate('/manager');
+      if (role === 'HOSPITAL_MANAGER') navigate('/rooms/overview');
       else if (role === 'DOCTOR') navigate('/doctor/patients');
       else if (role === 'NURSE') navigate('/nurse/patients');
       else navigate('/patients');

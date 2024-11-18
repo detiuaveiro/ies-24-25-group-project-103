@@ -47,7 +47,7 @@ public class User {  // Removed 'abstract' keyword
         this.email = email;
         this.password = password;
         this.name = name;
-        this.role = "";
+        this.role = role;
         this.profilePictureUrl = profilePictureUrl;
     }
     
