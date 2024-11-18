@@ -1,9 +1,12 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@600&display=swap');
 /* Scoped styles for the modal */
   /* Modal container styling */
   .discharge-patient {
       .modal-content {
         border: 10px solid #a10000 !important; /* Red border matching the second image */
         background-color: #ffffff !important; /* Ensure white background */
+        font-family: 'Montserrat', sans-serif !important; /* Use Montserrat font */
       }
     
       /* Header styling */
@@ -70,7 +73,7 @@
     
     /* Adjust the label text size and keep it close to the checkbox */
     .form-check-label {
-      font-size: 14px !important; /* Smaller text size */
+      font-size: 16px !important; /* Smaller text size */
       padding-left: 8px !important; /* Space between checkbox and label */
     }
   }
