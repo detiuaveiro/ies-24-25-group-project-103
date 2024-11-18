@@ -1,54 +1,64 @@
 .patientsContainer {
-    padding: 2rem;
-    background-color: #f5f6fa;
-    min-height: 100vh;
+    padding: 20px;
+    width: 100%;
 }
 
 .headerContainer {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 2rem;
+    margin-bottom: 30px;
+    padding: 20px;
+    width: 100%;
+    background: transparent;
+    box-shadow: none;
 }
 
 .title {
-    font-size: 1.8rem;
-    color: #2c3e50;
+    color: #271E4A;
+    font-size: 48px;
     margin: 0;
+    font-weight: bold;
 }
 
 .searchContainer {
     position: relative;
-    width: 300px;
-}
-
-.searchIcon {
-    position: absolute;
-    left: 12px;
-    top: 50%;
-    transform: translateY(-50%);
-    color: #7f8c8d;
+    width: 400px;
 }
 
 .searchInput {
     width: 100%;
-    padding: 10px 35px;
-    border: 1px solid #dcdde1;
+    padding: 12px 40px;
+    border: 2px solid #D5DEED;
     border-radius: 8px;
-    font-size: 0.9rem;
-    outline: none;
+    font-size: 20px;
+    color: #271E4A;
+    background-color: white;
+    transition: border-color 0.3s ease;
 }
 
 .searchInput:focus {
-    border-color: #3498db;
-    box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
+    outline: none;
+    border-color: #271E4A;
+}
+
+.searchInput::placeholder {
+    color: #8991A5;
+}
+
+.searchIcon {
+    position: absolute;
+    left: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #8991A5;
+    font-size: 22px;
 }
 
 .tableContainer {
-    background-color: white;
-    border-radius: 10px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    overflow: hidden;
+    margin: 0 -20px;
+    width: calc(100% + 40px);
+    position: relative;
 }
 
 .patientsTable {
@@ -56,21 +66,44 @@
     border-collapse: collapse;
 }
 
-.patientsTable th,
-.patientsTable td {
-    padding: 1rem;
-    text-align: left;
-    border-bottom: 1px solid #dcdde1;
+.patientsTable thead::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    height: 70px;
+    background-color: #E6EAF5;
+    z-index: 1;
+}
+
+.patientsTable thead tr {
+    position: relative;
+    z-index: 2;
 }
 
 .patientsTable th {
-    background-color: #f8f9fa;
-    color: #2c3e50;
+    color: #271E4A;
+    padding: 20px;
     font-weight: 600;
+    background: transparent;
+    text-align: center;
+    font-size: 22px;
 }
 
-.patientsTable tr:hover {
-    background-color: #f8f9fa;
+.patientsTable td {
+    padding: 20px;
+    border-bottom: 1px solid #eee;
+    color: #271E4A;
+    text-align: center;
+    font-size: 20px;
+}
+
+.patientsTable td:last-child {
+    text-align: center;
+}
+
+.patientsTable tbody tr:hover {
+    background-color: #F8F9FC;
 }
 
 .moreInfoButton {
@@ -80,27 +113,33 @@
     padding: 12px 20px;
     border-radius: 6px;
     cursor: pointer;
-    font-size: 14px;
-    width: 200px;
+    font-size: 18px;
+    width: 250px;
     text-align: center;
-    display: block;
     margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
 }
 
 .moreInfoButton:hover {
     background-color: #d5d9e4;
 }
 
-.loadingContainer,
-.errorContainer {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 70vh;
-    font-size: 1.2rem;
-    color: #2c3e50;
+.loadingContainer {
+    text-align: center;
+    padding: 20px;
+    font-size: 20px;
+    color: #271E4A;
 }
 
 .errorContainer {
-    color: #e74c3c;
+    text-align: center;
+    padding: 20px;
+    font-size: 20px;
+    color: #dc3545;
+    background-color: #f8d7da;
+    border-radius: 4px;
+    margin: 20px 0;
 }

@@ -7,6 +7,7 @@ import { useNavigate } from 'react-router-dom';
 
 function DoctorPatients() {
     const [patients, setPatients] = useState([]);
+    const [beds, setBeds] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [searchTerm, setSearchTerm] = useState('');
@@ -16,9 +17,10 @@ function DoctorPatients() {
     const token = localStorage.getItem('token');
 
     useEffect(() => {
-        const fetchPatients = async () => {
+        const fetchData = async () => {
             try {
-                const response = await axios.get(
+                // Fetch patients
+                const patientsResponse = await axios.get(
                     `http://localhost:8080/api/v1/doctors/${user.id}/patients`,
                     {
                         headers: {
@@ -26,17 +28,40 @@ function DoctorPatients() {
                         }
                     }
                 );
-                setPatients(response.data);
+
+                // Fetch beds
+                const bedsResponse = await axios.get(
+                    'http://localhost:8080/api/v1/hospital/beds',
+                    {
+                        headers: {
+                            'Authorization': `Bearer ${token}`
+                        }
+                    }
+                );
+
+                setPatients(patientsResponse.data);
+                setBeds(bedsResponse.data);
                 setLoading(false);
             } catch (err) {
-                console.error('Error fetching patients:', err);
-                setError('Failed to fetch patients');
+                console.error('Error fetching data:', err);
+                setError('Failed to fetch data');
                 setLoading(false);
             }
         };
 
-        fetchPatients();
+        fetchData();
     }, [user.id, token]);
+
+    const getPatientRoom = (patientId) => {
+        const bed = beds.find(bed => bed.assignedPatient?.id === patientId);
+        if (!bed) return 'Not assigned';
+    
+        const roomNumber = bed.room.roomNumber;
+        const floor = roomNumber.charAt(0);
+        const room = roomNumber.charAt(1);
+        
+        return `Floor ${floor} Room ${room}`;
+    };
 
     const filteredPatients = patients.filter(patient =>
         patient.name.toLowerCase().includes(searchTerm.toLowerCase())
@@ -77,7 +102,7 @@ function DoctorPatients() {
                             <tr key={patient.id}>
                                 <td>{String(index + 1).padStart(2, '0')}</td>
                                 <td>{patient.name}</td>
-                                <td>{patient.room || 'Not assigned'}</td>
+                                <td>{getPatientRoom(patient.id)}</td>
                                 <td>{new Date(patient.estimatedDischargeDate).toLocaleDateString('en-GB')}</td>
                                 <td>
                                     <button 
