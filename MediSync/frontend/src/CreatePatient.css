@@ -1,0 +1,68 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+
+.create-patient .modal-header {
+    background-color: #f8f9fa;
+    border-bottom: 1px solid #dee2e6;
+}
+
+.create-patient .modal-dialog {
+    max-width: 1000px; /* Adjust the width as needed */
+}
+
+.create-patient .modal-title {
+    color: var(--Secondary-Dark-Color, #54595E);
+    font-family: Inter;
+    font-size: 50px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: 70px;
+}
+
+.create-patient .form-label {
+    font-weight: 500;
+}
+.create-patient .modal-body {
+    padding: 30px;
+    padding-bottom: 0px;
+}
+
+.create-patient .form-control,
+.create-patient .form-select {
+    border-radius: 5px;
+    margin-bottom: 15px;
+    padding:10px;
+}
+
+
+.create-patient .form-check-label {
+    font-weight: 500;
+}
+
+.create-patient .modal-footer {
+    display: flex;
+    justify-content: space-between;
+    border-top: 1px solid #dee2e6;
+}
+
+.create-patient .add {
+    border-radius: 10px;
+    border-color: #4F4F4F;
+    padding: 13px;
+    margin-top: 28px;
+    margin-left: 30px;
+
+    background: var(--Dark-Medium, #4F4F4F);
+}
+
+.create-patient .cancel {
+    border-radius: 10px;
+    border: 1px solid var(--Dark-Medium, #4F4F4F);
+    background: var(--White, #FFF);
+    padding: 13px;
+    margin-top: 28px;
+    margin-left: 50px;
+    color: var(--Dark-Medium, #4F4F4F);
+}
+
+

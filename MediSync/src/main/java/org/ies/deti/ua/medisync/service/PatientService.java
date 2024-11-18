@@ -82,6 +82,10 @@ public class PatientService {
     }
 
     public Patient createPatient(Patient patient) {
+        if (patient.getAssignedDoctor() != null) {
+            Doctor actualDoctor = doctorRepository.findById(patient.getAssignedDoctor().getId()).get();
+            patient.setAssignedDoctor(actualDoctor);
+        }
         return patientRepository.save(patient);
     }
 
