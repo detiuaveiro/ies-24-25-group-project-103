@@ -8,6 +8,7 @@ export default function CreatePatient({ showModal, setShowModal, availableBeds=[
         firstName: '',
         lastName: '',
         gender: '',
+        birthDate: '',
         weight: '',
         height: '',
         observations: '',
@@ -19,62 +20,118 @@ export default function CreatePatient({ showModal, setShowModal, availableBeds=[
     const token = localStorage.getItem('token');
 
     function handleClose() {
+        setFormData({
+            firstName: '',
+            lastName: '',
+            gender: '',
+            birthDate: '',
+            weight: '',
+            height: '',
+            observations: '',
+            conditions: '',
+            bed: '',
+            doctor: ''
+        });
         setShowModal(false);
     }
 
     const handleChange = (e) => {
-        const { name, value, type, checked } = e.target;
-        setFormData({
-            ...formData,
-            [name]: type === 'checkbox' ? checked : value,
-        });
+        const { name, value } = e.target;
+        setFormData(prev => ({
+            ...prev,
+            [name]: value
+        }));
     };
 
-   
     const handleSave = () => {
-        if (!formData.firstName || !formData.lastName || !formData.height || !formData.weight || !formData.observations || !formData.room || !formData.doctor) {
+        if (!formData.firstName || !formData.lastName || !formData.height || 
+            !formData.weight || !formData.observations || !formData.bed || 
+            !formData.doctor) {
             alert('Please fill all fields');
             return;
         }
-        const name = `${formData.firstName} ${formData.lastName}`;
-        const gender = `${formData.gender}`;
-        const birthDate = `${formData.birthDate}`;
-        const weight = `${formData.weight}`;
-        const height = `${formData.height}`;
-        const observations = `${formData.observations}`.split('\n');
-        const conditions = `${formData.conditions}`.split('\n');
+    
         const jsonBody = {
-            name,
-            gender,
-            birthDate,
-            weight,
-            height,
-            observations,
-            conditions,
+            name: `${formData.firstName} ${formData.lastName}`,
+            gender: formData.gender.toUpperCase(),
+            birthDate: formData.birthDate,
+            weight: Number(formData.weight),
+            height: Number(formData.height),
+            observations: formData.observations.split('\n'),
+            conditions: formData.conditions.split('\n'),
         };
-        const postData = () => {
-            fetch('/api/v1/patients', {
+    
+        let createdPatient;
+    
+        // First create the patient
+        fetch('http://localhost:8080/api/v1/patients', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify(jsonBody),
+        })
+        .then(response => {
+            if (!response.ok) {
+                return response.text().then(text => {
+                    throw new Error(`Failed to create patient: ${text}`);
+                });
+            }
+            return response.json();
+        })
+        .then(patient => {
+            console.log('Patient created:', patient);
+            createdPatient = patient;
+            
+            const selectedBed = availableBeds.find(bed => bed.id.toString() === formData.bed);
+            return fetch(`http://localhost:8080/api/v1/patients/${patient.id}/bed`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${token}`
                 },
-                body: JSON.stringify(jsonBody),
-            }).then(response => {
-                if (response.ok) {
-                    alert('Patient added successfully');
-                } else {
-                    alert('Failed to add patient');
-                }
+                body: JSON.stringify(selectedBed)
             });
-        };
-        postData();
-        handleClose();
+        })
+        .then(response => {
+            if (!response.ok) {
+                return response.text().then(text => {
+                    throw new Error(`Failed to assign bed: ${text}`);
+                });
+            }
+            return response.json();
+        })
+        .then(data => {
+            console.log('Bed assigned:', data);
+            
+            const selectedDoctor = availableDoctors.find(doc => doc.id.toString() === formData.doctor);
+            return fetch(`http://localhost:8080/api/v1/patients/${createdPatient.id}/doctor`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify(selectedDoctor)
+            });
+        })
+        .then(response => {
+            if (!response.ok) {
+                return response.text().then(text => {
+                    throw new Error(`Failed to assign doctor: ${text}`);
+                });
+            }
+            alert('Patient added successfully');
+            handleClose();
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert(error.message);
+        });
     };
-  
 
-    const availableRoomsOptions = availableRooms.map(room => (
-        <option key={room.id} value={room.id}>{room.name}</option>
+    const availableBedsOptions = availableBeds.map(bed => (
+        <option key={bed.id} value={bed.id}>{bed.name}</option>
     ));
 
     const availableDoctorsOptions = availableDoctors.map(doctor => (
@@ -134,6 +191,7 @@ export default function CreatePatient({ showModal, setShowModal, availableBeds=[
                                     value={formData.gender}
                                     onChange={handleChange}
                                 >
+                                    <option value="">Select gender</option>
                                     <option value="male">Male</option>
                                     <option value="female">Female</option>
                                 </Form.Select>
@@ -183,61 +241,61 @@ export default function CreatePatient({ showModal, setShowModal, availableBeds=[
                         </Col>
                         <Col md={6}>
                             <Row>
-                            <Col md={12}>
-                                <Form.Group>
-                                    <Form.Label>Observations</Form.Label>
-                                    <Form.Control
-                                        as="textarea"
-                                        placeholder="Observations"
-                                        name="observations"
-                                        value={formData.observations}
-                                        onChange={handleChange}
-
-                                    />
-                                </Form.Group>
-                            </Col>
+                                <Col md={12}>
+                                    <Form.Group>
+                                        <Form.Label>Observations</Form.Label>
+                                        <Form.Control
+                                            as="textarea"
+                                            placeholder="Observations"
+                                            name="observations"
+                                            value={formData.observations}
+                                            onChange={handleChange}
+                                        />
+                                    </Form.Group>
+                                </Col>
                             </Row>
                         </Col>
                     </Row>
                     <Row>
-                            <Col md={6}>
-                                    <Form.Group>
-                                        <Form.Label>Bed</Form.Label>
-                                        <Form.Select
-                                            name="bed"
-                                            value={formData.bed}
-                                            onChange={handleChange}
-                                        >
-                                            {availableBedsOptions}
-                                        </Form.Select>
-                                    </Form.Group>
-                                </Col>
-
-                        </Row>
-                        <Row>
                         <Col md={6}>
-                                    <Form.Group>
-                                        <Form.Label>Doctor</Form.Label>
-                                        <Form.Select
-                                            name="doctor"
-                                            value={formData.doctor}
-                                            onChange={handleChange}
-                                        >
-                                            {availableDoctorsOptions}
-                                        </Form.Select>
-                                    </Form.Group>
-                                </Col>
-                                <Col md={3}>
-                                <Button className="cancel" onClick={handleClose}>
-                                    Cancel
-                                </Button>
-                            </Col>
-                            <Col md={3}>
-                                <Button className="add" onClick={handleSave}>
-                                    Add Patient
-                                </Button>
-                            </Col>
-                                </Row>
+                            <Form.Group>
+                                <Form.Label>Bed</Form.Label>
+                                <Form.Select
+                                    name="bed"
+                                    value={formData.bed}
+                                    onChange={handleChange}
+                                >
+                                    <option value="">Select a bed</option>
+                                    {availableBedsOptions}
+                                </Form.Select>
+                            </Form.Group>
+                        </Col>
+                    </Row>
+                    <Row>
+                        <Col md={6}>
+                            <Form.Group>
+                                <Form.Label>Doctor</Form.Label>
+                                <Form.Select
+                                    name="doctor"
+                                    value={formData.doctor}
+                                    onChange={handleChange}
+                                >
+                                    <option value="">Select a doctor</option>
+                                    {availableDoctorsOptions}
+                                </Form.Select>
+                            </Form.Group>
+                        </Col>
+                        <Col md={3}>
+                            <Button className="cancel" onClick={handleClose}>
+                                Cancel
+                            </Button>
+                        </Col>
+                        <Col md={3}>
+                            <Button className="add" onClick={handleSave}>
+                                Add Patient
+                            </Button>
+                        </Col>
+                    </Row>
                 </Form>
             </Modal.Body>
         </Modal>
