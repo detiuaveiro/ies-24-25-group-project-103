@@ -2,7 +2,7 @@ import { Box, Chip, Typography } from "@mui/material";
 import React from "react";
 
 const BMI = ({ patient }) => {
-  const bmi = (patient.weight / (patient.height * patient.height)).toFixed(1); // Round to 1 decimal
+  const bmi = (patient.weight / ((patient.height  / 100) * (patient.height / 100))).toFixed(1); // Round to 1 decimal
   const minBMI = 15;
   const maxBMI = 40;
   const healthyMin = 18.5;
