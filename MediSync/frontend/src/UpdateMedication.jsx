@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { Modal, Form, Button } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './UpdateMedication.css';
@@ -10,15 +10,75 @@ export default function UpdateMedication({ showModal, setShowModal, patient, med
     const [hourInterval, setHourInterval] = useState(medication===null ? '' : medication?.hourInterval);
     const [numberTimes, setNumberTimes] = useState(medication===null ? '' : medication?.numberTimes);
     const [dosage, setDosage] = useState(medication===null ? '' : medication?.dosage);
+    const token = localStorage.getItem('token');
 
     function handleClose() {
         setShowModal(false);
     }
 
     const handleSave = () => {
+        if (addMedication) {
+            const addMedication = async () => {
+                try {
+                    const response = await axios.post(`http://localhost:8080/api/v1/patients/${patient.id}/medications`, {
+                        "name": medicationName,
+                        "hourInterval": hourInterval,
+                        "numberTimes": numberTimes,
+                        "dosage": dosage,
+                    }, {
+                        headers: {
+                            'Authorization': `Bearer ${token}`
+                        }
+                    });
+                    console.log('Medication added:', response.data);
+                    handleClose();
+                } catch (err) {
+                    console.error('Error adding medication:', err);
+                }
+            };
+            if (medicationName != "" && hourInterval != "" && numberTimes != "" && dosage != "") {
+                if (token) {
+                    addMedication();
+                } else {
+                    console.error('Not authenticated');
+                }
+            }
+            else {
+                console.error('Missing medication information');
+            }
+        }
+        else {
+            const editMedication = async () => {
+                try {
+                    const response = await axios.put(`http://localhost:8080/api/v1/patients/${patient.id}/medications/${medication.id}`, {
+                        "name": medicationName,
+                        "hourInterval": hourInterval,
+                        "numberTimes": numberTimes,
+                        "dosage": dosage,
+                    }, {
+                        headers: {
+                            'Authorization': `Bearer ${token}`
+                        }
+                    });
+                    console.log('Medication edited:', response.data);
+                    handleClose();
+                } catch (err) {
+                    console.error('Error editing medication:', err);
+                }
+            }
+            setMedicationName(medicationName != "" ? medicationName : medication.name);
+            setHourInterval(hourInterval != "" ? hourInterval : medication.hourInterval);
+            setNumberTimes(numberTimes != "" ? numberTimes : medication.numberTimes);
+            setDosage(dosage != "" ? dosage : medication.dosage);
+            if (token) {
+                editMedication();
+            }
+            else {
+                console.error('Not authenticated');
+            }
+        }
         // Handle saving the medication information here
         console.log('Medication:', medicationName, hourInterval, numberTimes, dosage);
-        handleClose();
       };
 
     return (
