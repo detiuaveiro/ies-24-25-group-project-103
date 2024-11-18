@@ -148,6 +148,7 @@ public class PatientService {
             existingPatient.setConditions(updatedPatient.getConditions());
             existingPatient.setObservations(updatedPatient.getObservations());
             existingPatient.setAssignedDoctor(updatedPatient.getAssignedDoctor());
+            existingPatient.setDischarged(updatedPatient.isDischarged());
             return patientRepository.save(existingPatient);
         }).orElseThrow(() -> new RuntimeException("Patient not found with id: " + id));
     }
