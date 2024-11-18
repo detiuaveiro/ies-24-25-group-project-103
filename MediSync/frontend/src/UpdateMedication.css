@@ -1,0 +1,110 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap');
+
+
+/* UpdateMedication.css */
+.update-medication .modal-dialog {
+    max-width: 900px; /* Increase the max width of the modal */
+    margin: 1.75rem auto; /* Keep the modal vertically centered with margin */
+    border-radius: 8px; /* Retain rounded corners */
+}
+
+.update-medication .modal-title {
+    font-size: 20px;
+    font-weight: bold;
+    text-align: left;
+    margin-top: 20px;
+    padding: 10px 40px;
+}
+
+.update-medication .modal-body {
+    padding: 0px 40px;
+}
+
+.update-medication .form-label {
+    font-size: 14px;
+    color: #444; /* A darker text color for labels */
+}
+
+.update-medication .form-control {
+    border: 1px solid #ccc; /* Subtle border for inputs */
+    border-radius: 4px; /* Rounded edges */
+    font-size: 14px;
+    padding: 10px;
+    margin-bottom: 10px;
+}
+
+.update-medication .modal-footer {
+    display: flex;
+    justify-content: space-between;
+    padding: 15px 20px;
+    border-top: 1px solid #eee; /* Add a subtle top border for separation */
+}
+
+.update-medication .btn-secondary {
+    background-color: #f8f9fa; /* Light gray background */
+    color: #000; /* Black text */
+    border: 1px solid #ccc; /* Subtle border */
+    padding: 8px 16px;
+    border-radius: 4px;
+    font-size: 14px;
+}
+
+.update-medication .btn-secondary:hover {
+    background-color: #e2e6ea; /* Slightly darker hover effect */
+}
+
+.update-medication .btn-primary {
+    background-color: #444; /* Dark background for contrast */
+    color: #fff; /* White text */
+    border: none;
+    padding: 8px 16px;
+    border-radius: 4px;
+    font-size: 14px;
+}
+
+.update-medication .btn-primary:hover {
+    background-color: #333; /* Slightly darker hover effect */
+}
+
+.update-medication .form-group {
+    margin-bottom: 15px; /* Add space between input groups */
+}
+
+.update-medication .modal-content {
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1); /* Retain shadow for depth */
+    width: 100%; /* Ensure the modal content adapts to the larger width */
+}
+
+.custom-modal-footer .button-container {
+    display: flex;
+    justify-content: flex-end; /* Align buttons to the right */
+    gap: 10px; /* Add spacing between the buttons */
+    width: 100%; /* Ensure the buttons take up the available space */
+}
+
+.cancel-button {
+    background-color: #f8f9fa;
+    color: #000;
+    border: 1px solid #ccc;
+    padding: 8px 16px;
+    border-radius: 4px;
+    font-size: 14px;
+}
+
+.cancel-button:hover {
+    background-color: #e2e6ea; /* Slightly darker hover effect */
+}
+
+.confirm-button {
+    background-color: #444; /* Match the dark color for "Yes, confirm" */
+    color: #fff;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 4px;
+    font-size: 14px;
+}
+
+.confirm-button:hover {
+    background-color: #333; /* Darker hover effect */
+}
+
