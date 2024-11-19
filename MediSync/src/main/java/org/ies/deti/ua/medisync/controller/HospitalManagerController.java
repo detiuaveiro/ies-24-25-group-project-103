@@ -20,6 +20,12 @@ public class HospitalManagerController {
         this.hospitalManagerService = hospitalManagerService;
     }
 
+    @PostMapping
+    public ResponseEntity<HospitalManager> createHospitalManager() {
+        HospitalManager createdHospitalManager = hospitalManagerService.createHospitalManager();
+        return ResponseEntity.ok(createdHospitalManager);
+    }
+
     // End point das salas
 
     @PostMapping("/rooms")
@@ -69,6 +75,12 @@ public class HospitalManagerController {
     @GetMapping("/beds")
     public ResponseEntity<List<Bed>> getBeds() {
         return ResponseEntity.ok(hospitalManagerService.getAllBeds());
+    }
+
+    @GetMapping("/rooms/occupants")
+    public ResponseEntity<List<RoomOccupancyDTO>> getRoomsOccupancy() {
+        List<RoomOccupancyDTO> occupancies = hospitalManagerService.getRoomsOccupancy();
+        return ResponseEntity.ok(occupancies);
     }
 
 }

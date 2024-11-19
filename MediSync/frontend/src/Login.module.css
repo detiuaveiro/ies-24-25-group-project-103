@@ -1,0 +1,151 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300&display=swap');
+
+.page {
+    font-family: 'Montserrat', sans-serif;
+    background-color: #16195E !important;
+    color: white;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+}
+
+.logoContainer {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 20px;
+}
+
+.logo {
+    max-width: 200px;
+    height: auto;
+}
+
+.container {
+    text-align: center;
+    width: 90vw;
+    max-width: 1200px;
+    height: 90vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.formContainer {
+    display: flex;
+    background-color: #16195E;
+    padding: 40px;
+    border-radius: 12px;
+    align-items: stretch;
+    justify-content: space-between;
+    width: 100%;
+    height: 100%;
+    box-sizing: border-box;
+    color: white;
+}
+
+.divider {
+    width: 2px;
+    background-color: #ffffff;
+    height: 80%;
+    margin: 0 20px;
+}
+
+.staffLogin,
+.patientVisit {
+    width: 45%;
+    text-align: center;
+}
+
+.forgotPassword {
+    text-align: right;
+    margin-top: -10px;
+    margin-right: 10px;
+}
+
+h2 {
+    font-size: 1.5rem;
+    margin-bottom: 20px;
+    display: block;
+    text-align: left;
+    margin-left: 10px;
+}
+
+.inputGroup,
+.loginButton {
+    margin: 20px !important;
+}
+
+input {
+    background-color: #16195E;
+    border: 1px solid #ffffff;
+    padding: 15px 25px;
+    border-radius: 10px;
+    color: #ffffff;
+    font-size: 1.2rem;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+input::placeholder {
+    color: #bebebe;
+    opacity: 1;
+    font-family: 'Montserrat', sans-serif !important;
+}
+
+button {
+    padding: 15px;
+    border-radius: 10px;
+    font-size: 1.2rem;
+    font-weight: bold;
+    background-color: #ffffff;
+    color: #1b237c;
+    cursor: pointer;
+    width: 92%;
+    border: none;
+}
+
+button:hover {
+    transform: scale(1.05);
+    transition: ease-in-out 0.3s;
+}
+
+/* Responsive Layout for Mobile */
+@media (max-width: 768px) {
+    .container {
+        width: 100vw;
+        height: 100vh;
+        padding: 20px;
+    }
+  
+    .formContainer {
+        flex-direction: column;
+        padding: 20px;
+        align-items: stretch;
+    }
+  
+    .divider {
+        width: 100%;
+        height: 2px;
+        margin: 20px 0;
+    }
+  
+    .staffLogin,
+    .patientVisit {
+        width: 100%;
+    }
+
+    h2 {
+        font-size: 1.2rem;
+    }
+
+    input,
+    button {
+        font-size: 1rem;
+        padding: 12px 20px;
+    }
+}
+
+

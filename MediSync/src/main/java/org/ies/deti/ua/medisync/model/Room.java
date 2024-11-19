@@ -1,8 +1,13 @@
 package org.ies.deti.ua.medisync.model;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 import jakarta.persistence.Column;
@@ -28,19 +33,21 @@ public class Room {
     private String roomNumber;
 
     @ManyToMany
-    @JoinTable(
-            name = "schedule_rooms",
-            joinColumns = @JoinColumn(name = "room_id"),
-            inverseJoinColumns = @JoinColumn(name = "schedule_id")
-    )
+    @JoinTable(name = "schedule_rooms", joinColumns = @JoinColumn(name = "room_id"), inverseJoinColumns = @JoinColumn(name = "schedule_id"))
+    @JsonIgnore // Manages serialization of the relationship
     private List<ScheduleEntry> scheduleEntries;
 
-
-    public Room() {}
+    public Room() {
+    }
 
     public Room(String roomNumber, List<ScheduleEntry> scheduleEntries) {
         this.roomNumber = roomNumber;
         this.scheduleEntries = scheduleEntries;
+    }
+
+    @JsonProperty("scheduleEntries")
+    public List<Long> getScheduleEntryIds() {
+        return scheduleEntries.stream().map(ScheduleEntry::getId).collect(Collectors.toList());
     }
 
     public Long getId() {

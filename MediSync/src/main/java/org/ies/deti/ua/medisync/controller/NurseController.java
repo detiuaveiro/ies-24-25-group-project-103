@@ -3,6 +3,7 @@ package org.ies.deti.ua.medisync.controller;
 import java.util.List;
 import java.util.Optional;
 
+import org.ies.deti.ua.medisync.dto.RoomWithPatientsDTO;
 import org.ies.deti.ua.medisync.model.Nurse;
 import org.ies.deti.ua.medisync.model.PatientWithVitals;
 import org.ies.deti.ua.medisync.model.Room;
@@ -40,11 +41,42 @@ public class NurseController {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
     }
 
+    @GetMapping("/{nurse_id}/roomswithpatients")
+    public ResponseEntity<List<RoomWithPatientsDTO>> getRoomWithBedsAndPatientsDTO(@PathVariable Long nurse_id) {
+        Optional<Nurse> nurseOpt = nurseService.getNurseById(nurse_id);
+        if (nurseOpt.isPresent()) {
+            List<RoomWithPatientsDTO> roomWithPatientsDTOList = nurseService
+                    .getRoomWithBedsAndPatientsDTO(nurseOpt.get());
+            return ResponseEntity.ok(roomWithPatientsDTOList);
+        }
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+    }
+
+    @GetMapping("/schedules")
+    public ResponseEntity<List<ScheduleEntry>> getScheduleEntrys() {
+        List<ScheduleEntry> scheduleEntries = nurseService.getSchedules();
+        return ResponseEntity.ok(scheduleEntries);
+    }
+
     // Add a Schedule Entry to a specified Nurse
     @PostMapping("/{nurseId}/schedule") // Issue #154
     public ResponseEntity<Nurse> addScheduleEntry(@PathVariable Long nurseId, @RequestBody ScheduleEntry newEntry) {
         Nurse updatedNurse = nurseService.addScheduleEntryToNurse(nurseId, newEntry);
-        return updatedNurse != null ? ResponseEntity.ok(updatedNurse) : ResponseEntity.notFound().build();
+
+        if (updatedNurse == null) {
+            // Check if the null was due to an overlap or the nurse not being found
+            Optional<Nurse> nurseOpt = nurseService.getNurseById(nurseId);
+            if (nurseOpt.isPresent()) {
+                // Conflict due to schedule overlap
+                return ResponseEntity.status(HttpStatus.CONFLICT).build();
+            } else {
+                // Nurse not found
+                return ResponseEntity.notFound().build();
+            }
+        }
+
+        // Success
+        return ResponseEntity.ok(updatedNurse);
     }
 
     // Update a Schedule Entry from a specified nurse
@@ -60,6 +92,12 @@ public class NurseController {
     public ResponseEntity<Nurse> removeScheduleEntry(@PathVariable Long nurseId, @PathVariable Long entryId) {
         Nurse updatedNurse = nurseService.removeScheduleEntryFromNurse(nurseId, entryId);
         return updatedNurse != null ? ResponseEntity.ok(updatedNurse) : ResponseEntity.notFound().build();
+    }
+
+    @GetMapping("/{nurseId}/schedule")
+    public ResponseEntity<List<ScheduleEntry>> getScheduleEntry(@PathVariable Long nurseId) {
+        List<ScheduleEntry> scheduleEntries = nurseService.getScheduleEntriesFromNurse(nurseId);
+        return scheduleEntries.isEmpty() ? ResponseEntity.notFound().build() : ResponseEntity.ok(scheduleEntries);
     }
 
     // Delete nurse FEITO
@@ -90,6 +128,14 @@ public class NurseController {
         List<Nurse> nurses = nurseService.getAllNurses();
         return ResponseEntity.ok(nurses);
     }
+
+    /*
+     * @GetMapping // Issue #79
+     * public ResponseEntity<List<Nurse>> getAllActiveNurses() {
+     * List<Nurse> nurses = nurseService.getAllActiveNurses();
+     * return ResponseEntity.ok(nurses);
+     * }
+     */
 
     // Get nurse by ID FEITO
     @GetMapping("/{id}") // Issue #80

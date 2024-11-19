@@ -34,6 +34,9 @@ public class Bed {
     @JoinColumn(name = "patient_id")
     private Patient assignedPatient;
 
+    @Column(name = "cleaned", nullable = false)
+    private boolean cleaned = true;
+
     public Bed() {
     }
 
@@ -78,5 +81,13 @@ public class Bed {
 
     public void setBedNumber(String bedNumber) {
         this.bedNumber = bedNumber;
+    }
+
+    public boolean isCleaned() {
+        return cleaned;
+    }
+
+    public void setCleaned(boolean cleaned) {
+        this.cleaned = cleaned;
     }
 }

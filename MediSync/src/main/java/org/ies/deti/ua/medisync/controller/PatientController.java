@@ -4,7 +4,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import org.ies.deti.ua.medisync.model.*;
+import org.ies.deti.ua.medisync.model.Bed;
+import org.ies.deti.ua.medisync.model.Doctor;
+import org.ies.deti.ua.medisync.model.Medication;
+import org.ies.deti.ua.medisync.model.Patient;
+import org.ies.deti.ua.medisync.model.PatientWithVitals;
 import org.ies.deti.ua.medisync.repository.PatientRepository;
 import org.ies.deti.ua.medisync.service.PatientService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -74,8 +78,9 @@ public class PatientController {
             @PathVariable String end) {
         String bedID = patientService.getPatientBed(patientService.getPatientById(Long.parseLong(id)).get()).getId()
                 .toString();
+        System.out.println(bedID);
         List<FluxTable> tables = patientService.getPatientVitals(bedID, start, end);
-        return patientService.generateQuickChartUrl(tables, bedID, type);
+        return patientService.generateQuickChartUrl(bedID, type, start, end);
 
     }
 
@@ -132,9 +137,11 @@ public class PatientController {
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
+
+    //THIS IS TEMPORARY FOR TESTING PURPOSES!!!!
     @GetMapping("{id}/vitals")
     public ResponseEntity<Map<String, Object>> getVitals(@PathVariable Long id) {
-        Map<String, Object> lastVitals = patientService.getLastVitals(patientService.getPatientBed(patientService.getPatientById(id).get()).getId().toString());
+        Map<String, Object> lastVitals = patientService.getLastVitals(id.toString());
         return ResponseEntity.ok(lastVitals);
     }
 

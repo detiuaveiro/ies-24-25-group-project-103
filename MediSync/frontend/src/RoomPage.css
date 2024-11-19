@@ -1,0 +1,100 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@900&display=swap');
+
+.room-container {
+  padding: 20px;
+  font-family: 'Montserrat', sans-serif;
+  font-family: 'Montserrat', sans-serif;
+  background-color: #f5f5f5;
+  font-family: Arial, sans-serif;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  font-family: 'Montserrat', sans-serif;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.filter-dropdown {
+  padding: 10px;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 16px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+}
+
+.room-grid {
+  display: grid;
+  font-family: 'Montserrat', sans-serif;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 20px;
+}
+
+.room-card {
+  background-color: #fff;
+  font-family: 'Montserrat', sans-serif;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  padding: 15px;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.beds-grid {
+  display: grid;
+  font-family: 'Montserrat', sans-serif;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 15px;
+}
+
+.bed-card {
+  display: flex;
+  font-family: 'Montserrat', sans-serif;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+  border-radius: 10px;
+  text-align: center;
+  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+  transition: background-color 0.3s;
+}
+
+.bed-card.good {
+  background-color: #d4edda;
+  border: 1px solid #28a745;
+}
+
+.bed-card.warning {
+  background-color: #fff3cd;
+  border: 1px solid #ffc107;
+}
+
+.bed-card.bad {
+  background-color: #f8d7da;
+  border: 1px solid #dc3545;
+}
+
+.bed-card.neutral {
+  background-color: #e2e3e5;
+  border: 1px solid #6c757d;
+}
+
+.bed-name {
+  font-size: 20px;
+  font-family: 'Montserrat', sans-serif;
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+.bed-icon {
+  font-size: 90px;
+  margin: 5px 0;
+}
+
+.bed-value {
+  font-size: 20px;
+  font-weight: bold;
+}

@@ -9,7 +9,7 @@ services:
       - MYSQL_USER=${MYSQL_USER}
       - MYSQL_PASSWORD=${MYSQL_PASSWORD}
     ports:
-      - "${MYSQL_PORT}:3306"
+      - "${MYSQL_PORT}"
     volumes:
       - db:/var/lib/mysql
     healthcheck:
@@ -23,16 +23,17 @@ services:
   influxdb:
     image: influxdb:2.7
     ports:
-      - "${INFLUXDB_PORT}:8086"
+      - "${INFLUXDB_PORT}"
     volumes:
       - influxdb_data:/var/lib/influxdb2
     environment:
-      - DOCKER_INFLUXDB_INIT_MODE=setup
-      - DOCKER_INFLUXDB_INIT_USERNAME=${INFLUXDB_USERNAME}
-      - DOCKER_INFLUXDB_INIT_PASSWORD=${INFLUXDB_PASSWORD}
-      - DOCKER_INFLUXDB_INIT_ORG=${INFLUXDB_ORG}
-      - DOCKER_INFLUXDB_INIT_BUCKET=${INFLUXDB_BUCKET}
-      - DOCKER_INFLUXDB_INIT_ADMIN_TOKEN=${INFLUXDB_TOKEN}
+      - INFLUXDB_INIT_MODE=setup                        # These variables are defined in .env
+      - INFLUXDB_INIT_USERNAME=${INFLUXDB_USERNAME}     # Admin username
+      - INFLUXDB_INIT_PASSWORD=${INFLUXDB_PASSWORD}     # Admin password
+      - INFLUXDB_INIT_ORG=${INFLUXDB_ORG}               # Organization name
+      - INFLUXDB_INIT_BUCKET=${INFLUXDB_BUCKET}         # Bucket name
+      - INFLUXDB_INIT_RETENTION=0                       # Retention policy (0 = unlimited)
+      - INFLUXDB_INIT_ADMIN_TOKEN=${INFLUXDB_TOKEN}     # Admin token for API access
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8086/health"]
       interval: 10s
@@ -49,7 +50,7 @@ services:
         condition: service_healthy
     build: .
     ports:
-      - "${APP_PORT}:8080"
+      - "${APP_PORT}"
     environment:
       SPRING_APPLICATION_JSON: '{
         "spring.datasource.url": "jdbc:mysql://mysqldb:3306/${MYSQL_DATABASE}?useSSL=false",
@@ -68,6 +69,27 @@ services:
       - ./target:/app/target
     networks:
       - medisync-network
+
+  frontend:
+      build:
+        context: ./frontend
+        dockerfile: Dockerfile.frontend
+      ports:
+        - "${FRONTEND_PORT_VITE}"
+        - "${FRONTEND_PORT_REACT}"
+      volumes:
+        - ./frontend:/app
+        - /app/node_modules
+      environment:
+        - REACT_APP_API_URL=${API_URL}
+        - VITE_APP_API_URL=${API_URL}
+        - CHOKIDAR_USEPOLLING=${CHOKIDAR_USEPOLLING}
+        - WATCHPACK_POLLING=${WATCHPACK_POLLING}
+        - NODE_ENV=${NODE_ENV}
+      depends_on:
+        - app
+      networks:
+        - medisync-network
 
 networks:
   medisync-network:

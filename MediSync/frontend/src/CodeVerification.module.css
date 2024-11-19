@@ -1,0 +1,156 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap');
+
+.logoContainer {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.page {
+  font-family: 'Montserrat', sans-serif;
+  background-color: #16195E;
+  color: white;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  margin: 0;
+  padding: 10px; /* Add padding for mobile devices */
+}
+
+.medsyncContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  margin-top: -100px;
+}
+
+.logo {
+  width: 80%; /* Make logo width responsive */
+  max-width: 380px; /* Max width to keep it from growing too large */
+  margin-bottom: 1.1rem;
+}
+
+.medsyncInstruction {
+  font-size: 2rem; /* Reduce font size for smaller screens */
+  margin-bottom: 0.5rem;
+}
+
+.medsyncNumber {
+  font-size: 2rem; /* Adjust number font size for mobile */
+  font-weight: bold;
+}
+
+.medsyncSubtitle {
+  font-size: 2.5rem; /* Adjust subtitle font size for mobile */
+  margin-bottom: 1rem;
+}
+
+.medsyncInputContainer {
+  display: flex;
+  justify-content: center;
+  gap: 2rem; /* Reduce gap for better fit on mobile */
+  margin-top: 20px;
+}
+
+@keyframes typingAnimation {
+  0% {
+    border-bottom-color: white;
+  }
+  50% {
+    border-bottom-color: #636363; /* Golden effect */
+  }
+  100% {
+    border-bottom-color: white;
+  }
+}
+
+.inputBox {
+  width: 4rem; /* Adjust input box width for mobile */
+  height: 4rem; /* Adjust input box height for mobile */
+  font-size: 3.5rem; /* Adjust font size for smaller screens */
+  text-align: center;
+  line-height: 4rem; /* Adjust line height for alignment */
+  border-bottom: 2px solid white;
+  color: white;
+  background: transparent;
+  transition: border-bottom-color 0.2s ease-in-out;
+}
+
+.inputBox.active {
+  animation: typingAnimation 0.8s infinite;
+}
+
+.hiddenInput {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.medsyncInputContainer:hover {
+  cursor: pointer;
+}
+
+@media (max-width: 768px) {
+  /* For tablets and below */
+  .medsyncContainer {
+    padding: 20px;
+  }
+
+  .medsyncInstruction,
+  .medsyncNumber,
+  .medsyncSubtitle {
+    font-size: 1.8rem;
+  }
+
+  .inputBox {
+    width: 3.5rem;
+    height: 3.5rem;
+    font-size: 3rem;
+  }
+
+  .logo {
+    width: 70%;
+    max-width: 350px;
+  }
+}
+
+@media (max-width: 480px) {
+  /* For mobile devices */
+  .medsyncContainer {
+    padding: 15px;
+    padding-left: 20px !important;
+  }
+
+  .medsyncInstruction {
+    font-size: 1.6rem;
+  }
+
+  .medsyncNumber {
+    font-size: 1.6rem;
+  }
+
+  .medsyncSubtitle {
+    font-size: 2rem;
+  }
+
+  .inputBox {
+    width: 3rem;
+    height: 3rem;
+    font-size: 2.5rem;
+    line-height: 3rem;
+  }
+
+  .logo {
+    width: 90%;
+    max-width: 300px;
+  }
+
+  .medsyncInputContainer {
+    gap: 1.5rem; /* Adjust gap for smaller screen sizes */
+  }
+}
+

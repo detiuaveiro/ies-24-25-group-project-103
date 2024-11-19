@@ -2,12 +2,17 @@ package org.ies.deti.ua.medisync.service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.time.LocalDateTime;
 
+import org.ies.deti.ua.medisync.model.RoomOccupancyDTO;
+import org.ies.deti.ua.medisync.model.ScheduleEntry;
 import org.ies.deti.ua.medisync.model.Bed;
 import org.ies.deti.ua.medisync.model.Doctor;
 import org.ies.deti.ua.medisync.model.Nurse;
 import org.ies.deti.ua.medisync.model.Patient;
 import org.ies.deti.ua.medisync.model.Room;
+import org.ies.deti.ua.medisync.model.HospitalManager;
+import org.ies.deti.ua.medisync.model.User;
 import org.ies.deti.ua.medisync.repository.BedRepository;
 import org.ies.deti.ua.medisync.repository.HospitalManagerRepository;
 import org.ies.deti.ua.medisync.repository.RoomRepository;
@@ -49,6 +54,26 @@ public class HospitalManagerService {
 
     public Patient createPatient(Patient patient) {
         return patientService.createPatient(patient);
+    }
+
+    public HospitalManager convertToHospitalManager(User user) {
+        HospitalManager hospitalManager = new HospitalManager(user.getUsername(), user.getPassword(), user.getPassword(), user.getName(), "HOSPITAL_MANAGER", user.getProfilePictureUrl());
+        return hospitalManagerRepository.save(hospitalManager);
+    }
+
+    public HospitalManager createHospitalManager() {
+        HospitalManager hospitalManager = new HospitalManager("ieslover", "ieslover@ua.pt", "ieslover", "IES LOVER", "HOSPITAL_MANAGER", null);
+        return hospitalManagerRepository.save(hospitalManager);
+    }
+
+    public boolean hasHospitalManager() {
+        return hospitalManagerRepository.findAll().size() > 0;
+    }
+
+    public HospitalManager deleteHospitalManager() {
+        HospitalManager hospitalManager = hospitalManagerRepository.findAll().get(0);
+        hospitalManagerRepository.delete(hospitalManager);
+        return hospitalManager;
     }
 
     public void dischargePatient(Long patientId) {
@@ -105,10 +130,11 @@ public class HospitalManagerService {
                 roomRepository.save(room);
 
                 for (int bedNum = 1; bedNum <= 4; bedNum++) {
+                    Room newRoom = roomRepository.findById(room.getId()).orElse(null);
                     Bed bed = new Bed();
                     // Format: room_number+bed_number
                     String bedNumber = String.format("%s%d", roomNumber, bedNum);
-                    bed.setRoom(room);
+                    bed.setRoom(newRoom);
                     bed.setBedNumber(bedNumber);
                     bed.setAssignedPatient(null);
                     bedRepository.save(bed);
@@ -147,6 +173,40 @@ public class HospitalManagerService {
 
     public Room getRoomByNumber(String roomNumber) {
         return roomRepository.findByRoomNumber(roomNumber).orElse(null);
+    }
+
+    public List<RoomOccupancyDTO> getRoomsOccupancy() {
+        List<Room> rooms = getAllRooms();
+        List<RoomOccupancyDTO> roomOccupancies = new ArrayList<>();
+
+        for (Room room : rooms) {
+            // Get beds and count patients
+            List<Bed> beds = bedRepository.findBedByRoom(room);
+            int patientCount = (int) beds.stream()
+                .filter(bed -> bed.getAssignedPatient() != null)
+                .count();
+
+            // Count current staff (nurses) from schedule entries
+            LocalDateTime now = LocalDateTime.now();
+            int staffCount = (int) room.getScheduleEntries().stream()
+                .filter(entry -> 
+                    entry.getStart_time().isBefore(now) && 
+                    entry.getEnd_time().isAfter(now))
+                .map(ScheduleEntry::getNurse)
+                .distinct()
+                .count();
+
+            RoomOccupancyDTO occupancy = new RoomOccupancyDTO(
+                room.getId(),
+                room.getRoomNumber(),
+                patientCount,
+                staffCount
+            );
+
+            roomOccupancies.add(occupancy);
+        }
+
+        return roomOccupancies;
     }
 
 }

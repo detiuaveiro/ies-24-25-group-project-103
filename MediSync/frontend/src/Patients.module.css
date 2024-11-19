@@ -1,0 +1,204 @@
+/* Patients.module.css */
+.patientsContainer {
+    padding: 20px;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 16px; 
+}
+
+.headerContainer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+    padding: 20px;
+    width: 100%;
+    background: transparent;
+    box-shadow: none;
+}
+
+.title {
+    color: #271E4A;
+    font-size: 48px;
+    margin: 0;
+    font-weight: bold;
+}
+
+.searchContainer {
+    position: relative;
+    width: 400px;
+}
+
+.searchInput {
+    width: 100%;
+    padding: 12px 40px;
+    border: 2px solid #D5DEED;
+    border-radius: 8px;
+    font-size: 20px;
+    color: #271E4A;
+    background-color: white;
+    transition: border-color 0.3s ease;
+}
+
+.searchInput:focus {
+    outline: none;
+    border-color: #271E4A;
+}
+
+.searchInput::placeholder {
+    color: #8991A5;
+}
+
+.searchIcon {
+    position: absolute;
+    left: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #8991A5;
+    font-size: 22px;
+}
+
+.tableContainer {
+    margin: 0 -20px;
+    width: calc(100% + 40px);
+    position: relative;
+}
+
+.patientsTable {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.patientsTable thead::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    height: 70px;
+    background-color: #E6EAF5;
+    z-index: 1;
+}
+
+.patientsTable thead tr {
+    position: relative;
+    z-index: 2;
+}
+
+.patientsTable th {
+    color: #271E4A;
+    padding: 20px;
+    font-weight: 600;
+    background: transparent;
+    text-align: center;
+    font-size: 22px;
+}
+
+.patientsTable td {
+    padding: 20px;
+    border-bottom: 1px solid #eee;
+    color: #271E4A;
+    text-align: center;
+    font-size: 20px;
+}
+
+.patientsTable td:last-child {
+    text-align: center;
+}
+
+.patientsTable tbody tr:hover {
+    background-color: #F8F9FC;
+}
+
+.moreInfoButton {
+    background-color: #E6EAF5;
+    color: #271E4A;
+    border: none;
+    padding: 12px 20px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 18px;
+    width: 250px;
+    text-align: center;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+.moreInfoButton:hover {
+    background-color: #d5d9e4;
+}
+
+.loadingContainer {
+    text-align: center;
+    padding: 20px;
+    font-size: 20px;
+    color: #271E4A;
+}
+
+.errorContainer {
+    text-align: center;
+    padding: 20px;
+    font-size: 20px;
+    color: #dc3545;
+    background-color: #f8d7da;
+    border-radius: 4px;
+    margin: 20px 0;
+}
+
+/* General table styles */
+.tableContainer {
+    margin: 0 -20px;
+    width: calc(100% + 40px);
+    position: relative;
+}
+
+/* Reduce font size and padding for smaller screens */
+.patientsTable th, .patientsTable td {
+    font-size: 18px;
+    padding: 16px;
+}
+
+@media (max-width: 768px) {
+    /* Reduce font size and spacing for smaller devices */
+    .patientsTable th, .patientsTable td {
+        font-size: 14px;
+        padding: 8px;
+    }
+
+    .moreInfoButton {
+        font-size: 14px;
+        padding: 8px 12px;
+    }
+
+    /* Hide columns on small screens */
+    .hideOnMobile {
+        display: none;
+    }
+
+    /* Adjust layout for smaller screens */
+    .headerContainer {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+    }
+
+    .title {
+        font-size: 28px;
+    }
+
+    .moreInfoButton {
+        width: 100%;
+        font-size: 16px;
+    }
+
+    .moreInfoButton {
+        margin-top: 10px;
+    }
+
+    .searchContainer {
+        width: 100%;
+    }
+}

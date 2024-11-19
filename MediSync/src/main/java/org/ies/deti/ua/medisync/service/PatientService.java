@@ -61,11 +61,12 @@ public class PatientService {
 
     @Autowired
     public PatientService(PatientRepository patientRepository, MedicationRepository medicationRepository,
-            BedRepository bedRepository, DoctorRepository doctorRepository) {
+            BedRepository bedRepository, DoctorRepository doctorRepository, InfluxDBClient influxDBClient) {
         this.patientRepository = patientRepository;
         this.medicationRepository = medicationRepository;
         this.bedRepository = bedRepository;
         this.doctorRepository = doctorRepository;
+        this.influxDBClient = influxDBClient;
     }
 
     @PostConstruct
@@ -81,6 +82,10 @@ public class PatientService {
     }
 
     public Patient createPatient(Patient patient) {
+        if (patient.getAssignedDoctor() != null) {
+            Doctor actualDoctor = doctorRepository.findById(patient.getAssignedDoctor().getId()).get();
+            patient.setAssignedDoctor(actualDoctor);
+        }
         return patientRepository.save(patient);
     }
 
@@ -95,8 +100,10 @@ public class PatientService {
     public Bed setBed(Long id, Bed bed) {
         Optional<Patient> patient = this.getPatientById(id);
         if (patient.isPresent()) {
-            bed.setAssignedPatient(patient.get());
-            return bedRepository.save(bed);
+            Bed existingBed = bedRepository.findById(bed.getId()).get();
+            System.out.println(existingBed);
+            existingBed.setAssignedPatient(patient.get());
+            return bedRepository.save(existingBed);
         }
         return null;
     }
@@ -104,8 +111,8 @@ public class PatientService {
     public Patient setDoctor(Long id, Doctor doctor) {
         Optional<Patient> patient = this.getPatientById(id);
         if (patient.isPresent()) {
-            patient.get().setAssignedDoctor(doctor);
-            doctorRepository.save(doctor);
+            Doctor actualDoctor = doctorRepository.findById(doctor.getId()).get();
+            patient.get().setAssignedDoctor(actualDoctor);
             return patientRepository.save(patient.get());
         }
         return null;
@@ -117,12 +124,12 @@ public class PatientService {
             Patient patient = patientOptional.get();
             Long bedId = bedRepository.getBedByAssignedPatient(patient).getId();
             Map<String, Object> lastVitals = this.getLastVitals(bedId.toString());
-            Long HeartRate = (Long) lastVitals.get("heartbeat");
-            Long o2 = (Long) lastVitals.get("o2");
-            Long temperature = (Long) lastVitals.get("temperature");
-            Long bloodPressure_systolic = (Long) lastVitals.get("bloodPressure_systolic");
-            Long bloodPressure_diastolic = (Long) lastVitals.get("bloodPressure_diastolic");
-            Vitals vitals = new Vitals(HeartRate, bloodPressure_diastolic, bloodPressure_systolic, o2, temperature);
+            Double HeartRate = (Double) lastVitals.get("heartbeat");
+            Double o2 = (Double) lastVitals.get("o2");
+            Double temperature = (Double) lastVitals.get("temperature");
+            Double bloodPressure_systolic = (Double) lastVitals.get("bloodPressure_systolic");
+            Double bloodPressure_diastolic = (Double) lastVitals.get("bloodPressure_diastolic");
+            Vitals vitals = new Vitals(HeartRate, bloodPressure_diastolic, bloodPressure_systolic, temperature, o2);
             PatientWithVitals patientWithVitals = new PatientWithVitals(patient, vitals);
             return Optional.of(patientWithVitals);
         } else {
@@ -145,6 +152,7 @@ public class PatientService {
             existingPatient.setConditions(updatedPatient.getConditions());
             existingPatient.setObservations(updatedPatient.getObservations());
             existingPatient.setAssignedDoctor(updatedPatient.getAssignedDoctor());
+            existingPatient.setDischarged(updatedPatient.isDischarged());
             return patientRepository.save(existingPatient);
         }).orElseThrow(() -> new RuntimeException("Patient not found with id: " + id));
     }
@@ -154,7 +162,9 @@ public class PatientService {
     }
 
     public void dischargePatient(Long id) {
-        patientRepository.deleteById(id);
+        Patient existingPatient = patientRepository.findById(id).get();
+        existingPatient.setDischarged(true);
+        patientRepository.save(existingPatient);
     }
 
     public List<Patient> getPatientsFromDoctor(Doctor doctor) {
@@ -195,53 +205,83 @@ public class PatientService {
                 "from(bucket: \"%s\") " +
                         "|> range(start: %s, stop: %s) " +
                         "|> filter(fn: (r) => r[\"bedId\"] == \"%s\") " +
-                        "|> filter(fn: (r) => r[\"_measurement\"] == \"vitals\") " +
-                        "|> pivot(rowKey: [\"_time\"], columnKey: [\"bedId\"], valueColumn: \"_value\")",
-                bucket, startTime, endTime, bedId);
-
+                        "|> filter(fn: (r) => r[\"_measurement\"] == \"vitals\")",
+                bucket, startTime, endTime, bedId);  
+    
         QueryApi queryApi = influxDBClient.getQueryApi();
         return queryApi.query(fluxQuery);
     }
-
-    public String generateQuickChartUrl(List<FluxTable> vitalsRecords, String bedId, String vitalType) {
+    
+    public String generateQuickChartUrl(String bedId, String vitalType, String startTime, String endTime) {
+        List<FluxTable> vitalsRecords = getPatientVitals(bedId, startTime, endTime);
+    
         StringBuilder labels = new StringBuilder();
         StringBuilder dataPoints = new StringBuilder();
-
+        vitalType = "o2";
+    
         for (FluxTable table : vitalsRecords) {
             for (FluxRecord record : table.getRecords()) {
+                System.out.println("Record: " + record.toString());
+                System.out.println("Record Field: " + record.getValueByKey("_field"));
+                System.out.println("Record Value: " + record.getValue());
+    
                 String field = (String) record.getValueByKey("_field");
-                Number value = (Number) record.getValue();
-
-                if (value == null || !vitalType.equals(field))
+    
+                if (!vitalType.equals(field)) {
                     continue;
-
+                }
+    
+                Number value = (Number) record.getValue();
+                if (value == null) {
+                    System.out.println("Record value is null, skipping...");
+                    continue;
+                }
+    
                 String timeLabel = record.getTime().toString();
+                System.out.println("Time Label: " + timeLabel);
+                System.out.println("Value: " + value);
+    
                 labels.append("\"").append(timeLabel).append("\",");
                 dataPoints.append(value.toString()).append(",");
             }
         }
-
-        if (labels.length() > 0)
+    
+        if (labels.length() > 0) {
             labels.setLength(labels.length() - 1);
-        if (dataPoints.length() > 0)
+        }
+        if (dataPoints.length() > 0) {
             dataPoints.setLength(dataPoints.length() - 1);
-
+        }
+    
+        System.out.println("Final Labels: " + labels.toString());
+        System.out.println("Final Data Points: " + dataPoints.toString());
+    
         String chartJson = String.format(
-                "{"
-                        + "\"type\":\"line\","
-                        + "\"data\":{"
-                        + "\"labels\":[%s],"
-                        + "\"datasets\":[{\"label\":\"%s\",\"data\":[%s]}]"
-                        + "},"
-                        + "\"options\":{"
-                        + "\"title\":{\"display\":true,\"text\":\"%s\"}"
-                        + "}"
-                        + "}",
-                labels.toString(), vitalType, dataPoints.toString(), vitalType);
-
+            "{"
+                    + "\"type\":\"line\","
+                    + "\"data\":{"
+                    + "\"labels\":[%s],"
+                    + "\"datasets\":[{\"label\":\"%s\",\"data\":[%s]}]"
+                    + "},"
+                    + "\"options\":{"
+                    + "\"title\":{\"display\":true,\"text\":\"%s\"},"
+                    + "\"scales\":{"
+                    + "\"y\":{"
+                    + "\"min\":60,"
+                    + "\"max\":90"
+                    + "}"
+                    + "}"
+                    + "}"
+                    + "}",
+            labels.toString(), vitalType, dataPoints.toString(), vitalType
+        );
+      
         String encodedChart = URLEncoder.encode(chartJson, StandardCharsets.UTF_8);
         return "https://quickchart.io/chart?c=" + encodedChart;
     }
+    
+    
+    
 
     public Map<String, Object> getLastVitals(String bedId) {
         String fluxQuery = String.format(
@@ -278,6 +318,7 @@ public class PatientService {
         Optional<Patient> patientOptional = patientRepository.findById(patientId);
         if (patientOptional.isPresent()) {
             Patient patient = patientOptional.get();
+            System.out.println(patient);
             medication.setPatient(patient);
             medicationRepository.save(medication);
             return patient;
@@ -289,10 +330,13 @@ public class PatientService {
         List<Medication> medicationList = medicationRepository.findMedicationByPatientId(patientId);
         for (Medication medication : medicationList) {
             if (medication.getId().equals(medicationId)) {
+                System.out.println(medication.getPatient());
                 medication.setName(updatedMedication.getName());
                 medication.setDosage(updatedMedication.getDosage());
                 medication.setHourInterval(updatedMedication.getHourInterval());
-                medication.setPatient(updatedMedication.getPatient());
+                medication.setLastTaken(updatedMedication.getLastTaken());
+                medication.setHasTaken(updatedMedication.isHasTaken());
+                
                 return medicationRepository.save(medication);
             }
         }

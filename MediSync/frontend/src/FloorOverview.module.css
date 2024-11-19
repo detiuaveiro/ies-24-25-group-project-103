@@ -1,0 +1,158 @@
+.container {
+    padding: 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.title {
+    color: #271E4A;
+    font-size: 48px;
+    margin: 0 0 20px 0;
+    font-weight: bold;
+}
+
+.controlsRow {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+}
+
+.leftControls {
+    display: flex;
+    align-items: center;
+    gap: 40px;
+}
+
+.floorControl {
+    min-width: 200px;
+}
+
+.floorSelect {
+    padding: 12px 24px;
+    font-size: 18px;
+    border: 2px solid #D5DEED;
+    border-radius: 8px;
+    color: #271E4A;
+    background-color: white;
+    cursor: pointer;
+    width: 100%;
+}
+
+.legend {
+    display: flex;
+    gap: 16px;
+    padding: 10px 15px;
+    border-radius: 6px;
+    background-color: #E6EAF5;
+}
+
+.legendItem {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    color: #271E4A;
+}
+
+.legendItem .bed {
+    width: 20px;
+    height: 20px;
+    border-radius: 4px;
+    margin: 0;
+}
+
+.actionButtons {
+    display: flex;
+    gap: 10px;
+}
+
+.addButton {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 24px;
+    background-color: #E6EAF5;
+    border: none;
+    border-radius: 8px;
+    color: #271E4A;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    min-width: 170px;
+}
+
+.addButton:hover {
+    background-color: #d5d9e4;
+}
+
+.addButton svg {
+    font-size: 20px;
+}
+
+.addButton span {
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.floorPlan {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 20px;
+    padding: 20px;
+    background-color: white;
+    border-radius: 8px;
+}
+
+.room {
+    background-color: #F5F6FA;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.roomHeader {
+    text-align: center;
+    margin-bottom: 15px;
+    font-size: 20px;
+    color: #271E4A;
+    font-weight: 600;
+}
+
+.bedGrid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+    padding: 10px;
+}
+
+.bed {
+    width: 60px;
+    height: 60px;
+    border-radius: 8px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+
+.bed:hover {
+    transform: scale(1.05);
+}
+
+.bed.occupied {
+    background-color: #271E4A;
+}
+
+.bed.available {
+    background-color: #4CAF50;
+}
+
+.bed.needs-cleaning {
+    background-color: #f44336;
+}
