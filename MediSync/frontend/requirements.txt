@@ -1,8 +1,15 @@
-react-router-dom
-react-bootstrap
---save @fortawesome/fontawesome-svg-core @fortawesome/free-solid-svg-icons @fortawesome/react-fontawesome
-@mui/material @emotion/react @emotion/styled
-axios
-react-datepicker
+@emotion/react
+@emotion/styled
+@fortawesome/fontawesome-svg-core
+@fortawesome/free-solid-svg-icons
+@fortawesome/react-fontawesome
 @mui/icons-material
-@mui/material @emotion/react @emotion/styled
+@mui/material
+axios
+bootstrap
+react-bootstrap
+react-datepicker
+react-dom
+react-icons
+react-router-dom
+react
