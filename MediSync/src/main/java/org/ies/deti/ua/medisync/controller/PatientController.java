@@ -74,13 +74,13 @@ public class PatientController {
     }
 
     @GetMapping("/graph/{id}/{type}/{start}/{end}")
-    public String getGraph(@PathVariable String id, @PathVariable String type, @PathVariable String start,
+    public Map<String, Object> getGraph(@PathVariable String id, @PathVariable String type, @PathVariable String start,
             @PathVariable String end) {
         String bedID = patientService.getPatientBed(patientService.getPatientById(Long.parseLong(id)).get()).getId()
                 .toString();
         System.out.println(bedID);
         List<FluxTable> tables = patientService.getPatientVitals(bedID, start, end);
-        return patientService.generateQuickChartUrl(bedID, type, start, end);
+        return patientService.generateVitalsChartData(bedID, type, start, end);
 
     }
 

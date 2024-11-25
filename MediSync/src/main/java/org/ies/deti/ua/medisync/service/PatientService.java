@@ -1,7 +1,6 @@
 package org.ies.deti.ua.medisync.service;
 
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -212,76 +211,37 @@ public class PatientService {
         return queryApi.query(fluxQuery);
     }
     
-    public String generateQuickChartUrl(String bedId, String vitalType, String startTime, String endTime) {
+    public Map<String, Object> generateVitalsChartData(String bedId, String vitalType, String startTime, String endTime) {
         List<FluxTable> vitalsRecords = getPatientVitals(bedId, startTime, endTime);
-    
-        StringBuilder labels = new StringBuilder();
-        StringBuilder dataPoints = new StringBuilder();
-        vitalType = "o2";
-    
+
+        List<String> labels = new ArrayList<>();
+        List<Double> dataPoints = new ArrayList<>();
+
         for (FluxTable table : vitalsRecords) {
             for (FluxRecord record : table.getRecords()) {
-                System.out.println("Record: " + record.toString());
-                System.out.println("Record Field: " + record.getValueByKey("_field"));
-                System.out.println("Record Value: " + record.getValue());
-    
                 String field = (String) record.getValueByKey("_field");
-    
                 if (!vitalType.equals(field)) {
                     continue;
                 }
-    
+
                 Number value = (Number) record.getValue();
                 if (value == null) {
-                    System.out.println("Record value is null, skipping...");
                     continue;
                 }
-    
+
                 String timeLabel = record.getTime().toString();
-                System.out.println("Time Label: " + timeLabel);
-                System.out.println("Value: " + value);
-    
-                labels.append("\"").append(timeLabel).append("\",");
-                dataPoints.append(value.toString()).append(",");
+                labels.add(timeLabel);
+                dataPoints.add(value.doubleValue());
             }
         }
-    
-        if (labels.length() > 0) {
-            labels.setLength(labels.length() - 1);
-        }
-        if (dataPoints.length() > 0) {
-            dataPoints.setLength(dataPoints.length() - 1);
-        }
-    
-        System.out.println("Final Labels: " + labels.toString());
-        System.out.println("Final Data Points: " + dataPoints.toString());
-    
-        String chartJson = String.format(
-            "{"
-                    + "\"type\":\"line\","
-                    + "\"data\":{"
-                    + "\"labels\":[%s],"
-                    + "\"datasets\":[{\"label\":\"%s\",\"data\":[%s]}]"
-                    + "},"
-                    + "\"options\":{"
-                    + "\"title\":{\"display\":true,\"text\":\"%s\"},"
-                    + "\"scales\":{"
-                    + "\"y\":{"
-                    + "\"min\":60,"
-                    + "\"max\":90"
-                    + "}"
-                    + "}"
-                    + "}"
-                    + "}",
-            labels.toString(), vitalType, dataPoints.toString(), vitalType
-        );
-      
-        String encodedChart = URLEncoder.encode(chartJson, StandardCharsets.UTF_8);
-        return "https://quickchart.io/chart?c=" + encodedChart;
+
+        Map<String, Object> chartData = new HashMap<>();
+        chartData.put("labels", labels);
+        chartData.put("data", dataPoints);
+        chartData.put("vitalType", vitalType);
+
+        return chartData;
     }
-    
-    
-    
 
     public Map<String, Object> getLastVitals(String bedId) {
         String fluxQuery = String.format(

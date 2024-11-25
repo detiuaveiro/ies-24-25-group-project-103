@@ -1,14 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { Modal, Button } from 'react-bootstrap';
+import { Line } from 'react-chartjs-2';
 import axios from 'axios';
 
 const GraphModal = ({ show, onClose, patientId, vitalType, startDate, endDate }) => {
-  const [graphUrl, setGraphUrl] = useState(null);
+  const [chartData, setChartData] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    const fetchGraph = async () => {
+    const fetchGraphData = async () => {
       setLoading(true);
       setError(null);
 
@@ -20,6 +21,7 @@ const GraphModal = ({ show, onClose, patientId, vitalType, startDate, endDate })
       }
 
       try {
+        // Call the correct endpoint
         const response = await axios.get(
           `http://localhost:8080/api/v1/patients/graph/${patientId}/${vitalType}/${startDate}/${endDate}`,
           {
@@ -28,7 +30,22 @@ const GraphModal = ({ show, onClose, patientId, vitalType, startDate, endDate })
             },
           }
         );
-        setGraphUrl(response.data);
+
+        const { labels, data } = response.data;
+
+        // Set chart data in the format required by Chart.js
+        setChartData({
+          labels,
+          datasets: [
+            {
+              label: vitalType,
+              data,
+              borderColor: 'rgba(75, 192, 192, 1)',
+              backgroundColor: 'rgba(75, 192, 192, 0.2)',
+              fill: true,
+            },
+          ],
+        });
       } catch (err) {
         setError(err.response?.data?.message || 'Failed to fetch graph data.');
       } finally {
@@ -36,8 +53,9 @@ const GraphModal = ({ show, onClose, patientId, vitalType, startDate, endDate })
       }
     };
 
+    // Fetch graph data only when modal is shown
     if (show && patientId && vitalType && startDate && endDate) {
-      fetchGraph();
+      fetchGraphData();
     }
   }, [show, patientId, vitalType, startDate, endDate]);
 
@@ -49,9 +67,28 @@ const GraphModal = ({ show, onClose, patientId, vitalType, startDate, endDate })
       <Modal.Body>
         {loading && <p>Loading graph...</p>}
         {error && <p className="text-danger">{error}</p>}
-        {graphUrl && (
-          <div style={{ textAlign: 'center' }}>
-            <img src={graphUrl} alt={`${vitalType} graph`} style={{ maxWidth: '100%', height: 'auto' }} />
+        {chartData && (
+          <div style={{ textAlign: 'center', width: '100%' }}>
+            <Line
+              data={chartData}
+              options={{
+                responsive: true,
+                plugins: {
+                  legend: { position: 'top' },
+                  title: { display: true, text: `${vitalType} Over Time` },
+                },
+                scales: {
+                  x: {
+                    type: 'time',
+                    time: { unit: 'minute' },
+                    title: { display: true, text: 'Time' },
+                  },
+                  y: {
+                    title: { display: true, text: vitalType },
+                  },
+                },
+              }}
+            />
           </div>
         )}
       </Modal.Body>
