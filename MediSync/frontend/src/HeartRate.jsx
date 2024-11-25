@@ -147,11 +147,11 @@ const HeartRate = () => {
 
       <GraphModal
         show={showModal}
-        onClose={handleCloseModal}
-        patientId= {id}
-        vitalType="heartbeat" // Pass vital type
-        startDate="2024-11-18" // Pass dynamic start date
-        endDate="2024-11-19" // Pass dynamic end date
+        onClose={() => setShowModal(false)}
+        patientId="12345"
+        vitalType="heartbeat"
+        startDate="2023-11-25T14:00:00Z"
+        endDate="2023-11-25T15:00:00Z"
       />
     </>
   );
