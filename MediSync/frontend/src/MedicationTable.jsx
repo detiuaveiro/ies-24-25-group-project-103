@@ -8,10 +8,13 @@ import { faEdit, faTrash } from '@fortawesome/free-solid-svg-icons';  
 
 import { useParams } from "react-router-dom";
 import DeleteIcon from "@mui/icons-material/Delete";
+import axios from "axios";
 
 const MedicationTableNurse = ({ medications = [] }) => {
   // Default values for medications
   const [Medication, setMedication] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const { id } = useParams();
   const defaultMedications = [
     { name: "Benuron", quantity: "1mg", frequency: "5 in 5 hours" },

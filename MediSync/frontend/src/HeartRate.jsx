@@ -7,7 +7,16 @@ import GraphModal from "./GraphModal"; // Import the modal component
 
 const HeartRate = () => {
   const [showModal, setShowModal] = useState(false);
-  const {id} = useParams();
+  const { id } = useParams();
+
+  const formatDate = (date) => date.toISOString().split("T")[0];
+
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  const tomorrow = new Date(today);
+  tomorrow.setDate(today.getDate() + 1);
+
   const handleOpenModal = () => setShowModal(true);
   const handleCloseModal = () => setShowModal(false);
 
@@ -148,10 +157,10 @@ const HeartRate = () => {
       <GraphModal
         show={showModal}
         onClose={handleCloseModal}
-        patientId= {id}
-        vitalType="heartbeat" // Pass vital type
-        startDate="2024-11-18" // Pass dynamic start date
-        endDate="2024-11-19" // Pass dynamic end date
+        patientId={id}
+        vitalType="heartbeat"
+        startDate={formatDate(today)}
+        endDate={formatDate(tomorrow)}
       />
     </>
   );
