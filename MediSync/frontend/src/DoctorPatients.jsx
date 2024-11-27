@@ -114,7 +114,7 @@ function DoctorPatients() {
                                 <td>
                                     <button 
                                         className={styles.moreInfoButton}
-                                        onClick={() => navigate(`/doctor/patients/${patient.id}`)}
+                                        onClick={() => navigate(`/patients/${patient.id}`)}
                                     >
                                         More Information <FontAwesomeIcon icon={faChartLine} />
                                     </button>
