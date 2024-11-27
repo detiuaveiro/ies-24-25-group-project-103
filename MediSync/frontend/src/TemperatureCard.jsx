@@ -2,11 +2,27 @@ import FavoriteIcon from "@mui/icons-material/Favorite";
 import MonitorHeartIcon from '@mui/icons-material/MonitorHeart';
 import DeviceThermostatIcon from '@mui/icons-material/DeviceThermostat';
 import { Avatar, Box, Paper, Typography } from "@mui/material";
+import { useState } from "react";
+import { useParams } from "react-router-dom";
+import GraphModal from "./GraphModal";
 import React from "react";
 
 const TemperatureCard = ({patient}) => {
+  const [showModal, setShowModal] = useState(false);
+  const { id } = useParams();
+
+  const formatDate = (date) => date.toISOString().split("T")[0];
+
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  const tomorrow = new Date(today);
+  tomorrow.setDate(today.getDate() + 1);
+
+  const handleOpenModal = () => setShowModal(true);
+  const handleCloseModal = () => setShowModal(false);
   return (
-    
+    <>
     <Box
       sx={{
         width: 380,
@@ -115,6 +131,7 @@ const TemperatureCard = ({patient}) => {
       </Paper>
 
       <Paper
+        onClick={handleOpenModal}
         sx={{
           width: 90,
           height: 90,
@@ -126,12 +143,22 @@ const TemperatureCard = ({patient}) => {
           boxShadow: "0px 4px 4px #00000040",
           display: "flex",
           alignItems: "center",
+          cursor: "pointer", 
           justifyContent: "center",
         }}
       >
         <MonitorHeartIcon sx={{ fontSize: 70, color: "#F4C430" }} />
       </Paper>
     </Box>
+              <GraphModal
+              show={showModal}
+              onClose={handleCloseModal}
+              patientId={id}
+              vitalType="temperature" 
+              startDate={formatDate(today)} 
+              endDate={formatDate(tomorrow)} 
+            />
+            </>
   );
 };
 

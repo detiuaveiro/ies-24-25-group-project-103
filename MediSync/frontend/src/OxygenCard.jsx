@@ -1,10 +1,26 @@
 import MonitorHeartIcon from '@mui/icons-material/MonitorHeart';
-import BloodtypeIcon from '@mui/icons-material/Bloodtype';
 import { Avatar, Box, Paper, Typography } from "@mui/material";
 import React from "react";
+import { useState } from "react";
+import { useParams } from "react-router-dom";
+import GraphModal from "./GraphModal";
 const OxygenCard = () => {
+  const [showModal, setShowModal] = useState(false);
+  const { id } = useParams();
+
+  const formatDate = (date) => date.toISOString().split("T")[0];
+
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  const tomorrow = new Date(today);
+  tomorrow.setDate(today.getDate() + 1);
+
+  const handleOpenModal = () => setShowModal(true);
+  const handleCloseModal = () => setShowModal(false);
+
   return (
-    
+    <>
     <Box
     sx={{
         width: 380,
@@ -28,7 +44,7 @@ const OxygenCard = () => {
           color: "black",
         }}
       >
-        Blood Pressure
+        Oxygen Levels
       </Typography>
 
       <Typography
@@ -56,7 +72,7 @@ const OxygenCard = () => {
           color: "#808080",
         }}
       >
-       mmHg
+       %
       </Typography>
 
       <Paper
@@ -113,6 +129,7 @@ const OxygenCard = () => {
       </Paper>
 
       <Paper
+        onClick={handleOpenModal}
         sx={{
             width: 90,
             height: 90,
@@ -124,12 +141,22 @@ const OxygenCard = () => {
             boxShadow: "0px 4px 4px #00000040",
             display: "flex",
             alignItems: "center",
+            cursor: "pointer", 
             justifyContent: "center",
           }}
       >
         <MonitorHeartIcon sx={{ fontSize: 70, color: "#E77B38" }} />
       </Paper>
     </Box>
+          <GraphModal
+          show={showModal}
+          onClose={handleCloseModal}
+          patientId={id}
+          vitalType="o2" 
+          startDate={formatDate(today)} 
+          endDate={formatDate(tomorrow)} 
+        />
+        </>
   );
 };
 

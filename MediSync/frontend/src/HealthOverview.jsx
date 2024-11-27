@@ -23,6 +23,7 @@ function HealthOverview() {
     const user = JSON.parse(localStorage.getItem('user'));
     const { id } = useParams(); 
     const [showModal, setShowModal] = useState(false);
+    console.log(user);
 
     function handleButtonClick() {
         setShowModal(true);
