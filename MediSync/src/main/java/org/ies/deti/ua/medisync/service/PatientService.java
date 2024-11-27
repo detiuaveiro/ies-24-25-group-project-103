@@ -211,13 +211,13 @@ public class PatientService {
         return queryApi.query(fluxQuery);
     }
     
-    
+
     public Map<String, Object> generateVitalsChartData(String bedId, String vitalType, String startTime, String endTime) {
         String query = String.format(
             "from(bucket: \"%s\") " +
             "|> range(start: %s, stop: %s) " +
-            "|> filter(fn: (r) => r[\"_measurement\"] == \"vitals\" and r[\"bedId\"] == \"%s\" and r[\"_field\"] == \"%s\")",
-            bucket, startTime, endTime, bedId, vitalType
+            "|> filter(fn: (r) => r[\"_measurement\"] == \"vitals\" and r[\"bedId\"] == \"%s\")",
+            bucket, startTime, endTime, bedId
         );
     
         System.out.println("InfluxDB Query: " + query);
@@ -225,11 +225,12 @@ public class PatientService {
         List<FluxTable> vitalsRecords = influxDBClient.getQueryApi().query(query, org);
     
         List<String> labels = new ArrayList<>();
-        List<Double> dataPoints = new ArrayList<>();
+        List<Double> systolicData = new ArrayList<>();
+        List<Double> diastolicData = new ArrayList<>();
+        List<Double> otherData = new ArrayList<>();
     
         if (vitalsRecords.isEmpty()) {
             System.out.println("No records found for bed ID: " + bedId + ", vital type: " + vitalType);
-            return Map.of("labels", labels, "data", dataPoints, "vitalType", vitalType, "color", getColorForVitalType(vitalType));
         }
     
         for (FluxTable table : vitalsRecords) {
@@ -237,38 +238,55 @@ public class PatientService {
                 String timeLabel = record.getTime().toString();
                 labels.add(timeLabel);
     
+                String field = (String) record.getValueByKey("_field");
                 Number value = (Number) record.getValue();
                 if (value != null) {
-                    dataPoints.add(value.doubleValue());
+                    if ("bloodPressure_systolic".equals(field)) {
+                        systolicData.add(value.doubleValue());
+                    } else if ("bloodPressure_diastolic".equals(field)) {
+                        diastolicData.add(value.doubleValue());
+                    } else if (field.equals(vitalType)) {
+                        otherData.add(value.doubleValue());
+                    }
                 }
             }
         }
     
-        return Map.of(
-            "labels", labels,
-            "data", dataPoints,
-            "vitalType", vitalType,
-            "color", getColorForVitalType(vitalType)
-        );
+        if ("bloodpressure".equalsIgnoreCase(vitalType)) {
+            return Map.of(
+                "labels", labels,
+                "datasets", List.of(
+                    Map.of("label", "Systolic", "data", systolicData, "color", "#FF6347"), 
+                    Map.of("label", "Diastolic", "data", diastolicData, "color", "#4682B4") 
+                )
+            );
+        } else {
+            return Map.of(
+                "labels", labels,
+                "data", otherData,
+                "vitalType", vitalType,
+                "color", getColorForVitalType(vitalType)
+            );
+        }
     }
     
     private String getColorForVitalType(String vitalType) {
         switch (vitalType.toLowerCase()) {
             case "o2":
-                return "orange";
+                return "#FFA500"; 
             case "temperature":
-                return "yellow";
+                return "#FFD700"; 
             case "heartbeat":
-                return "red";
+                return "#FF0000"; 
             case "bloodpressure":
-                return "blue";
+                return "#0000FF"; 
             default:
-                return "gray";
+                return "#808080"; 
         }
     }
     
+
         
-    
 
     public Map<String, Object> getLastVitals(String bedId) {
         String fluxQuery = String.format(
