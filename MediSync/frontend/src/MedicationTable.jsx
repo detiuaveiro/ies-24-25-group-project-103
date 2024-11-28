@@ -1,57 +1,53 @@
-import React from "react";
-import styles from "./MedicationTable.module.css"; // Import the CSS module
-import EditIcon from "@mui/icons-material/Edit";
-
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { useState, useEffect } from "react";
-import { faEdit, faTrash } from '@fortawesome/free-solid-svg-icons';   
-
+import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
-import DeleteIcon from "@mui/icons-material/Delete";
 import axios from "axios";
 
-const MedicationTableNurse = ({ medications = [] }) => {
-  // Default values for medications
-  const [Medication, setMedication] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const { id } = useParams();
-  const defaultMedications = [
-    { name: "Benuron", quantity: "1mg", frequency: "5 in 5 hours" },
-    { name: "Lisinopril", quantity: "1000mg", frequency: "4 in 4 hours" },
-    { name: "Metformin", quantity: "2000mg", frequency: "5 in 5 hours" },
-    { name: "Amoxicillin", quantity: "50mg", frequency: "8 in 8 hours" },
-    { name: "Atorvastatin", quantity: "500mg", frequency: "8 in 8" },
-  ];
+import styles from "./MedicationTable.module.css"; // Import the CSS module
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faEdit, faTrash } from '@fortawesome/free-solid-svg-icons';
+
+const MedicationTable= () => {
+  const [medications, setMedications] = useState([]); // State to hold medications
+  const [loading, setLoading] = useState(true); // Loading state
+  const [error, setError] = useState(null); // Error state
+  const { id } = useParams(); // Get patient ID from URL parameters
 
   useEffect(() => {
-    const fetchPatientData = async () => {
-        try {
-            const token = localStorage.getItem('token');
-            if (!token) {
-                throw new Error('Authentication token not found.');
-            }
-
-            const response = await axios.get(`http://localhost:8080/api/v1/patients/${id}/medications`, {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                },
-            });
-
-            setMedication(response.data);
-            console.log(response.data);
-        } catch (err) {
-            setError('Failed to load patient data.');
-            console.error(err);
-        } finally {
-            setLoading(false);
+    const fetchMedications = async () => {
+      try {
+        const token = localStorage.getItem("token");
+        if (!token) {
+          throw new Error("Authentication token not found.");
         }
+
+        const response = await axios.get(
+          `http://localhost:8080/api/v1/patients/${id}/medications`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`, // Attach the token for authentication
+            },
+          }
+        );
+
+        setMedications(response.data); // Set fetched medications
+      } catch (err) {
+        setError("Failed to load medications.");
+        console.error(err);
+      } finally {
+        setLoading(false); // Stop loading
+      }
     };
 
-    fetchPatientData();
-}, [id]);
+    fetchMedications();
+  }, [id]);
 
-  const rows = medications.length > 0 ? medications : defaultMedications;
+  if (loading) {
+    return <div>Loading medications...</div>; // Show loading message
+  }
+
+  if (error) {
+    return <div>{error}</div>; // Show error message
+  }
 
   return (
     <div className={styles.tableContainer}>
@@ -59,17 +55,21 @@ const MedicationTableNurse = ({ medications = [] }) => {
         <thead>
           <tr>
             <th>Name</th>
-            <th>Quantity</th>
-            <th>Frequency</th>
+            <th>Dosage</th>
+            <th>Hour Interval</th>
+            <th>Last Taken</th>
+            <th>Has Taken</th>
             <th>Actions</th>
           </tr>
         </thead>
         <tbody>
-          {rows.map((medication, index) => (
-            <tr key={index}>
+          {medications.map((medication) => (
+            <tr key={medication.id}>
               <td>{medication.name}</td>
-              <td>{medication.quantity}</td>
-              <td>{medication.frequency}</td>
+              <td>{medication.dosage}</td>
+              <td>{medication.hourInterval}</td>
+              <td>{medication.lastTaken ? new Date(medication.lastTaken).toLocaleString() : "N/A"}</td>
+              <td>{medication.hasTaken ? "Yes" : "No"}</td>
               <td className={styles.actions}>
                 <FontAwesomeIcon icon={faEdit} className={styles.icon} />
                 <FontAwesomeIcon icon={faTrash} className={styles.icon} />
@@ -82,4 +82,4 @@ const MedicationTableNurse = ({ medications = [] }) => {
   );
 };
 
-export default MedicationTableNurse
+export default MedicationTable;
