@@ -1,67 +1,80 @@
 package org.ies.deti.ua.medisync.model;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class Vitals {
-    private Double HeartRate;
-    private Double BloodPressureDiastolic;
-    private Double BloodPressureSystolic;
-    private Double Temperature;
-    private Double OxygenSaturation;
+    @JsonProperty("HeartRate")
+    private Double heartRate;
+
+    @JsonProperty("BloodPressureDiastolic")
+    private Double bloodPressureDiastolic;
+
+    @JsonProperty("BloodPressureSystolic")
+    private Double bloodPressureSystolic;
+
+    @JsonProperty("Temperature")
+    private Double temperature;
+
+    @JsonProperty("OxygenSaturation")
+    private Double oxygenSaturation;
 
     public Vitals() {}
 
-    public Vitals(Double HeartRate, Double BloodPressureDiastolic, Double BloodPressureSystolic, Double Temperature, Double OxygenSaturation) {
-        this.HeartRate = HeartRate;
-        this.BloodPressureDiastolic = BloodPressureDiastolic;
-        this.BloodPressureSystolic = BloodPressureSystolic;
-        this.Temperature = Temperature;
-        this.OxygenSaturation = OxygenSaturation;
+    public Vitals(Double heartRate, Double bloodPressureDiastolic, Double bloodPressureSystolic, Double temperature, Double oxygenSaturation) {
+        this.heartRate = heartRate;
+        this.bloodPressureDiastolic = bloodPressureDiastolic;
+        this.bloodPressureSystolic = bloodPressureSystolic;
+        this.temperature = temperature;
+        this.oxygenSaturation = oxygenSaturation;
     }
 
     public Double getHeartRate() {
-        return HeartRate;
+        return heartRate;
     }
 
-    public void setHeartRate(Double HeartRate) {
-        this.HeartRate = HeartRate;
+    public void setHeartRate(Double heartRate) {
+        this.heartRate = heartRate;
     }
 
     public Double getBloodPressureDiastolic() {
-        return BloodPressureDiastolic;
+        return bloodPressureDiastolic;
     }
 
-    public void setBloodPressureDiastolic(Double BloodPressureDiastolic) {
-        this.BloodPressureDiastolic = BloodPressureDiastolic;
+    public void setBloodPressureDiastolic(Double bloodPressureDiastolic) {
+        this.bloodPressureDiastolic = bloodPressureDiastolic;
     }
 
     public Double getBloodPressureSystolic() {
-        return BloodPressureSystolic;
+        return bloodPressureSystolic;
     }
 
-    public void setBloodPressureSystolic(Double BloodPressureSystolic) {
-        this.BloodPressureSystolic = BloodPressureSystolic;
+    public void setBloodPressureSystolic(Double bloodPressureSystolic) {
+        this.bloodPressureSystolic = bloodPressureSystolic;
     }
 
     public Double getTemperature() {
-        return Temperature;
+        return temperature;
     }
 
-    public void setTemperature(Double Temperature) {
-        this.Temperature = Temperature;
+    public void setTemperature(Double temperature) {
+        this.temperature = temperature;
     }
 
     public Double getOxygenSaturation() {
-        return OxygenSaturation;
+        return oxygenSaturation;
     }
 
-    public void setOxygenSaturation(Double OxygenSaturation) {
-        this.OxygenSaturation = OxygenSaturation;
+    public void setOxygenSaturation(Double oxygenSaturation) {
+        this.oxygenSaturation = oxygenSaturation;
     }
 
     @Override
     public String toString() {
-        return "Vitals [BloodPressureDiastolic=" + BloodPressureDiastolic + ", BloodPressureSystolic="
-                + BloodPressureSystolic + ", HeartRate=" + HeartRate + ", OxygenSaturation=" + OxygenSaturation
-                + ", Temperature=" + Temperature + "]";
+        return "Vitals{" +
+                "heartRate=" + heartRate +
+                ", bloodPressureDiastolic=" + bloodPressureDiastolic +
+                ", bloodPressureSystolic=" + bloodPressureSystolic +
+                ", temperature=" + temperature +
+                ", oxygenSaturation=" + oxygenSaturation +
+                '}';
     }
-
 }

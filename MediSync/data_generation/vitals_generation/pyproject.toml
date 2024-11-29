@@ -7,7 +7,7 @@ readme = "README.md"
 
 [tool.poetry.dependencies]
 python = "^3.10"
-
+kafka-python = "^2.0.2"
 
 [build-system]
 requires = ["poetry-core"]
