@@ -4,29 +4,42 @@ import json
 import random
 import time
 
-producer = KafkaProducer(bootstrap_servers=['localhost:29092'], value_serializer=lambda m: json.dumps(m).encode('ascii'))
+# Initialize Kafka producer
+producer = KafkaProducer(
+    bootstrap_servers=['localhost:29092'], 
+    value_serializer=lambda m: json.dumps(m).encode('ascii')
+)
+
+# Number of beds to simulate
 nBeds = 96
+
 curVitals = {}
 for i in range(1, nBeds+1):
     curVitals[i] = {
-        "heart_rate": 60,
-        "oxygen_saturation": 96,
-        "blood_pressure": [120, 70],
-        "temperature": 36.5
+        "HeartRate": 60.0,
+        "BloodPressureDiastolic": 70.0,
+        "BloodPressureSystolic": 120.0,
+        "Temperature": 36.5,
+        "OxygenSaturation": 96.0
     }
+
 while True:
     for i in range(1, nBeds+1):
-        curVitals[i]["heart_rate"] += random.randint(-5, 5)
-        curVitals[i]["oxygen_saturation"] += int(random.randint(-2, 2) * 0.5)
-        curVitals[i]["blood_pressure"][0] += random.randint(-5, 5)
-        curVitals[i]["blood_pressure"][1] += random.randint(-5, 5)
-        curVitals[i]["temperature"] += random.random() * random.randint(-1, 1)
+        curVitals[i]["HeartRate"] += random.uniform(-5, 5)
+        curVitals[i]["OxygenSaturation"] += random.uniform(-1, 1)
+        curVitals[i]["BloodPressureDiastolic"] += random.uniform(-3, 3)
+        curVitals[i]["BloodPressureSystolic"] += random.uniform(-5, 5)
+        curVitals[i]["Temperature"] += random.uniform(-0.5, 0.5)
+
         vitals = {
-            "bed_id": str(i),
-            "heart_rate": str(curVitals[i]["heart_rate"]),
-            "oxygen_saturation": str(curVitals[i]["oxygen_saturation"]),
-            "blood_pressure": [str(curVitals[i]["blood_pressure"][0]), str(curVitals[i]["blood_pressure"][1])],
-            "temperature": f"{curVitals[i]['temperature']:.1f}"
+            "HeartRate": round(curVitals[i]["HeartRate"], 1),
+            "BloodPressureDiastolic": round(curVitals[i]["BloodPressureDiastolic"], 1),
+            "BloodPressureSystolic": round(curVitals[i]["BloodPressureSystolic"], 1),
+            "Temperature": round(curVitals[i]["Temperature"], 1),
+            "OxygenSaturation": round(curVitals[i]["OxygenSaturation"], 1)
         }
+        print(vitals)
         producer.send('vitals', vitals)
-    time.sleep(1)
+
+    # Wait for a few seconds before sending the next batch
+    time.sleep(5)
