@@ -129,7 +129,7 @@ services:
     ports:
       - "${KAFDROP_PORT}"
     environment:
-      KAFKA_BROKERCONNECT: "${KAFROP_BROKERCONNECT}"
+      KAFKA_BROKERCONNECT: "${KAFDROP_BROKERCONNECT}"
       SERVER_SERVLET_CONTEXTPATH: "/"
     networks:
       - medisync-network

@@ -1,5 +1,7 @@
 package org.ies.deti.ua.medisync.consumer;
-import org.ies.deti.ua.medisync.model.Vitals;
+
+import org.ies.deti.ua.medisync.model.VitalsBed;
+import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;
 
@@ -15,7 +17,7 @@ public class VitalsConsumer {
     }
 
     @KafkaListener(topics = "vitals", groupId = "vitals_group")
-    public void consume(Vitals vitals) {
+    public void consume(VitalsBed vitals) {
         
         try {
             System.out.println("Consumed message: " + vitals.toString());
