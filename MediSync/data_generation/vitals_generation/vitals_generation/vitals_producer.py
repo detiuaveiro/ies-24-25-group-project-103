@@ -4,13 +4,11 @@ import json
 import random
 import time
 
-# Initialize Kafka producer
 producer = KafkaProducer(
     bootstrap_servers=['localhost:29092'], 
     value_serializer=lambda m: json.dumps(m).encode('ascii')
 )
 
-# Number of beds to simulate
 nBeds = 96
 
 curVitals = {}
@@ -41,5 +39,4 @@ while True:
         print(vitals)
         producer.send('vitals', vitals)
 
-    # Wait for a few seconds before sending the next batch
     time.sleep(5)
