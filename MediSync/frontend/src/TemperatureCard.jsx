@@ -21,15 +21,12 @@ const TemperatureCard = ({ value }) => {
   tomorrow.setDate(today.getDate() + 1);
 
   useEffect(() => {
-    if (value >= 40) {
+    if (value >= 37.5) {
       setStatus("Too High");
-      setShowModal(true);
     } else if (value < 34) {
       setStatus("Too Low");
-      setShowModal(true);
     } else {
       setStatus("Normal");
-      setShowModal(false);
     }
   }, [value]);
 
@@ -118,42 +115,43 @@ const TemperatureCard = ({ value }) => {
         </Paper>
 
         <Paper
-          sx={{
-            width: 84,
-            height: 33,
-            position: "absolute",
-            top: 179,
-            left: 28,
-            backgroundColor: status === "Normal" ? "#FFFAA0" : "#FFE6E6",
-            borderRadius: "5.6px",
-            display: "flex",
-            alignItems: "center",
-            marginTop: 2,
-            justifyContent: "center",
-            paddingX: 1.5,
-            animation: status !== "Normal" ? "zoomGlow 1.5s infinite" : "none", // Only animate if status is abnormal
-            "@keyframes zoomGlow": {
-              "0%": {
-                transform: "scale(1)",
-                boxShadow: "0 0 5px 0 rgba(255, 0, 0, 0.6)",
+            sx={{
+              width: 'auto',
+              height: 'auto',
+              padding: '0.3em 0.7em',
+              position: "absolute",
+              top: 179,
+              left: 28,
+              backgroundColor: "#FFFAA0",
+              borderRadius: "5.6px",
+              display: "flex",
+              alignItems: "center",
+              marginTop: 2,
+              justifyContent: "center",
+              paddingX: 1.5,
+              animation: status !== "Normal" ? "zoomGlowTemperature 1.5s infinite" : "none", // Glow animation for non-normal status
+              "@keyframes zoomGlowTemperature": {
+                "0%": {
+                  transform: "scale(1)",
+                  boxShadow: "0 0 5px 0 rgba(255, 255, 0, 0.6)", // Light yellow glow
+                },
+                "50%": {
+                  transform: "scale(1.1)",
+                  boxShadow: "0 0 15px 5px rgba(255, 255, 0, 0.8)", // Intense yellow glow
+                },
+                "100%": {
+                  transform: "scale(1)",
+                  boxShadow: "0 0 5px 0 rgba(255, 255, 0, 0.6)", // Light yellow glow
+                },
               },
-              "50%": {
-                transform: "scale(1.1)",
-                boxShadow: "0 0 15px 5px rgba(255, 0, 0, 0.8)",
-              },
-              "100%": {
-                transform: "scale(1)",
-                boxShadow: "0 0 5px 0 rgba(255, 0, 0, 0.6)",
-              },
-            },
-          }}
-        >
+            }}
+          >
           <Typography
             variant="body1"
             sx={{
               fontFamily: 'Montserrat, sans-serif',
               fontWeight: "bold",
-              color: status === "Normal" ? "black" : "#FF0000",
+              color: "black",
             }}
           >
             {status}

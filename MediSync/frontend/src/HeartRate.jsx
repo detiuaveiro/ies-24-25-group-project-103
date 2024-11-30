@@ -21,13 +21,10 @@ const HeartRate = ({ value }) => {
   useEffect(() => {
     if (value >= 130) {
       setStatus("Too High");
-      setShowModal(true);
     } else if (value < 40) {
       setStatus("Too Low");
-      setShowModal(true);
     } else {
       setStatus("Normal");
-      setShowModal(false);
     }
   }, [value]);
 
@@ -122,8 +119,9 @@ const HeartRate = ({ value }) => {
 
         <Paper
           sx={{
-            width: 84,
-            height: 33,
+            width: 'auto',
+            height: 'auto',
+            padding: '0.3em 0.7em',
             position: "absolute",
             top: 179,
             left: 28,
@@ -134,8 +132,8 @@ const HeartRate = ({ value }) => {
             justifyContent: "center",
             paddingX: 1.5,
             marginTop: 2,
-            animation: status !== "Normal" ? "zoomGlow 1.5s infinite" : "none", // Only animate if status is not "Normal"
-            "@keyframes zoomGlow": {
+            animation: status !== "Normal" ? "zoomGlowHeartRate 1.5s infinite" : "none", // Only animate if status is not "Normal"
+            "@keyframes zoomGlowHeartRate": {
               "0%": {
                 transform: "scale(1)",
                 boxShadow: "0 0 5px 0 rgba(255, 0, 0, 0.6)",
@@ -156,7 +154,7 @@ const HeartRate = ({ value }) => {
             sx={{
               fontFamily: "Montserrat, sans-serif",
               fontWeight: "bold",
-              color: status === "Normal" ? "black" : "#ff0000",
+              color: "black",
             }}
           >
             {status}

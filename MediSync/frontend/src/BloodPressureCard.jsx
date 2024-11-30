@@ -21,13 +21,10 @@ const BloodPressureCard = ({ systolic, diastolic }) => {
   useEffect(() => {
     if (systolic >= 140 || diastolic >= 90) {
       setStatus("Too High");
-      setShowModal(true);
     } else if (systolic < 70 || diastolic < 40) {
       setStatus("Too Low");
-      setShowModal(true);
     } else {
       setStatus("Normal");
-      setShowModal(false);
     }
   }, [systolic, diastolic]);
 
@@ -141,34 +138,34 @@ const BloodPressureCard = ({ systolic, diastolic }) => {
             <BloodtypeIcon sx={{ fontSize: 60, color: "#6495ED" }} />
           </Avatar>
         </Paper>
-
         <Paper
           sx={{
-            width: 84,
-            height: 33,
+            width: 'auto',
+            height: 'auto',
+            padding: '0.3em 0.7em',
             position: "absolute",
             top: 179,
             left: 28,
-            backgroundColor: status === "Normal" ? "#D0FBFF" : "#FFE6E6",
+            backgroundColor: "#D0FBFF",
             borderRadius: "5.6px",
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
             paddingX: 1.5,
             marginTop: 2,
-            animation: status !== "Normal" ? "zoomGlow 1.5s infinite" : "none",  
-            "@keyframes zoomGlow": {
+            animation: status !== "Normal" ? "zoomGlowBlood 1.5s infinite" : "none", // Glow animation for non-normal status
+            "@keyframes zoomGlowBlood": {
               "0%": {
                 transform: "scale(1)",
-                boxShadow: "0 0 5px 0 rgba(255, 0, 0, 0.6)",
+                boxShadow: "0 0 5px 0 rgba(100, 149, 237, 0.6)", // Light blue glow
               },
               "50%": {
                 transform: "scale(1.1)",
-                boxShadow: "0 0 15px 5px rgba(255, 0, 0, 0.8)",
+                boxShadow: "0 0 15px 5px rgba(100, 149, 237, 0.8)",
               },
               "100%": {
                 transform: "scale(1)",
-                boxShadow: "0 0 5px 0 rgba(255, 0, 0, 0.6)",
+                boxShadow: "0 0 5px 0 rgba(100, 149, 237, 0.6)", 
               },
             },
           }}
@@ -178,12 +175,13 @@ const BloodPressureCard = ({ systolic, diastolic }) => {
             sx={{
               fontFamily: 'Montserrat, sans-serif',
               fontWeight: "bold",
-              color: status === "Normal" ? "black" : "#FF0000",
+              color: "black", 
             }}
           >
             {status}
           </Typography>
         </Paper>
+
 
         <Paper
           onClick={handleOpenModal}

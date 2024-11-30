@@ -20,10 +20,8 @@ const OxygenCard = ({ value }) => {
   useEffect(() => {
     if (value <= 94) {
       setStatus("Too Low");
-      setShowModal(true);
     } else {
       setStatus("Normal");
-      setShowModal(false);
     }
   }, [value]);
 
@@ -112,47 +110,48 @@ const OxygenCard = ({ value }) => {
         </Paper>
 
         <Paper
-          sx={{
-            width: 84,
-            height: 33,
-            position: "absolute",
-            top: 179,
-            left: 28,
-            backgroundColor: status === "Normal" ? "#F8D6BD" : "#FFE6E6",
-            borderRadius: "5.6px",
-            display: "flex",
-            alignItems: "center",
-            marginTop: 2,
-            justifyContent: "center",
-            paddingX: 1.5,
-            animation: status !== "Normal" ? "zoomGlow 1.5s infinite" : "none",
-            "@keyframes zoomGlow": {
-              "0%": {
-                transform: "scale(1)",
-                boxShadow: "0 0 5px 0 rgba(255, 0, 0, 0.6)",
-              },
-              "50%": {
-                transform: "scale(1.1)",
-                boxShadow: "0 0 15px 5px rgba(255, 0, 0, 0.8)",
-              },
-              "100%": {
-                transform: "scale(1)",
-                boxShadow: "0 0 5px 0 rgba(255, 0, 0, 0.6)",
-              },
+        sx={{
+          width: 'auto',
+          height: 'auto', 
+          padding: '0.3em 0.7em', 
+          position: "absolute",
+          top: 179,
+          left: 28,
+          backgroundColor: "#F8D6BD", 
+          borderRadius: "5.6px",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          marginTop: 2,
+          animation: status !== "Normal" ? "zoomGlowOxygen 1.5s infinite" : "none", 
+          "@keyframes zoomGlowOxygen": {
+            "0%": {
+              transform: "scale(1)",
+              boxShadow: "0 0 5px 0 rgba(255, 140, 0, 0.6)", // Dark orange glow
             },
+            "50%": {
+              transform: "scale(1.1)",
+              boxShadow: "0 0 15px 5px rgba(255, 140, 0, 0.8)", // Intense dark orange glow
+            },
+            "100%": {
+              transform: "scale(1)",
+              boxShadow: "0 0 5px 0 rgba(255, 140, 0, 0.6)", // Return to dark orange glow
+            },
+          },
+        }}
+      >
+        <Typography
+          variant="body1"
+          sx={{
+            fontFamily: "Montserrat, sans-serif",
+            fontWeight: "bold",
+            color: status ===  "#FF8C00", 
+            fontSize: "1rem", 
           }}
         >
-          <Typography
-            variant="body1"
-            sx={{
-              fontFamily: 'Montserrat, sans-serif',
-              fontWeight: "bold",
-              color: status === "Normal" ? "black" : "#FF0000",
-            }}
-          >
-            {status}
-          </Typography>
-        </Paper>
+          {status}
+        </Typography>
+      </Paper>
 
         <Paper
           onClick={handleOpenModal}
