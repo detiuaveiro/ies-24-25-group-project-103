@@ -13,6 +13,7 @@ import org.ies.deti.ua.medisync.model.Medication;
 import org.ies.deti.ua.medisync.model.Patient;
 import org.ies.deti.ua.medisync.model.PatientWithVitals;
 import org.ies.deti.ua.medisync.model.Vitals;
+import org.ies.deti.ua.medisync.model.VitalsBed;
 import org.ies.deti.ua.medisync.repository.BedRepository;
 import org.ies.deti.ua.medisync.repository.DoctorRepository;
 import org.ies.deti.ua.medisync.repository.MedicationRepository;
@@ -169,6 +170,38 @@ public class PatientService {
     public List<Patient> getPatientsFromDoctor(Doctor doctor) {
         return patientRepository.findByAssignedDoctor(doctor);
     }
+
+    public void processAndWritePatientVitals(VitalsBed vitalsBed) {
+        try {
+            Optional<Bed> bedOptional = bedRepository.findById(Long.valueOf(vitalsBed.getBedId()));
+            if (bedOptional.isPresent() && bedOptional.get().getAssignedPatient() != null) {
+    
+                long currentTimestamp = System.currentTimeMillis();
+    
+                Double heartbeat = Double.valueOf(vitalsBed.getHeartRate());
+                Double o2 = Double.valueOf(vitalsBed.getOxygenSaturation());
+                Double systolicBP = Double.valueOf(vitalsBed.getBloodPressure()[0]);
+                Double diastolicBP = Double.valueOf(vitalsBed.getBloodPressure()[1]);
+                Double temperature = Double.valueOf(vitalsBed.getTemperature());
+    
+                Point point = Point.measurement("vitals")
+                        .time(currentTimestamp, WritePrecision.MS)
+                        .addTag("bedId", vitalsBed.getBedId())
+                        .addField("heartbeat", heartbeat)
+                        .addField("o2", o2)
+                        .addField("bloodPressure_systolic", systolicBP)
+                        .addField("bloodPressure_diastolic", diastolicBP)
+                        .addField("temperature", temperature);
+    
+                influxDBClient.getWriteApiBlocking().writePoint(bucket, org, point);
+    
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println("Error processing vitals for bed ID: " + vitalsBed.getBedId());
+        }
+    }
+    
 
     public void writeVitals(String bedId, Map<String, Object> vitals) {
         long currentTimestamp = System.currentTimeMillis();
