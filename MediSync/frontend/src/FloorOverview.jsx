@@ -3,6 +3,7 @@ import axios from 'axios';
 import styles from './FloorOverview.module.css';
 import AddIcon from '@mui/icons-material/Add';
 import CreatePatient from './CreatePatient';
+import CONFIG from './config';
 
 function FloorOverview() {
     const [beds, setBeds] = useState([]);
@@ -10,11 +11,12 @@ function FloorOverview() {
     const [selectedFloor, setSelectedFloor] = useState('1');
     const token = localStorage.getItem('token');
     const [showPatientsModal, setShowPatientsModal] = useState(false);
+    const baseUrl = CONFIG.API_URL;
 
     useEffect(() => {
         const fetchBeds = async () => {
             try {
-                const response = await axios.get('http://localhost:8080/api/v1/hospital/beds', {
+                const response = await axios.get(`${baseUrl}/hospital/beds`, {
                     headers: {
                         'Authorization': `Bearer ${token}`
                     }
@@ -22,23 +24,28 @@ function FloorOverview() {
                 setBeds(response.data);
             } catch (error) {
                 console.error('Error fetching beds:', error);
+                setError('Error fetching beds');
             }
         };
+    
         const fetchDoctors = async () => {
             try {
-                const response = await axios.get('http://localhost:8080/api/v1/doctors', {
+                const response = await axios.get(`${baseUrl}/doctors`, {
                     headers: {
                         'Authorization': `Bearer ${token}`
                     }
                 });
-                setDoctors(response.data);
+                setDoctors(Array.isArray(response.data) ? response.data : []);
             } catch (error) {
                 console.error('Error fetching doctors:', error);
+                setError('Error fetching doctors');
+            } finally {
+                setIsLoading(false);
             }
         };
         fetchDoctors();
         fetchBeds();
-    }, [token]);
+    }, [token, baseUrl]);
 
     const floors = ['1', '2', '3'];
 

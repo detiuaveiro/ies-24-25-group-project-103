@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import "./Notification.css"; // Ensure you have the corresponding CSS file for styling.
 
+import CONFIG from './config';
+
 const Notifications = () => {
   const [notifications, setNotifications] = useState([]);
   const [error, setError] = useState(null);
@@ -11,6 +13,7 @@ const Notifications = () => {
   const user = JSON.parse(localStorage.getItem("user")); 
   const userId = user ? user.id : null; // Validate user object
   const token = localStorage.getItem("token"); // Token for Authorization header
+  const baseUrl = CONFIG.API_URL;
 
   // Fetch notifications when the component mounts
   useEffect(() => {
@@ -24,7 +27,7 @@ const Notifications = () => {
       console.log(token)
 
       try {
-        const response = await axios.get(`http://localhost:8080/api/v1/notifications/user/${userId}`, {
+        const response = await axios.get(`${baseUrl}/notifications/user/${userId}`, {
           headers: {
             Authorization: `Bearer ${token}`, // Attach token to request headers
           },
@@ -40,7 +43,7 @@ const Notifications = () => {
     };
 
     fetchNotifications();
-  }, [userId, token]);
+  }, [userId, token, baseUrl]);
 
   // Delete a single notification by ID
   const deleteNotification = async (id) => {

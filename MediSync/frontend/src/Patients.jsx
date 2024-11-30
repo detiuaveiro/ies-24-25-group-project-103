@@ -4,6 +4,7 @@ import styles from './Patients.module.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSearch, faChartLine } from '@fortawesome/free-solid-svg-icons';
 import { Link } from 'react-router-dom';
+import CONFIG from './config';
 
 function Patients() {
     const [patients, setPatients] = useState([]);
@@ -12,15 +13,16 @@ function Patients() {
     const [error, setError] = useState(null);
     const [searchTerm, setSearchTerm] = useState('');
     const token = localStorage.getItem('token');
+    const baseUrl = CONFIG.API_URL;
 
     useEffect(() => {
         const fetchData = async () => {
             try {
                 const [patientsResponse, bedsResponse] = await Promise.all([
-                    axios.get('http://localhost:8080/api/v1/patients', {
+                    axios.get(`${baseUrl}/patients`, {
                         headers: { 'Authorization': `Bearer ${token}` }
                     }),
-                    axios.get('http://localhost:8080/api/v1/hospital/beds', {
+                    axios.get(`${baseUrl}/hospital/beds`, {
                         headers: { 'Authorization': `Bearer ${token}` }
                     })
                 ]);
@@ -41,7 +43,7 @@ function Patients() {
             setError('Not authenticated');
             setLoading(false);
         }
-    }, [token]);
+    }, [token, baseUrl]);
 
     // Function to format room number (e.g., "13" becomes "Floor 1 Room 3")
     const formatRoomNumber = (roomNumber) => {
