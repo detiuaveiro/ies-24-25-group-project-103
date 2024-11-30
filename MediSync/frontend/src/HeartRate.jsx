@@ -1,12 +1,13 @@
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import MonitorHeartIcon from "@mui/icons-material/MonitorHeart";
 import { Avatar, Box, Paper, Typography } from "@mui/material";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import GraphModal from "./GraphModal"; // Import the modal component
 
-const HeartRate = () => {
+const HeartRate = ({ value }) => {
   const [showModal, setShowModal] = useState(false);
+  const [status, setStatus] = useState("Normal");
   const { id } = useParams();
 
   const formatDate = (date) => date.toISOString().split("T")[0];
@@ -17,6 +18,19 @@ const HeartRate = () => {
   const tomorrow = new Date(today);
   tomorrow.setDate(today.getDate() + 1);
 
+  useEffect(() => {
+    if (value >= 130) {
+      setStatus("Too High");
+      setShowModal(true);
+    } else if (value < 40) {
+      setStatus("Too Low");
+      setShowModal(true);
+    } else {
+      setStatus("Normal");
+      setShowModal(false);
+    }
+  }, [value]);
+
   const handleOpenModal = () => setShowModal(true);
   const handleCloseModal = () => setShowModal(false);
 
@@ -26,80 +40,85 @@ const HeartRate = () => {
         sx={{
           width: 380,
           height: 250,
-          position: "relative",
           backgroundColor: "white",
           borderRadius: "16.81px",
           border: "1.4px solid #e7e6e6",
           boxShadow: "0px 1.4px 70.04px #00000014",
-          padding: 2,
+          padding: 2.8,
+          position: "relative",
         }}
       >
-        <Typography
-          variant="h5"
+        <Box
           sx={{
-            position: "absolute",
-            top: 48,
-            left: 135,
-            fontFamily: "Montserrat, sans-serif",
-            fontWeight: "500",
-            color: "black",
-          }}
-        >
-          Heart Rate
-        </Typography>
-
-        <Typography
-          variant="h2"
-          sx={{
-            position: "absolute",
-            top: 115,
-            left: 28,
-            fontFamily: "Montserrat, sans-serif",
-            fontWeight: "normal",
-            color: "#272927",
-          }}
-        >
-          65
-        </Typography>
-
-        <Typography
-          variant="h6"
-          sx={{
-            position: "absolute",
-            top: 131,
-            left: 103,
-            fontFamily: "Montserrat, sans-serif",
-            fontWeight: "bold",
-            color: "#808080",
-          }}
-        >
-          bpm
-        </Typography>
-
-        <Paper
-          sx={{
-            width: 84,
-            height: 81,
-            position: "absolute",
-            top: 21,
-            left: 28,
-            backgroundColor: "#fbf0f3",
-            borderRadius: "16.81px",
             display: "flex",
             alignItems: "center",
-            justifyContent: "center",
           }}
         >
-          <Avatar
+          <Paper
             sx={{
-              width: 61,
-              height: 59,
-              backgroundColor: "transparent",
+              width: 84,
+              height: 81,
+              backgroundColor: "#fbf0f3",
+              borderRadius: "16.81px",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              marginRight: 2,
             }}
           >
-            <FavoriteIcon sx={{ fontSize: 40, color: "#e57373" }} />
-          </Avatar>
-        </Paper>
+            <Avatar
+              sx={{
+                width: 61,
+                height: 59,
+                backgroundColor: "transparent",
+              }}
+            >
+              <FavoriteIcon sx={{ fontSize: 40, color: "#e57373" }} />
+            </Avatar>
+          </Paper>
+
+          <Typography
+            variant="h5"
+            sx={{
+              fontFamily: "Montserrat, sans-serif",
+              fontWeight: "500",
+              color: "black",
+            }}
+          >
+            Heart Rate
+          </Typography>
+        </Box>
+
+        <Box
+          sx={{
+            display: "flex",
+            alignItems: "baseline",
+            marginTop: 2,
+          }}
+        >
+          <Typography
+            variant="h2"
+            sx={{
+              fontFamily: "Montserrat, sans-serif",
+              fontWeight: "normal",
+              color: "#272927",
+              marginLeft: 1,
+            }}
+          >
+            {value ?? 60}
+          </Typography>
+          <Typography
+            variant="h6"
+            sx={{
+              fontFamily: "Montserrat, sans-serif",
+              fontWeight: "bold",
+              color: "#808080",
+              marginLeft: 1,
+            }}
+          >
+            bpm
+          </Typography>
+        </Box>
 
         <Paper
           sx={{
@@ -108,13 +127,28 @@ const HeartRate = () => {
             position: "absolute",
             top: 179,
             left: 28,
-            backgroundColor: "#fbf0f3",
+            backgroundColor: status === "Normal" ? "#fbf0f3" : "#ffe6e6",
             borderRadius: "5.6px",
             display: "flex",
             alignItems: "center",
-            marginTop: 2,
             justifyContent: "center",
             paddingX: 1.5,
+            marginTop: 2,
+            animation: status !== "Normal" ? "zoomGlow 1.5s infinite" : "none", // Only animate if status is not "Normal"
+            "@keyframes zoomGlow": {
+              "0%": {
+                transform: "scale(1)",
+                boxShadow: "0 0 5px 0 rgba(255, 0, 0, 0.6)",
+              },
+              "50%": {
+                transform: "scale(1.1)",
+                boxShadow: "0 0 15px 5px rgba(255, 0, 0, 0.8)",
+              },
+              "100%": {
+                transform: "scale(1)",
+                boxShadow: "0 0 5px 0 rgba(255, 0, 0, 0.6)",
+              },
+            },
           }}
         >
           <Typography
@@ -122,31 +156,31 @@ const HeartRate = () => {
             sx={{
               fontFamily: "Montserrat, sans-serif",
               fontWeight: "bold",
-              color: "black",
+              color: status === "Normal" ? "black" : "#ff0000",
             }}
           >
-            Normal
+            {status}
           </Typography>
         </Paper>
 
         <Box
           component={Paper}
-          onClick={handleOpenModal} // Open modal on click
+          onClick={handleOpenModal}
           sx={{
             width: 90,
             height: 90,
-            position: "absolute",
-            top: 126,
-            left: 261,
             backgroundColor: "#fbf0f3",
             borderRadius: "7px",
             boxShadow: "0px 4px 4px #00000040",
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
-            cursor: "pointer", // Add pointer cursor
+            cursor: "pointer",
+            position: "absolute",
+            top: 126,
+            left: 261,
             "&:hover": {
-              boxShadow: "0px 6px 6px #00000060", // Optional hover effect
+              boxShadow: "0px 6px 6px #00000060",
             },
           }}
         >

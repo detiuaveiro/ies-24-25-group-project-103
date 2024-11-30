@@ -9,10 +9,10 @@ export default function BloodPressureAlert({ showModal, setShowModal, patient, v
     useEffect(() => {
         if (values[0] >= 140 || values[1] >= 90) {
             setShowModal(true);
-            setStatus('HIGH');
+            setStatus('Too High');
         } else if (values[0] < 70 || values[1] < 40) {
             setShowModal(true);
-            setStatus('LOW');
+            setStatus('Too Low');
         } else {
             setShowModal(false);
         }

@@ -2,15 +2,19 @@ import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import axios from "axios";
 
-import styles from "./MedicationTable.module.css"; // Import the CSS module
+import styles from "./MedicationTable.module.css"; 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import UpdateMedication from "./UpdateMedication";
+
 import { faEdit, faTrash } from '@fortawesome/free-solid-svg-icons';
 
-const MedicationTable= () => {
-  const [medications, setMedications] = useState([]); // State to hold medications
-  const [loading, setLoading] = useState(true); // Loading state
-  const [error, setError] = useState(null); // Error state
-  const { id } = useParams(); // Get patient ID from URL parameters
+const MedicationTable= ({patient}) => {
+  const [medications, setMedications] = useState([]); 
+  const [loading, setLoading] = useState(true); 
+  const [error, setError] = useState(null); 
+  const [showModal, setShowModal] = useState(false);
+  const [editMedication, setEditMedication] = useState(null);
+  const { id } = useParams();
 
   useEffect(() => {
     const fetchMedications = async () => {
@@ -24,17 +28,17 @@ const MedicationTable= () => {
           `http://localhost:8080/api/v1/patients/${id}/medications`,
           {
             headers: {
-              Authorization: `Bearer ${token}`, // Attach the token for authentication
+              Authorization: `Bearer ${token}`,
             },
           }
         );
 
-        setMedications(response.data); // Set fetched medications
+        setMedications(response.data); 
       } catch (err) {
         setError("Failed to load medications.");
         console.error(err);
       } finally {
-        setLoading(false); // Stop loading
+        setLoading(false);
       }
     };
 
@@ -42,11 +46,11 @@ const MedicationTable= () => {
   }, [id]);
 
   if (loading) {
-    return <div>Loading medications...</div>; // Show loading message
+    return <div>Loading medications...</div>; 
   }
 
   if (error) {
-    return <div>{error}</div>; // Show error message
+    return <div>{error}</div>;
   }
 
   return (
@@ -71,13 +75,22 @@ const MedicationTable= () => {
               <td>{medication.lastTaken ? new Date(medication.lastTaken).toLocaleString() : "N/A"}</td>
               <td>{medication.hasTaken ? "Yes" : "No"}</td>
               <td className={styles.actions}>
-                <FontAwesomeIcon icon={faEdit} className={styles.icon} />
+                <FontAwesomeIcon icon={faEdit} className={styles.icon} onClick={() => {
+                  setEditMedication(medication);
+                  setShowModal(true);
+                }}/>
                 <FontAwesomeIcon icon={faTrash} className={styles.icon} />
               </td>
             </tr>
           ))}
         </tbody>
       </table>
+      <UpdateMedication
+      showModal={showModal}
+      setShowModal={setShowModal}
+      patient={patient}
+      medication={editMedication} 
+      />
     </div>
   );
 };

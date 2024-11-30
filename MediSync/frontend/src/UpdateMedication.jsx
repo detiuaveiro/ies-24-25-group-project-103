@@ -1,17 +1,29 @@
 import { useState } from 'react';
 import { Modal, Form, Button } from 'react-bootstrap';
+import { useEffect } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './UpdateMedication.css';
 
 export default function UpdateMedication({ showModal, setShowModal, patient, medication=null}) {
     const addMedication = medication === null;
+    console.log(addMedication);    
 
-    const [medicationName, setMedicationName] = useState(medication===null ? '' : medication?.name);
-    const [hourInterval, setHourInterval] = useState(medication===null ? '' : medication?.hourInterval);
-    const [numberTimes, setNumberTimes] = useState(medication===null ? '' : medication?.numberTimes);
-    const [dosage, setDosage] = useState(medication===null ? '' : medication?.dosage);
+    const [medicationName, setMedicationName] = useState(medication?.name || '');
+    const [hourInterval, setHourInterval] = useState(medication?.hourInterval || '');
+    const [numberTimes, setNumberTimes] = useState(medication?.numberTimes || '');
+    const [dosage, setDosage] = useState(medication?.dosage || '');
     const token = localStorage.getItem('token');
+    console.log(medication);
 
+    useEffect(() => {
+        if (medication) {
+            setMedicationName(medication.name || '');
+            setHourInterval(medication.hourInterval || '');
+            setNumberTimes(medication.numberTimes || '');
+            setDosage(medication.dosage || '');
+        }
+    }, [medication]);
+    
     function handleClose() {
         setShowModal(false);
     }
