@@ -1,0 +1,164 @@
+/* General Modal Styling */
+.add-staff-modal .modal-content {
+    background-color: #ffffff; /* Light background for the modal */
+    border-radius: 10px;
+    padding: 20px;
+    font-family: 'Roboto', sans-serif;
+    color: #333333;
+    box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.1);
+  }
+  
+  .add-staff-modal .modal-dialog {
+    max-width: 1000px;
+  }
+  
+  /* Modal Title */
+  .add-staff-modal .modal-title {
+    font-size: 28px;
+    font-weight: bold;
+    margin-bottom: 20px;
+    color: #333333;
+  }
+  
+  /* Content Grid Layout */
+  .add-staff-modal .modal-content-grid {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+  }
+  
+  /* Left Column */
+  .add-staff-modal .left-column {
+    flex: 2;
+  }
+  
+  .add-staff-modal .form-row {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 15px;
+  }
+  
+  .add-staff-modal .form-group {
+    flex: 1;
+  }
+  
+  .add-staff-modal .until-label {
+    margin-top: 35px;
+    font-size: 14px;
+    color: #666666;
+  }
+  
+  /* Add to Group Button */
+  .add-staff-modal .add-to-group-button-col {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 10px;
+  }
+  
+  .add-staff-modal .add-to-group-button {
+    background-color: #007bff;
+    color: #ffffff;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
+  .add-staff-modal .add-to-group-button:hover {
+    background-color: #0056b3;
+  }
+  
+  /* Right Column */
+  .add-staff-modal .right-column {
+    flex: 1;
+    background-color: #f7f7f7;
+    padding: 15px;
+    border-radius: 8px;
+  }
+  
+  .add-staff-modal .staff-group-title {
+    font-size: 16px;
+    font-weight: bold;
+    margin-bottom: 10px;
+    color: #333333;
+  }
+  
+  .add-staff-modal .staff-list {
+    list-style: none;
+    padding: 0;
+  }
+  
+  .add-staff-modal .staff-list li {
+    font-size: 14px;
+    color: #555555;
+    margin-bottom: 8px;
+  }
+  
+  /* Footer Buttons */
+  .add-staff-modal .footer-buttons {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 20px;
+    gap: 10px;
+  }
+  
+  .add-staff-modal .footer-buttons .btn {
+    padding: 10px 20px;
+    font-size: 14px;
+    border-radius: 5px;
+  }
+  
+  .add-staff-modal .cancel-button {
+    background-color: #6c757d;
+    color: #ffffff;
+  }
+  
+  .add-staff-modal .cancel-button:hover {
+    background-color: #5a6268;
+  }
+  
+  .add-staff-modal .confirm-button {
+    background-color: #007bff;
+    color: #ffffff;
+  }
+  
+  .add-staff-modal .confirm-button:hover {
+    background-color: #0056b3;
+  }
+  
+  /* Form Inputs */
+  .add-staff-modal .form-control {
+    background-color: #ffffff;
+    color: #333333;
+    border: 1px solid #cccccc;
+    border-radius: 5px;
+    padding: 8px;
+  }
+  
+  .add-staff-modal .form-control:focus {
+    background-color: #ffffff;
+    border-color: #007bff;
+    outline: none;
+  }
+  
+  /* Date Picker */
+  .add-staff-modal .duration-picker {
+    width: 100%;
+    background-color: #ffffff;
+    border: 1px solid #cccccc;
+    border-radius: 5px;
+    padding: 8px;
+  }
+  
+  /* Ensure proper layout of duration fields */
+  .add-staff-modal .duration-fields {
+    display: flex;
+    justify-content: space-between;
+    gap: 15px;
+  }
+  
+  .add-staff-modal .duration-field {
+    flex: 1;
+  }
+  
