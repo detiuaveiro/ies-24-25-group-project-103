@@ -2,6 +2,7 @@ import React, { useState, useRef } from 'react';
 import axios from 'axios';
 import { useLocation } from 'react-router-dom';
 import styles from './CodeVerification.module.css';
+import CONFIG from './config';
 
 function CodeVerification() {
   const [code, setCode] = useState('');
@@ -11,6 +12,7 @@ function CodeVerification() {
   const location = useLocation();
   const inputRef = useRef(null);
   const phoneNumber = location.state?.phoneNumber || '';
+  const baseUrl = CONFIG.API_URL;
 
   const handleInputChange = async (e) => {
     const value = e.target.value.replace(/\D/g, '');
@@ -32,7 +34,7 @@ function CodeVerification() {
   const checkCode = async (code) => {
     try {
       const response = await axios.post(
-        'http://localhost:8080/api/v1/visitors/checkcode',
+        `${baseUrl}/visitors/checkcode`,
         { code: code, phoneNumber: phoneNumber },
         { withCredentials: true }
       );

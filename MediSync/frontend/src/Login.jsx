@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import styles from './Login.module.css';
+import CONFIG from './config';
 
 function Login() {
   const [username, setUsername] = useState('');
@@ -13,7 +14,7 @@ function Login() {
   const [visitorError, setVisitorError] = useState('');
   const [visitorMessage, setVisitorMessage] = useState('');
 
-  const baseUrl = 'http://localhost:8080/api/v1';
+  const baseUrl = CONFIG.API_URL;
   const navigate = useNavigate();
 
   const handleLogin = async () => {

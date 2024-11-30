@@ -5,6 +5,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBars, faTimes, faClipboardList, faArrowRightFromBracket, faBedPulse, faComment } from '@fortawesome/free-solid-svg-icons';
 import axios from 'axios';
 import EventNoteIcon from '@mui/icons-material/EventNote';
+import CONFIG from './config';
 
 function Header({ children }) {
     const [profileImage, setProfileImage] = useState(null);
@@ -13,7 +14,8 @@ function Header({ children }) {
     const name = JSON.parse(localStorage.getItem('user')).name;
     const user = JSON.parse(localStorage.getItem('user'));
     const imageUrl = user.profilePictureUrl;
-    const fullImageUrl = `http://localhost:8080/uploads/${imageUrl}`;
+    const baseUrl = CONFIG.API_URL;
+    const fullImageUrl = `${baseUrl}/uploads/${imageUrl}`;
     const token = localStorage.getItem('token');
 
     useEffect(() => {

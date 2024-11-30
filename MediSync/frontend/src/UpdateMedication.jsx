@@ -3,6 +3,7 @@ import { Modal, Form, Button } from 'react-bootstrap';
 import { useEffect } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './UpdateMedication.css';
+import CONFIG from './config';
 
 export default function UpdateMedication({ showModal, setShowModal, patient, medication=null}) {
     const addMedication = medication === null;
@@ -14,7 +15,7 @@ export default function UpdateMedication({ showModal, setShowModal, patient, med
     const [dosage, setDosage] = useState(medication?.dosage || '');
     const token = localStorage.getItem('token');
     console.log(medication);
-
+    const baseURL = CONFIG.API_URL;
     useEffect(() => {
         if (medication) {
             setMedicationName(medication.name || '');
@@ -23,7 +24,7 @@ export default function UpdateMedication({ showModal, setShowModal, patient, med
             setDosage(medication.dosage || '');
         }
     }, [medication]);
-    
+
     function handleClose() {
         setShowModal(false);
     }
@@ -32,7 +33,7 @@ export default function UpdateMedication({ showModal, setShowModal, patient, med
         if (addMedication) {
             const addMedication = async () => {
                 try {
-                    const response = await axios.post(`http://localhost:8080/api/v1/patients/${patient.id}/medications`, {
+                    const response = await axios.post(`${baseUrl}/patients/${patient.id}/medications`, {
                         "name": medicationName,
                         "hourInterval": hourInterval,
                         "numberTimes": numberTimes,
@@ -62,7 +63,7 @@ export default function UpdateMedication({ showModal, setShowModal, patient, med
         else {
             const editMedication = async () => {
                 try {
-                    const response = await axios.put(`http://localhost:8080/api/v1/patients/${patient.id}/medications/${medication.id}`, {
+                    const response = await axios.put(`${baseUrl}/patients/${patient.id}/medications/${medication.id}`, {
                         "name": medicationName,
                         "hourInterval": hourInterval,
                         "numberTimes": numberTimes,
