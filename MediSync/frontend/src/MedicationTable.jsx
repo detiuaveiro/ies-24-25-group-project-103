@@ -6,11 +6,14 @@ import styles from "./MedicationTable.module.css"; // Import the CSS module
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEdit, faTrash } from '@fortawesome/free-solid-svg-icons';
 
+import CONFIG from './config';
+
 const MedicationTable= () => {
   const [medications, setMedications] = useState([]); // State to hold medications
   const [loading, setLoading] = useState(true); // Loading state
   const [error, setError] = useState(null); // Error state
   const { id } = useParams(); // Get patient ID from URL parameters
+  const baseUrl = CONFIG.API_URL;
 
   useEffect(() => {
     const fetchMedications = async () => {
@@ -21,7 +24,7 @@ const MedicationTable= () => {
         }
 
         const response = await axios.get(
-          `http://localhost:8080/api/v1/patients/${id}/medications`,
+          `${baseUrl}/patients/${id}/medications`,
           {
             headers: {
               Authorization: `Bearer ${token}`, // Attach the token for authentication
@@ -39,7 +42,7 @@ const MedicationTable= () => {
     };
 
     fetchMedications();
-  }, [id]);
+  }, [id, baseUrl]);
 
   if (loading) {
     return <div>Loading medications...</div>; // Show loading message

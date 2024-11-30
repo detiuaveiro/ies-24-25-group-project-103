@@ -3,6 +3,7 @@ import axios from "axios";
 import { Link } from "react-router-dom";
 import { FaHeartbeat, FaLungs, FaThermometerHalf, FaTachometerAlt } from "react-icons/fa";
 import "./RoomPage.css";
+import CONFIG from "./config";
 
 const RoomPage = () => {
   const [rooms, setRooms] = useState([]);
@@ -11,9 +12,10 @@ const RoomPage = () => {
   const token = localStorage.getItem("token");
   const user = localStorage.getItem("user");
   const nurseId = user ? JSON.parse(user).id : null;
+  const baseUrl = CONFIG.API_URL;
 
   const axiosInstance = axios.create({
-    baseURL: "http://localhost:8080/api/v1",
+    baseURL: `${baseUrl}`,
     headers: {
       Authorization: `Bearer ${token}`,
     },

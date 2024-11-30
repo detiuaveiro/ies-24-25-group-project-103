@@ -24,8 +24,10 @@ function FloorOverview() {
                 setBeds(response.data);
             } catch (error) {
                 console.error('Error fetching beds:', error);
+                setError('Error fetching beds');
             }
         };
+    
         const fetchDoctors = async () => {
             try {
                 const response = await axios.get(`${baseUrl}/doctors`, {
@@ -33,14 +35,17 @@ function FloorOverview() {
                         'Authorization': `Bearer ${token}`
                     }
                 });
-                setDoctors(response.data);
+                setDoctors(Array.isArray(response.data) ? response.data : []);
             } catch (error) {
                 console.error('Error fetching doctors:', error);
+                setError('Error fetching doctors');
+            } finally {
+                setIsLoading(false);
             }
         };
         fetchDoctors();
         fetchBeds();
-    }, [token]);
+    }, [token, baseUrl]);
 
     const floors = ['1', '2', '3'];
 

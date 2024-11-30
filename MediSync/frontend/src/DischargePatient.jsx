@@ -2,19 +2,21 @@ import { Button, Modal } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './DischargePatientModal.css';
 import axios from 'axios';
+import CONFIG from './config';
 
 export default function DischargePatient({ showModal, setShowModal, patient }) {
     async function handleDischarge() {
         try {
             const token = localStorage.getItem("token"); // Retrieve token from localStorage
-
+            const baseUrl = CONFIG.API_URL;
+            
             if (!token) {
                 alert("Authentication token not found");
                 return;
             }
 
             const response = await axios.delete(
-                `http://localhost:8080/api/v1/patients/${patient.id}`,
+                `${baseUrl}/patients/${patient.id}`,
              // POST body is empty for this request
                 {
                     headers: {
