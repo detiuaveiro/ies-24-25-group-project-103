@@ -56,10 +56,17 @@ function DoctorPatients() {
         const bed = beds.find(bed => bed.assignedPatient?.id === patientId);
         if (!bed) return 'Not assigned';
     
-        const roomNumber = bed.room.roomNumber;
-        const floor = roomNumber.charAt(0);
-        const room = roomNumber.charAt(1);
+        if (typeof bed.room === 'object' && bed.room !== null) {
+            const roomNumber = bed.room.roomNumber;
+            const floor = roomNumber.charAt(0);
+            const room = roomNumber.charAt(1);
+            return `Floor ${floor} Room ${room}`;
+        }
         
+        // Handle case where bed.room is just the room number
+        const bedNumber = bed.bedNumber;  // Use bedNumber instead
+        const floor = bedNumber.charAt(0);
+        const room = bedNumber.charAt(1);
         return `Floor ${floor} Room ${room}`;
     };
 
@@ -107,7 +114,7 @@ function DoctorPatients() {
                                 <td>
                                     <button 
                                         className={styles.moreInfoButton}
-                                        onClick={() => navigate(`/doctor/patients/${patient.id}`)}
+                                        onClick={() => navigate(`/patients/${patient.id}`)}
                                     >
                                         More Information <FontAwesomeIcon icon={faChartLine} />
                                     </button>

@@ -1,7 +1,6 @@
 package org.ies.deti.ua.medisync.service;
 
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -14,6 +13,7 @@ import org.ies.deti.ua.medisync.model.Medication;
 import org.ies.deti.ua.medisync.model.Patient;
 import org.ies.deti.ua.medisync.model.PatientWithVitals;
 import org.ies.deti.ua.medisync.model.Vitals;
+import org.ies.deti.ua.medisync.model.VitalsBed;
 import org.ies.deti.ua.medisync.repository.BedRepository;
 import org.ies.deti.ua.medisync.repository.DoctorRepository;
 import org.ies.deti.ua.medisync.repository.MedicationRepository;
@@ -82,6 +82,10 @@ public class PatientService {
     }
 
     public Patient createPatient(Patient patient) {
+        if (patient.getAssignedDoctor() != null) {
+            Doctor actualDoctor = doctorRepository.findById(patient.getAssignedDoctor().getId()).get();
+            patient.setAssignedDoctor(actualDoctor);
+        }
         return patientRepository.save(patient);
     }
 
@@ -167,6 +171,38 @@ public class PatientService {
         return patientRepository.findByAssignedDoctor(doctor);
     }
 
+    public void processAndWritePatientVitals(VitalsBed vitalsBed) {
+        try {
+            Optional<Bed> bedOptional = bedRepository.findById(Long.valueOf(vitalsBed.getBedId()));
+            if (bedOptional.isPresent() && bedOptional.get().getAssignedPatient() != null) {
+    
+                long currentTimestamp = System.currentTimeMillis();
+    
+                Double heartbeat = Double.valueOf(vitalsBed.getHeartRate());
+                Double o2 = Double.valueOf(vitalsBed.getOxygenSaturation());
+                Double systolicBP = Double.valueOf(vitalsBed.getBloodPressure()[0]);
+                Double diastolicBP = Double.valueOf(vitalsBed.getBloodPressure()[1]);
+                Double temperature = Double.valueOf(vitalsBed.getTemperature());
+    
+                Point point = Point.measurement("vitals")
+                        .time(currentTimestamp, WritePrecision.MS)
+                        .addTag("bedId", vitalsBed.getBedId())
+                        .addField("heartbeat", heartbeat)
+                        .addField("o2", o2)
+                        .addField("bloodPressure_systolic", systolicBP)
+                        .addField("bloodPressure_diastolic", diastolicBP)
+                        .addField("temperature", temperature);
+    
+                influxDBClient.getWriteApiBlocking().writePoint(bucket, org, point);
+    
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println("Error processing vitals for bed ID: " + vitalsBed.getBedId());
+        }
+    }
+    
+
     public void writeVitals(String bedId, Map<String, Object> vitals) {
         long currentTimestamp = System.currentTimeMillis();
 
@@ -208,76 +244,82 @@ public class PatientService {
         return queryApi.query(fluxQuery);
     }
     
-    public String generateQuickChartUrl(String bedId, String vitalType, String startTime, String endTime) {
-        List<FluxTable> vitalsRecords = getPatientVitals(bedId, startTime, endTime);
+
+    public Map<String, Object> generateVitalsChartData(String bedId, String vitalType, String startTime, String endTime) {
+        String query = String.format(
+            "from(bucket: \"%s\") " +
+            "|> range(start: %s, stop: %s) " +
+            "|> filter(fn: (r) => r[\"_measurement\"] == \"vitals\" and r[\"bedId\"] == \"%s\")",
+            bucket, startTime, endTime, bedId
+        );
     
-        StringBuilder labels = new StringBuilder();
-        StringBuilder dataPoints = new StringBuilder();
-        vitalType = "o2";
+        System.out.println("InfluxDB Query: " + query);
+    
+        List<FluxTable> vitalsRecords = influxDBClient.getQueryApi().query(query, org);
+    
+        List<String> labels = new ArrayList<>();
+        List<Double> systolicData = new ArrayList<>();
+        List<Double> diastolicData = new ArrayList<>();
+        List<Double> otherData = new ArrayList<>();
+    
+        if (vitalsRecords.isEmpty()) {
+            System.out.println("No records found for bed ID: " + bedId + ", vital type: " + vitalType);
+        }
     
         for (FluxTable table : vitalsRecords) {
             for (FluxRecord record : table.getRecords()) {
-                System.out.println("Record: " + record.toString());
-                System.out.println("Record Field: " + record.getValueByKey("_field"));
-                System.out.println("Record Value: " + record.getValue());
+                String timeLabel = record.getTime().toString();
+                labels.add(timeLabel);
     
                 String field = (String) record.getValueByKey("_field");
-    
-                if (!vitalType.equals(field)) {
-                    continue;
-                }
-    
                 Number value = (Number) record.getValue();
-                if (value == null) {
-                    System.out.println("Record value is null, skipping...");
-                    continue;
+                if (value != null) {
+                    if ("bloodPressure_systolic".equals(field)) {
+                        systolicData.add(value.doubleValue());
+                    } else if ("bloodPressure_diastolic".equals(field)) {
+                        diastolicData.add(value.doubleValue());
+                    } else if (field.equals(vitalType)) {
+                        otherData.add(value.doubleValue());
+                    }
                 }
-    
-                String timeLabel = record.getTime().toString();
-                System.out.println("Time Label: " + timeLabel);
-                System.out.println("Value: " + value);
-    
-                labels.append("\"").append(timeLabel).append("\",");
-                dataPoints.append(value.toString()).append(",");
             }
         }
     
-        if (labels.length() > 0) {
-            labels.setLength(labels.length() - 1);
+        if ("bloodpressure".equalsIgnoreCase(vitalType)) {
+            return Map.of(
+                "labels", labels,
+                "datasets", List.of(
+                    Map.of("label", "Systolic", "data", systolicData, "color", "#FF6347"), 
+                    Map.of("label", "Diastolic", "data", diastolicData, "color", "#4682B4") 
+                )
+            );
+        } else {
+            return Map.of(
+                "labels", labels,
+                "data", otherData,
+                "vitalType", vitalType,
+                "color", getColorForVitalType(vitalType)
+            );
         }
-        if (dataPoints.length() > 0) {
-            dataPoints.setLength(dataPoints.length() - 1);
-        }
-    
-        System.out.println("Final Labels: " + labels.toString());
-        System.out.println("Final Data Points: " + dataPoints.toString());
-    
-        String chartJson = String.format(
-            "{"
-                    + "\"type\":\"line\","
-                    + "\"data\":{"
-                    + "\"labels\":[%s],"
-                    + "\"datasets\":[{\"label\":\"%s\",\"data\":[%s]}]"
-                    + "},"
-                    + "\"options\":{"
-                    + "\"title\":{\"display\":true,\"text\":\"%s\"},"
-                    + "\"scales\":{"
-                    + "\"y\":{"
-                    + "\"min\":60,"
-                    + "\"max\":90"
-                    + "}"
-                    + "}"
-                    + "}"
-                    + "}",
-            labels.toString(), vitalType, dataPoints.toString(), vitalType
-        );
-      
-        String encodedChart = URLEncoder.encode(chartJson, StandardCharsets.UTF_8);
-        return "https://quickchart.io/chart?c=" + encodedChart;
     }
     
+    private String getColorForVitalType(String vitalType) {
+        switch (vitalType.toLowerCase()) {
+            case "o2":
+                return "#FFA500"; 
+            case "temperature":
+                return "#FFD700"; 
+            case "heartbeat":
+                return "#FF0000"; 
+            case "bloodpressure":
+                return "#0000FF"; 
+            default:
+                return "#808080"; 
+        }
+    }
     
-    
+
+        
 
     public Map<String, Object> getLastVitals(String bedId) {
         String fluxQuery = String.format(

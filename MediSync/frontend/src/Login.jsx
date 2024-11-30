@@ -31,7 +31,7 @@ function Login() {
       console.log(role);
       if (role === 'HOSPITAL_MANAGER') navigate('/rooms/overview');
       else if (role === 'DOCTOR') navigate('/doctor/patients');
-      else if (role === 'NURSE') navigate('/nurse/patients');
+      else if (role === 'NURSE') navigate('/dashboard_nurse');
       else navigate('/patients');
 
     } catch (error) {

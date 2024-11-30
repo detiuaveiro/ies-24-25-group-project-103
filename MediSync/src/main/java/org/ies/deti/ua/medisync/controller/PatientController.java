@@ -74,15 +74,28 @@ public class PatientController {
     }
 
     @GetMapping("/graph/{id}/{type}/{start}/{end}")
-    public String getGraph(@PathVariable String id, @PathVariable String type, @PathVariable String start,
+    public Map<String, Object> getGraph(
+            @PathVariable String id, 
+            @PathVariable String type, 
+            @PathVariable String start,
             @PathVariable String end) {
-        String bedID = patientService.getPatientBed(patientService.getPatientById(Long.parseLong(id)).get()).getId()
-                .toString();
-        System.out.println(bedID);
-        List<FluxTable> tables = patientService.getPatientVitals(bedID, start, end);
-        return patientService.generateQuickChartUrl(bedID, type, start, end);
-
+        try {
+            String bedID = patientService.getPatientBed(
+                    patientService.getPatientById(Long.parseLong(id)).get()).getId().toString();
+            System.out.println("Fetched Bed ID: " + bedID);
+    
+            List<FluxTable> tables = patientService.getPatientVitals(bedID, start, end);
+    
+            Map<String, Object> chartData = patientService.generateVitalsChartData(bedID, type, start, end);
+            System.out.println("Generated Chart Data: " + chartData);
+    
+            return chartData;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Map.of("error", "Failed to retrieve graph data: " + e.getMessage());
+        }
     }
+    
 
     @GetMapping
     public ResponseEntity<List<Patient>> getAllPatients() {
@@ -138,7 +151,6 @@ public class PatientController {
     }
 
 
-    //THIS IS TEMPORARY FOR TESTING PURPOSES!!!!
     @GetMapping("{id}/vitals")
     public ResponseEntity<Map<String, Object>> getVitals(@PathVariable Long id) {
         Map<String, Object> lastVitals = patientService.getLastVitals(id.toString());

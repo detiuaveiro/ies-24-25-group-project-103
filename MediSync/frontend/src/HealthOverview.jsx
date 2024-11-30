@@ -15,6 +15,7 @@ import MedicationTableNurse from './MedicationTableNurse';
 import { DischargePatientButton } from './DischargePatientButton';
 import { Observations } from './Observations';
 import DischargePatient from './DischargePatient';
+import UpdateMedication from './UpdateMedication';
 
 function HealthOverview() {
     const [patient, setPatient] = useState(null);
@@ -22,11 +23,18 @@ function HealthOverview() {
     const [error, setError] = useState(null);
     const user = JSON.parse(localStorage.getItem('user'));
     const { id } = useParams(); 
-    const [showModal, setShowModal] = useState(false);
+    const [showModal, setShowModal] = useState(false); // State for UpdateMedication modal
+    const [showDischargeModal, setShowDischargeModal] = useState(false); // State for DischargePatient modal
 
-    function handleButtonClick() {
+    const handleAddMedicationClick = () => {
+        console.log('Add Medication button clicked');
         setShowModal(true);
-    }
+    };
+
+    const handleDischargeClick = () => {
+        setShowDischargeModal(true);
+    };
+
     useEffect(() => {
         const fetchPatientData = async () => {
             try {
@@ -54,7 +62,6 @@ function HealthOverview() {
         fetchPatientData();
     }, [id]);
 
-
     if (loading) {
         return <div>Loading...</div>;
     }
@@ -62,39 +69,8 @@ function HealthOverview() {
     if (error) {
         return <div>Error: {error}</div>;
     }
-    if (user.role === 'DOCTOR') {
-    return (
-        <div className="app">
-            <div className={styles.mainContent}>
-                <div className={styles.infoAndVitals}>
-                    <div className={styles.leftColumn}>
-                        <div className={styles.patientInfo}>
-                            <PatientInfo patient={patient} />
-                        </div>
-                        <div className={styles.heightAndBMIRow}>
-                            <HeightBox patient={patient} />
-                            <BMI patient={patient} />
-                        </div>
-                    </div>
 
-                    <div className={styles.rightColumn}>
-                        <div className={styles.vitalsGrid}>
-                            <HeartRate patient={patient} />
-                            <OxygenCard patient={patient} />
-                            <BloodPressureCard patient={patient} />
-                            <TemperatureCard patient={patient} />
-                        </div>
-                        <div className={styles.medicationSection}>
-                            <MedicationTable patient={patient} />
-                            <AddMedicationButton />
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    );
-    }
-    else if (user.role === 'NURSE') {
+    if (user.role === 'DOCTOR') {
         return (
             <div className="app">
                 <div className={styles.mainContent}>
@@ -108,7 +84,48 @@ function HealthOverview() {
                                 <BMI patient={patient} />
                             </div>
                         </div>
-    
+
+                        <div className={styles.rightColumn}>
+                            <div className={styles.vitalsGrid}>
+                                <HeartRate patient={patient} />
+                                <OxygenCard patient={patient} />
+                                <BloodPressureCard patient={patient} />
+                                <TemperatureCard patient={patient} />
+                            </div>
+                            <div className={styles.medicationSection}>
+                                <MedicationTable patient={patient} />
+                                <div onClick={handleAddMedicationClick}>
+                                    <AddMedicationButton />
+                                </div>
+                                {showModal && (
+                                    <UpdateMedication
+                                        showModal={showModal}
+                                        setShowModal={setShowModal}
+                                        patient={patient}
+                                        medication={null} 
+                                    />
+                                )}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        );
+    } else if (user.role === 'NURSE') {
+        return (
+            <div className="app">
+                <div className={styles.mainContent}>
+                    <div className={styles.infoAndVitals}>
+                        <div className={styles.leftColumn}>
+                            <div className={styles.patientInfo}>
+                                <PatientInfo patient={patient} />
+                            </div>
+                            <div className={styles.heightAndBMIRow}>
+                                <HeightBox patient={patient} />
+                                <BMI patient={patient} />
+                            </div>
+                        </div>
+
                         <div className={styles.rightColumn}>
                             <div className={styles.vitalsGrid}>
                                 <HeartRate patient={patient} />
@@ -122,12 +139,10 @@ function HealthOverview() {
                         </div>
                     </div>
                     <Observations patient={patient} />
-
                 </div>
             </div>
         );
-    }
-    else {
+    } else {
         return (
             <div className="app">
                 <div className={styles.mainContent}>
@@ -140,18 +155,17 @@ function HealthOverview() {
                                 <HeightBox patient={patient} />
                                 <BMI patient={patient} />
                             </div>
-                            <div onClick={handleButtonClick}>
-                            <DischargePatientButton />
+                            <div onClick={handleDischargeClick}>
+                                <DischargePatientButton />
+                            </div>
                         </div>
-                        </div>
-    
-                        <div className={styles.rightColumn}>
 
-                        <DischargePatient 
-                            showModal={showModal} 
-                            setShowModal={setShowModal} 
-                            patient={patient} 
-                        />
+                        <div className={styles.rightColumn}>
+                            <DischargePatient 
+                                showModal={showDischargeModal} 
+                                setShowModal={setShowDischargeModal} 
+                                patient={patient} 
+                            />
                         </div>
                     </div>
                 </div>
@@ -159,6 +173,5 @@ function HealthOverview() {
         );
     }
 }
-
 
 export default HealthOverview;
