@@ -1,15 +1,15 @@
 import React, { useState, useRef } from 'react';
 import axios from 'axios';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import styles from './CodeVerification.module.css';
 import CONFIG from './config';
 
 function CodeVerification() {
   const [code, setCode] = useState('');
   const [activeIndex, setActiveIndex] = useState(0);
-
   const [errorMessage, setErrorMessage] = useState('');
   const location = useLocation();
+  const navigate = useNavigate();
   const inputRef = useRef(null);
   const phoneNumber = location.state?.phoneNumber || '';
   const baseUrl = CONFIG.API_URL;
@@ -39,7 +39,12 @@ function CodeVerification() {
         { withCredentials: true }
       );
 
-      console.log('Valid code, bed:', response.data); // Handle success as needed
+      navigate('/visitorInstructions', {
+        state: {
+          bed: response.data,
+          phoneNumber: phoneNumber
+        }
+      });
     } catch (error) {
       if (error.response && error.response.status === 403) {
         setErrorMessage('The code you entered is not valid. Please try again.');
