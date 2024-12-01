@@ -16,6 +16,7 @@ import { DischargePatientButton } from './DischargePatientButton';
 import { Observations } from './Observations';
 import DischargePatient from './DischargePatient';
 import UpdateMedication from './UpdateMedication';
+import CONFIG from './config';
 
 function HealthOverview() {
     const [patient, setPatient] = useState(null);
@@ -25,6 +26,7 @@ function HealthOverview() {
     const { id } = useParams(); 
     const [showModal, setShowModal] = useState(false); // State for UpdateMedication modal
     const [showDischargeModal, setShowDischargeModal] = useState(false); // State for DischargePatient modal
+    const baseUrl = CONFIG.API_URL;
 
     const handleAddMedicationClick = () => {
         console.log('Add Medication button clicked');
@@ -43,7 +45,7 @@ function HealthOverview() {
                     throw new Error('Authentication token not found.');
                 }
 
-                const response = await axios.get(`http://localhost:8080/api/v1/patients/${id}`, {
+                const response = await axios.get(`${baseUrl}/patients/${id}`, {
                     headers: {
                         Authorization: `Bearer ${token}`,
                     },

@@ -3,6 +3,7 @@ import { Modal, Button } from "react-bootstrap";
 import { Line } from "react-chartjs-2";
 import axios from "axios";
 import { subDays, startOfDay, endOfDay } from "date-fns";
+import CONFIG from './config';
 
 import {
   Chart as ChartJS,
@@ -33,6 +34,7 @@ const GraphModal = ({ show, onClose, patientId, vitalType }) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [range, setRange] = useState("today");
+  const baseUrl = CONFIG.API_URL;
 
   const title =
     vitalType === "heartbeat"
@@ -79,7 +81,7 @@ const GraphModal = ({ show, onClose, patientId, vitalType }) => {
 
     try {
       const response = await axios.get(
-        `http://localhost:8080/api/v1/patients/graph/${patientId}/${vitalType}/${startDate}/${endDate}`,
+        `${baseUrl}/patients/graph/${patientId}/${vitalType}/${startDate}/${endDate}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
