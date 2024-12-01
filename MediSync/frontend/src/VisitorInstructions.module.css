@@ -1,0 +1,111 @@
+.page {
+    background-color: #1a237e;
+    min-height: 100vh;
+    padding: 20px;
+    color: white;
+  }
+  
+  .container {
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+  
+  .logoContainer {
+    text-align: center;
+    margin-bottom: 30px;
+  }
+  
+  .logo {
+    height: 60px;
+  }
+  
+  .contentContainer {
+    display: flex;
+    gap: 40px;
+  }
+  
+  .instructionsSection {
+    flex: 1;
+    padding: 20px;
+  }
+  
+  .instructionsSection h2 {
+    margin-bottom: 20px;
+    font-size: 1.5rem;
+  }
+  
+  .instructionsSection ul {
+    list-style: none;
+    padding: 0;
+  }
+  
+  .instructionsSection li {
+    margin-bottom: 15px;
+    position: relative;
+    padding-left: 20px;
+  }
+  
+  .instructionsSection li::before {
+    content: "•";
+    position: absolute;
+    left: 0;
+  }
+  
+  .floorPlan {
+    flex: 2;
+    background-color: white;
+    border-radius: 10px;
+    padding: 20px;
+    color: #1a237e;
+  }
+  
+  .floorPlan h3 {
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  
+  .roomsGrid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    grid-template-rows: repeat(2, 1fr);
+    gap: 20px;
+    padding: 20px;
+  }
+  
+  .room {
+    background-color: #f0f0f0;
+    padding: 20px;
+    border-radius: 8px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+  }
+  
+  .room::after {
+    content: "";
+    display: block;
+    width: 100%;
+    height: 40px;
+    background-image: url('path-to-bed-icon.svg');
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: contain;
+  }
+  
+  .highlight {
+    background-color: #4caf50;
+    color: white;
+  }
+  
+  @media (max-width: 768px) {
+    .contentContainer {
+      flex-direction: column;
+    }
+  
+    .roomsGrid {
+      grid-template-columns: repeat(2, 1fr);
+      grid-template-rows: repeat(4, 1fr);
+    }
+  }
