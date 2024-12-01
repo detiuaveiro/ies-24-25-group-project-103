@@ -91,7 +91,7 @@
     padding: 10px 15px;
     background-color: #ffffff;
     box-shadow: 3px 3px 1px rgba(0, 0, 0, 0.1);
-    width: 150px;
+    width: 200px;
     border-radius: 8px;
     cursor: pointer;
     color: #271E4A;
@@ -159,38 +159,123 @@
     transition: transform 0.3s ease-in-out;
 }
 
-/* Mobile Menu */
+.logoutText {
+    display: none; 
+    margin-left: 8px;
+    font-size: 1rem;
+    color: #271E4A;
+}
+
+
 /* Mobile-specific styles */
 @media (max-width: 768px) {
+    /* Adjust wrapper */
+    .wrapper {
+        display: flex;
+        flex-direction: column;
+        min-height: 100vh;
+        background: white; /* Remove gradient */
+        padding: 0; /* Remove padding to maximize space */
+        overflow-x: hidden; /* Prevent horizontal scrolling */
+    }
+
+    /* Fix header at the top */
+    .header {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        z-index: 1000;
+        padding: 10px 20px;
+        margin: 0;
+        background-color: #D5DEED;
+        border-radius: 0; /* Remove rounded corners */
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    /* Main content spans the full height below the navbar */
+    .mainContent {
+        margin: 0;
+        padding-top: 70px; /* Compensate for fixed navbar */
+        height: 100%;
+        background-color: white;
+        overflow-y: auto; /* Allow scrolling if content exceeds the height */
+    }
+
+    /* Sidebar navigation styles */
     .nav {
         position: fixed;
         top: 0;
         right: 0;
         height: 100%;
         width: 300px;
-        background: #D5DEED;
+        background-color: #D5DEED;
         flex-direction: column;
-        align-items: start;
-        justify-content: start;
+        align-items: flex-start;
+        justify-content: flex-start;
         padding: 20px;
         box-shadow: -2px 0 5px rgba(0, 0, 0, 0.2);
         transform: translateX(100%);
         z-index: 1000;
-        overflow-y: auto;
+        transition: transform 0.3s ease-in-out;
+        overflow-y: auto; /* Allow scrolling for long navigation content */
     }
 
+    /* Open state for the sidebar */
     .navOpen {
-        transform: translateX(0);
+        transform: translateX(0); /* Sidebar slides into view */
+    }
+
+    /* Hamburger menu for opening the sidebar */
+    .hamburger {
+        display: block;
+        cursor: pointer;
+        color: #271E4A;
+        font-size: 1.5rem;
     }
 
     .closeButton {
-        display: block; /* Visible only in mobile mode */
+        position: absolute;
+        top: 0px; /* Aligns close button at the top */
+        right: -100px; /* Aligns close button at the right corner */
+        background: none; /* No background for the button */
+        border: none; /* Remove border */
+        color: #271E4A; /* Keep it consistent with your theme */
+        cursor: pointer; /* Change cursor to pointer on hover */
+        font-size: 1.5rem; /* Slightly larger font size */
+        z-index: 1100; /* Ensure it stays above other elements */
+    }
+    
+    /* Logout button and other nav buttons in the sidebar */
+    .logoutButton,
+    .navButton {
+        justify-content: flex-start;
+        padding: 10px 20px;
+        min-width: 200px;
     }
 
-    .hamburger {
-        display: block;
-    }
     .logoutButton{
-        margin-left: 0px !important;
+        margin-left: -2px;
     }
+
+    /* Content placeholder in mobile mode */
+    .contentPlaceholder {
+        height: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-size: 1.2rem;
+        color: #666;
+    }
+}
+
+@media (max-width: 768px) {
+    .logoutText {
+        font-weight: 500;
+        display: inline;
+    }
+
 }

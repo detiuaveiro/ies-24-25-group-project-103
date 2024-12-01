@@ -21,30 +21,36 @@ const RoomPage = () => {
     },
   });
 
+  const fetchData = async () => {
+    if (!nurseId) return;
+
+    try {
+      const scheduleResponse = await axiosInstance.get(`/nurses/${nurseId}/schedule`);
+      const roomResponse = await axiosInstance.get(`/nurses/${nurseId}/roomswithpatients`);
+      const schedules = scheduleResponse.data;
+      const currentDateTime = new Date();
+      const currentSchedule = schedules.find((schedule) => {
+        const startTime = new Date(schedule.start_time);
+        const endTime = new Date(schedule.end_time);
+        return currentDateTime >= startTime && currentDateTime <= endTime;
+      });
+
+      const assignedRooms = currentSchedule ? currentSchedule.roomsNumbers : [];
+      setScheduledRooms(assignedRooms);
+      setRooms(roomResponse.data);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  };
+
   useEffect(() => {
-    const fetchData = async () => {
-      if (!nurseId) return;
+    fetchData(); 
 
-      try {
-        const scheduleResponse = await axiosInstance.get(`/nurses/${nurseId}/schedule`);
-        const roomResponse = await axiosInstance.get(`/nurses/${nurseId}/roomswithpatients`);
-        const schedules = scheduleResponse.data;
-        const currentDateTime = new Date();
-        const currentSchedule = schedules.find((schedule) => {
-          const startTime = new Date(schedule.start_time);
-          const endTime = new Date(schedule.end_time);
-          return currentDateTime >= startTime && currentDateTime <= endTime;
-        });
+    const interval = setInterval(() => {
+      fetchData(); 
+    }, 10000);
 
-        const assignedRooms = currentSchedule ? currentSchedule.roomsNumbers : [];
-        setScheduledRooms(assignedRooms);
-        setRooms(roomResponse.data);
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      }
-    };
-
-    fetchData();
+    return () => clearInterval(interval);
   }, [nurseId]);
 
   const filteredRooms = rooms.filter((room) => scheduledRooms.includes(room.roomNumber));
@@ -52,14 +58,14 @@ const RoomPage = () => {
   const getVitalValue = (vitals) => {
     switch (filter) {
       case "HeartRate":
-        return { value: vitals.heartRate, icon: <FaHeartbeat />, unit: "bpm" };
+        return { value: vitals.HeartRate, icon: <FaHeartbeat />, unit: "bpm" };
       case "Oxygen":
-        return { value: vitals.oxygenSaturation, icon: <FaLungs />, unit: "%" };
+        return { value: vitals.OxygenSaturation, icon: <FaLungs />, unit: "%" };
       case "Temperature":
-        return { value: vitals.temperature, icon: <FaThermometerHalf />, unit: "°C" };
+        return { value: vitals.Temperature, icon: <FaThermometerHalf />, unit: "°C" };
       case "BloodPressure":
         return {
-          value: `${vitals.bloodPressureSystolic}/${vitals.bloodPressureDiastolic}`,
+          value: `${vitals.BloodPressureSystolic}/${vitals.BloodPressureDiastolic}`,
           icon: <FaTachometerAlt />,
           unit: "mmHg",
         };
@@ -70,52 +76,52 @@ const RoomPage = () => {
 
   const getCardBackground = (value) => {
     if (value === "N/A") return "neutral";
-  
+
     switch (filter) {
       case "HeartRate":
-        if (value < 60) return "bad"; // Below normal
-        if (value <= 100) return "good"; // Normal range
-        return "warning"; // Above normal
-  
+        if (value < 60) return "bad";
+        if (value <= 100) return "good";
+        return "warning";
+
       case "Oxygen":
-        if (value < 90) return "bad"; // Dangerously low
-        if (value <= 100) return "good"; // Normal range
-        return "warning"; // Higher than normal (rare but possible)
-  
+        if (value < 90) return "bad";
+        if (value <= 100) return "good";
+        return "warning";
+
       case "Temperature":
-        if (value < 36) return "bad"; // Hypothermia
-        if (value <= 37.5) return "good"; // Normal range
-        if (value <= 38) return "warning"; // Low-grade fever
-        return "bad"; // High fever
-  
+        if (value < 36) return "bad";
+        if (value <= 37.5) return "good";
+        if (value <= 38) return "warning";
+        return "bad";
+
       case "BloodPressure":
         const [systolic, diastolic] = value.split("/").map(Number);
-        if (systolic < 90 || diastolic < 60) return "bad"; // Low blood pressure
-        if (systolic <= 120 && diastolic <= 80) return "good"; // Normal range
-        if (systolic <= 140 || diastolic <= 90) return "warning"; // Elevated
-        return "bad"; // Hypertension
-  
+        if (systolic < 90 || diastolic < 60) return "bad";
+        if (systolic <= 120 && diastolic <= 80) return "good";
+        if (systolic <= 140 || diastolic <= 90) return "warning";
+        return "bad";
+
       default:
         return "neutral";
     }
   };
-  
 
   return (
     <div className="room-container">
-      <div className="header">
-        <h1>Assigned Rooms</h1>
-        <select
-          value={filter}
-          onChange={(e) => setFilter(e.target.value)}
-          className="filter-dropdown"
-        >
-          <option value="HeartRate">Heart Rate</option>
-          <option value="Oxygen">Oxygen Saturation</option>
-          <option value="Temperature">Temperature</option>
-          <option value="BloodPressure">Blood Pressure</option>
-        </select>
-      </div>
+    <div className="header">
+      <h1>Assigned Rooms</h1>
+      <select
+        value={filter}
+        onChange={(e) => setFilter(e.target.value)}
+        className="filter-dropdown"
+      >
+        <option value="HeartRate">Heart Rate</option>
+        <option value="Oxygen">Oxygen Saturation</option>
+        <option value="Temperature">Temperature</option>
+        <option value="BloodPressure">Blood Pressure</option>
+      </select>
+    </div>
+
 
       {filteredRooms.length > 0 ? (
         <div className="room-grid">
@@ -125,6 +131,7 @@ const RoomPage = () => {
               <div className="beds-grid">
                 {[...Array(4)].map((_, index) => {
                   const bed = room.beds[index];
+                  console.log(bed);
                   const vital = bed && bed.patient ? getVitalValue(bed.patient.vitals) : null;
                   return (
                     <div
@@ -132,15 +139,16 @@ const RoomPage = () => {
                       className={`bed-card ${vital ? getCardBackground(vital.value) : "empty"}`}
                     >
                       {bed && bed.patient ? (
+                        <Link to={`/patients/${bed.patient.patient.id}`} style={{ textDecoration: 'none' }}>
                         <>
-                          <Link to={`/patients/${bed.patient.patient.id}`}>
-                            <h3>{bed.patient.patient.name}</h3>
-                          </Link>
+                          <h3 className="patient-name">{bed.patient.patient.name}</h3>
                           <div className="bed-icon">{vital.icon}</div>
                           <p className="bed-value">
-                            {vital.value} {vital.unit}
+                            {vital.value}
+                            <span>{vital.unit}</span>
                           </p>
                         </>
+                        </Link>
                       ) : (
                         <p>No patient</p>
                       )}
@@ -151,6 +159,7 @@ const RoomPage = () => {
             </div>
           ))}
         </div>
+
       ) : (
         <p>No rooms assigned for the current schedule.</p>
       )}
