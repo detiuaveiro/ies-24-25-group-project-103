@@ -122,7 +122,8 @@ function Header({ children }) {
                     </Link>
                     ) : null}
                     <div className={styles.logoutButton} onClick={handleLogout}>
-                        <FontAwesomeIcon icon={faArrowRightFromBracket} size="2x" />
+                        <FontAwesomeIcon icon={faArrowRightFromBracket} size="2x" className='logout111' />
+                        <span className={styles.logoutText}>Log-out</span>
                     </div>
                 </nav>
             </header>

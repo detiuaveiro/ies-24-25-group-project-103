@@ -33,7 +33,7 @@ export default function UpdateMedication({ showModal, setShowModal, patient, med
         if (addMedication) {
             const addMedication = async () => {
                 try {
-                    const response = await axios.post(`${baseUrl}/patients/${patient.id}/medications`, {
+                    const response = await axios.post(`${baseURL}/patients/${patient.id}/medications`, {
                         "name": medicationName,
                         "hourInterval": hourInterval,
                         "numberTimes": numberTimes,

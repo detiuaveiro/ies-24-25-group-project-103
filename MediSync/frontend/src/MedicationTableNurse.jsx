@@ -13,6 +13,8 @@ const MedicationTableNurse = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
+  const baseUrl = CONFIG.API_URL;
+
   useEffect(() => {
     const fetchMedications = async () => {
       const token = localStorage.getItem("token");

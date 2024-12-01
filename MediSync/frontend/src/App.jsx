@@ -4,7 +4,6 @@ import Login from './Login';
 import './App.css';
 import Header from './Header';
 import Patients from './Patients';
-import Dashboard from './Dashboard';
 import Schedule from './Schedule';
 import CodeVerification from './CodeVerification';
 import DischargePatient from './DischargePatient';
@@ -35,7 +34,6 @@ function Main() {
       {shouldShowHeader && <Header> {}
         <Routes>
           <Route path="/dashboard_nurse" element={<RoomPage />} />
-          <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/schedule" element={<Schedule />} />
           <Route path="/patients" element={<Patients />} />
           <Route path="/notifications" element={<Notifications />} />
