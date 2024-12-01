@@ -8,13 +8,14 @@ import UpdateMedication from "./UpdateMedication";
 
 import { faEdit, faTrash } from '@fortawesome/free-solid-svg-icons';
 
-const MedicationTable= ({patient}) => {
-  const [medications, setMedications] = useState([]); 
-  const [loading, setLoading] = useState(true); 
-  const [error, setError] = useState(null); 
-  const [showModal, setShowModal] = useState(false);
-  const [editMedication, setEditMedication] = useState(null);
-  const { id } = useParams();
+import CONFIG from './config';
+
+const MedicationTable= () => {
+  const [medications, setMedications] = useState([]); // State to hold medications
+  const [loading, setLoading] = useState(true); // Loading state
+  const [error, setError] = useState(null); // Error state
+  const { id } = useParams(); // Get patient ID from URL parameters
+  const baseUrl = CONFIG.API_URL;
 
   useEffect(() => {
     const fetchMedications = async () => {
@@ -25,7 +26,7 @@ const MedicationTable= ({patient}) => {
         }
 
         const response = await axios.get(
-          `http://localhost:8080/api/v1/patients/${id}/medications`,
+          `${baseUrl}/patients/${id}/medications`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -43,7 +44,7 @@ const MedicationTable= ({patient}) => {
     };
 
     fetchMedications();
-  }, [id]);
+  }, [id, baseUrl]);
 
   if (loading) {
     return <div>Loading medications...</div>; 

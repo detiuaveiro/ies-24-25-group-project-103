@@ -4,6 +4,7 @@ import styles from './DoctorPatients.module.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSearch, faChartLine } from '@fortawesome/free-solid-svg-icons';
 import { useNavigate } from 'react-router-dom';
+import CONFIG from './config';
 
 function DoctorPatients() {
     const [patients, setPatients] = useState([]);
@@ -15,13 +16,14 @@ function DoctorPatients() {
     
     const user = JSON.parse(localStorage.getItem('user'));
     const token = localStorage.getItem('token');
+    const baseUrl = CONFIG.API_URL;
 
     useEffect(() => {
         const fetchData = async () => {
             try {
                 // Fetch patients
                 const patientsResponse = await axios.get(
-                    `http://localhost:8080/api/v1/doctors/${user.id}/patients`,
+                    `${baseUrl}/doctors/${user.id}/patients`,
                     {
                         headers: {
                             'Authorization': `Bearer ${token}`
@@ -31,7 +33,7 @@ function DoctorPatients() {
 
                 // Fetch beds
                 const bedsResponse = await axios.get(
-                    'http://localhost:8080/api/v1/hospital/beds',
+                    `${baseUrl}/hospital/beds`,
                     {
                         headers: {
                             'Authorization': `Bearer ${token}`
@@ -50,7 +52,7 @@ function DoctorPatients() {
         };
 
         fetchData();
-    }, [user.id, token]);
+    }, [user.id, token, baseUrl]);
 
     const getPatientRoom = (patientId) => {
         const bed = beds.find(bed => bed.assignedPatient?.id === patientId);

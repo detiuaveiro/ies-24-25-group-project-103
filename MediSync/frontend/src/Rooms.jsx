@@ -7,6 +7,7 @@ import { faBed, faSearch } from '@fortawesome/free-solid-svg-icons';
 import { Button } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import GridViewIcon from '@mui/icons-material/GridView';
+import CONFIG from './config';
 
 function Rooms() {
     const navigate = useNavigate();
@@ -15,11 +16,12 @@ function Rooms() {
     const [error, setError] = useState(null);
     const [searchTerm, setSearchTerm] = useState('');
     const token = localStorage.getItem('token');
+    const baseUrl = CONFIG.API_URL;
 
     useEffect(() => {
         const fetchRooms = async () => {
             try {
-                const response = await axios.get('http://localhost:8080/api/v1/hospital/rooms/occupants', {
+                const response = await axios.get(`${baseUrl}/hospital/rooms/occupants`, {
                     headers: {
                         'Authorization': `Bearer ${token}`
                     }
@@ -39,7 +41,7 @@ function Rooms() {
             setError('Not authenticated');
             setLoading(false);
         }
-    }, [token]);
+    }, [token, baseUrl]);
 
     const getFloor = (roomNumber) => roomNumber.charAt(0);
     

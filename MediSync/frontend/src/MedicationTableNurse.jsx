@@ -5,6 +5,8 @@ import { faEdit, faTrash } from "@fortawesome/free-solid-svg-icons";
 import { useParams } from "react-router-dom";
 import axios from "axios";
 
+import CONFIG from './config';
+
 const MedicationTableNurse = () => {
   const [medications, setMedications] = useState([]);
   const { id } = useParams();
@@ -22,7 +24,7 @@ const MedicationTableNurse = () => {
       }
 
       try {
-        const response = await axios.get(`http://localhost:8080/api/v1/patients/${id}/medications`, {
+        const response = await axios.get(`${baseUrl}/patients/${id}/medications`, {
           headers: {
             Authorization: `Bearer ${token}`, 
           },
@@ -36,7 +38,7 @@ const MedicationTableNurse = () => {
     };
 
     fetchMedications();
-  }, [id]);
+  }, [id, baseUrl]);
 
   const handleToggleCheck = async (medication) => {
     const token = localStorage.getItem("token");

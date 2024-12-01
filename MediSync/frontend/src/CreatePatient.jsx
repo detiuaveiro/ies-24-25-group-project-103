@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Modal, Form, Button, Row, Col } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './CreatePatient.css';
+import CONFIG from './config';
 
 export default function CreatePatient({ showModal, setShowModal, availableBeds=[{id: 1, name: "Room 1"}], availableDoctors=[{id: 1, name: "Doctor Ricardo"}] }) {
     const [formData, setFormData] = useState({
@@ -18,6 +19,7 @@ export default function CreatePatient({ showModal, setShowModal, availableBeds=[
     });
 
     const token = localStorage.getItem('token');
+    const baseUrl = CONFIG.API_URL;
 
     function handleClose() {
         setFormData({
@@ -64,7 +66,7 @@ export default function CreatePatient({ showModal, setShowModal, availableBeds=[
         let createdPatient;
     
         // First create the patient
-        fetch('http://localhost:8080/api/v1/patients', {
+        fetch(`${baseUrl}/patients`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -85,7 +87,7 @@ export default function CreatePatient({ showModal, setShowModal, availableBeds=[
             createdPatient = patient;
             
             const selectedBed = availableBeds.find(bed => bed.id.toString() === formData.bed);
-            return fetch(`http://localhost:8080/api/v1/patients/${patient.id}/bed`, {
+            return fetch(`${baseUrl}/patients/${patient.id}/bed`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -106,7 +108,7 @@ export default function CreatePatient({ showModal, setShowModal, availableBeds=[
             console.log('Bed assigned:', data);
             
             const selectedDoctor = availableDoctors.find(doc => doc.id.toString() === formData.doctor);
-            return fetch(`http://localhost:8080/api/v1/patients/${createdPatient.id}/doctor`, {
+            return fetch(`${baseUrl}/patients/${createdPatient.id}/doctor`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
