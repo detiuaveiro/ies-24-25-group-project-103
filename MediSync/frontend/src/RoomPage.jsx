@@ -58,22 +58,45 @@ const RoomPage = () => {
   const getVitalValue = (vitals) => {
     switch (filter) {
       case "HeartRate":
-        return { value: vitals.HeartRate, icon: <FaHeartbeat />, unit: "bpm" };
-      case "Oxygen":
-        return { value: vitals.OxygenSaturation, icon: <FaLungs />, unit: "%" };
-      case "Temperature":
-        return { value: vitals.Temperature, icon: <FaThermometerHalf />, unit: "°C" };
-      case "BloodPressure":
         return {
-          value: `${vitals.BloodPressureSystolic}/${vitals.BloodPressureDiastolic}`,
+          value: vitals.HeartRate, // Raw value for logic
+          display: vitals.HeartRate, // Same value for rendering
+          icon: <FaHeartbeat />,
+          unit: "bpm",
+        };
+      case "Oxygen":
+        return {
+          value: vitals.OxygenSaturation,
+          display: vitals.OxygenSaturation,
+          icon: <FaLungs />,
+          unit: "%",
+        };
+      case "Temperature":
+        return {
+          value: vitals.Temperature,
+          display: vitals.Temperature,
+          icon: <FaThermometerHalf />,
+          unit: "°C",
+        };
+      case "BloodPressure":
+        const systolic = vitals.BloodPressureSystolic;
+        const diastolic = vitals.BloodPressureDiastolic;
+        return {
+          value: `${systolic}/${diastolic}`, 
+          display: (
+            <>
+              {systolic}
+              <span className="diastolic">/{diastolic}</span>
+            </>
+          ), 
           icon: <FaTachometerAlt />,
           unit: "mmHg",
         };
       default:
-        return { value: "N/A", icon: null, unit: "" };
+        return { value: "N/A", display: "N/A", icon: null, unit: "" };
     }
   };
-
+  
   const getCardBackground = (value) => {
     if (value === "N/A") return "neutral";
 
@@ -144,7 +167,7 @@ const RoomPage = () => {
                           <h3 className="patient-name">{bed.patient.patient.name}</h3>
                           <div className="bed-icon">{vital.icon}</div>
                           <p className="bed-value">
-                            {vital.value}
+                            {vital.display}
                             <span>{vital.unit}</span>
                           </p>
                         </>
