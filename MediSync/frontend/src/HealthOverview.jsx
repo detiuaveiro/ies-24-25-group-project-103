@@ -20,10 +20,11 @@ import CONFIG from './config';
 
 function HealthOverview() {
     const [patient, setPatient] = useState(null);
+    const [vitals, setVitals] = useState(null); // State for vitals
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const user = JSON.parse(localStorage.getItem('user'));
-    const { id } = useParams(); 
+    const { id } = useParams();
     const [showModal, setShowModal] = useState(false); // State for UpdateMedication modal
     const [showDischargeModal, setShowDischargeModal] = useState(false); // State for DischargePatient modal
     const baseUrl = CONFIG.API_URL;
@@ -51,7 +52,10 @@ function HealthOverview() {
                     },
                 });
 
-                setPatient(response.data.patient);
+                const { patient, vitals } = response.data; 
+                setPatient(patient);
+                setVitals(vitals); 
+                
                 console.log(response.data);
             } catch (err) {
                 setError('Failed to load patient data.');
@@ -62,6 +66,10 @@ function HealthOverview() {
         };
 
         fetchPatientData();
+
+        const intervalId = setInterval(fetchPatientData, 5000);
+
+        return () => clearInterval(intervalId);
     }, [id]);
 
     if (loading) {
@@ -89,10 +97,13 @@ function HealthOverview() {
 
                         <div className={styles.rightColumn}>
                             <div className={styles.vitalsGrid}>
-                                <HeartRate patient={patient} />
-                                <OxygenCard patient={patient} />
-                                <BloodPressureCard patient={patient} />
-                                <TemperatureCard patient={patient} />
+                                <HeartRate value={vitals?.HeartRate} />
+                                <OxygenCard value={vitals?.OxygenSaturation} />
+                                <BloodPressureCard 
+                                    systolic={vitals?.BloodPressureSystolic} 
+                                    diastolic={vitals?.BloodPressureDiastolic} 
+                                />
+                                <TemperatureCard value={vitals?.Temperature} />
                             </div>
                             <div className={styles.medicationSection}>
                                 <MedicationTable patient={patient} />
@@ -130,10 +141,13 @@ function HealthOverview() {
 
                         <div className={styles.rightColumn}>
                             <div className={styles.vitalsGrid}>
-                                <HeartRate patient={patient} />
-                                <OxygenCard patient={patient} />
-                                <BloodPressureCard patient={patient} />
-                                <TemperatureCard patient={patient} />
+                                <HeartRate value={vitals?.HeartRate} />
+                                <OxygenCard value={vitals?.OxygenSaturation} />
+                                <BloodPressureCard 
+                                    systolic={vitals?.BloodPressureSystolic} 
+                                    diastolic={vitals?.BloodPressureDiastolic} 
+                                />
+                                <TemperatureCard value={vitals?.Temperature} />
                             </div>
                             <div className={styles.medicationSection}>
                                 <MedicationTableNurse patient={patient} />

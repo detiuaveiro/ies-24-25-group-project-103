@@ -7,7 +7,7 @@ export default function TemperatureAlert({ showModal, setShowModal, patient, val
     const [status, setStatus] = useState('HIGH');
 
     useEffect(() => {
-        if (value >= 40) {
+        if (value >= 37.5) {
             setShowModal(true);
             setStatus('HIGH');
         } else if (value < 34) {
