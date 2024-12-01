@@ -24,7 +24,6 @@ public class VisitorController {
     }
 
     @PostMapping
-    @CrossOrigin(origins = "http://localhost:5173")
     public ResponseEntity<String> checkIfVisitorIsAllowed(@RequestBody VisitorDTO visitorDTO) {
         String name = visitorDTO.getName();
         String phoneNumber = visitorDTO.getPhoneNumber();

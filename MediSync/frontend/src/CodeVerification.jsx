@@ -33,9 +33,15 @@ function CodeVerification() {
 
   const checkCode = async (code) => {
     try {
+      const payload = { 
+        code: code.toString(), // ensure code is string
+        phoneNumber: phoneNumber.trim() // remove any whitespace
+      };
+      console.log('Sending payload:', payload);
+      
       const response = await axios.post(
         `${baseUrl}/visitors/checkcode`,
-        { code: code, phoneNumber: phoneNumber },
+        payload,
         { withCredentials: true }
       );
 
@@ -46,13 +52,20 @@ function CodeVerification() {
         }
       });
     } catch (error) {
+      console.log('Error details:', {
+        status: error.response?.status,
+        data: error.response?.data,
+        payload: error.config?.data
+      });
+      
       if (error.response && error.response.status === 403) {
         setErrorMessage('The code you entered is not valid. Please try again.');
       } else {
         setErrorMessage('An error occurred while verifying the code. Please try again later.');
       }
     }
-  };
+};
+
 
   return (
     <div className={styles.page}>
