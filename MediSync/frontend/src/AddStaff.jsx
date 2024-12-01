@@ -1,11 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { Modal, Button, Row, Col } from "react-bootstrap";
-import Select from "react-select"; // Import react-select
-import DatePicker from "react-datepicker"; // Import react-datepicker
-import "react-datepicker/dist/react-datepicker.css"; // Import datepicker CSS
+import Select from "react-select";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 import "./AddStaff.css";
 
-// Sample nurses and rooms data
 const nurses = [
   { value: "nurse1", label: "Nurse A" },
   { value: "nurse2", label: "Nurse B" },
@@ -19,9 +18,24 @@ const rooms = [
 ];
 
 const existingAssignments = [
-  { nurse: "Nurse A", room: "Room 1", startDate: new Date("2024-11-26"), endDate: new Date("2024-12-02") },
-  { nurse: "Nurse B", room: "Room 2", startDate: new Date("2024-11-27"), endDate: new Date("2024-12-01") },
-  { nurse: "Nurse C", room: "Room 3", startDate: new Date("2024-11-29"), endDate: new Date("2024-12-03") },
+  {
+    nurse: "Nurse A",
+    room: "Room 1",
+    startDate: new Date("2024-11-26T08:00:00Z"),
+    endDate: new Date("2024-12-02T08:00:00Z"),
+  },
+  {
+    nurse: "Nurse B",
+    room: "Room 2",
+    startDate: new Date("2024-11-27T08:00:00Z"),
+    endDate: new Date("2024-12-01T08:00:00Z"),
+  },
+  {
+    nurse: "Nurse C",
+    room: "Room 3",
+    startDate: new Date("2024-11-29T08:00:00Z"),
+    endDate: new Date("2024-12-03T08:00:00Z"),
+  },
 ];
 
 export default function AddStaff({ showModal, setShowModal }) {
@@ -31,25 +45,15 @@ export default function AddStaff({ showModal, setShowModal }) {
   const [selectedRooms, setSelectedRooms] = useState([]);
   const [roomAssignments, setRoomAssignments] = useState({});
 
-  // Handle modal close
   const handleClose = () => setShowModal(false);
 
-  // Handle save action
   const handleSave = () => {
     console.log("Staff added!");
     handleClose();
   };
 
-  // Handle adding to group (can be used for any custom functionality)
-  const handleAddToGroup = () => {
-    console.log("Added to group!");
-    // Implement your logic for adding the staff to a group
-  };
-
-  // Check room assignments for conflicts
   useEffect(() => {
     const updatedAssignments = {};
-
     selectedRooms.forEach((room) => {
       const conflicts = existingAssignments.filter(
         (assignment) =>
@@ -60,7 +64,6 @@ export default function AddStaff({ showModal, setShowModal }) {
       );
       updatedAssignments[room.value] = conflicts;
     });
-
     setRoomAssignments(updatedAssignments);
   }, [selectedRooms, startDate, endDate]);
 
@@ -70,9 +73,7 @@ export default function AddStaff({ showModal, setShowModal }) {
         <h1 className="modal-title">Add Staff</h1>
         <div className="modal-content-grid">
           <Row>
-            {/* Left Column */}
             <Col xs={12} md={6} className="left-column">
-              {/* Staff Dropdown */}
               <Row className="form-row">
                 <Col>
                   <label>Staff</label>
@@ -84,8 +85,6 @@ export default function AddStaff({ showModal, setShowModal }) {
                   />
                 </Col>
               </Row>
-
-              {/* Room Selection Dropdown */}
               <Row className="form-row">
                 <Col>
                   <label>Rooms</label>
@@ -98,8 +97,6 @@ export default function AddStaff({ showModal, setShowModal }) {
                   />
                 </Col>
               </Row>
-
-              {/* Duration Row */}
               <Row className="form-row">
                 <Col>
                   <label>Duration</label>
@@ -108,8 +105,10 @@ export default function AddStaff({ showModal, setShowModal }) {
                       <DatePicker
                         selected={startDate}
                         onChange={(date) => setStartDate(date)}
-                        maxDate={new Date()}
-                        dateFormat="dd/MM/yyyy"
+                        showTimeSelect
+                        timeFormat="HH:mm"
+                        timeIntervals={15}
+                        dateFormat="yyyy-MM-dd'T'HH:mm:ssXXX"
                         placeholderText="Start"
                         className="duration-picker"
                       />
@@ -119,25 +118,19 @@ export default function AddStaff({ showModal, setShowModal }) {
                       <DatePicker
                         selected={endDate}
                         onChange={(date) => setEndDate(date)}
-                        minDate={startDate}
-                        dateFormat="dd/MM/yyyy"
+                        showTimeSelect
+                        timeFormat="HH:mm"
+                        timeIntervals={15}
+                        dateFormat="yyyy-MM-dd'T'HH:mm:ssXXX"
                         placeholderText="End"
                         className="duration-picker"
                       />
                     </div>
                   </div>
                 </Col>
-                {/* Add to Group Button */}
-                <Col xs="auto">
-                  <Button className="add-to-group-button" onClick={handleAddToGroup}>
-                    Add to Group
-                  </Button>
-                </Col>
               </Row>
             </Col>
-
-            {/* Right Column (Room Assignment Info) */}
-            <Col xs={12} md={6} className="right-column">
+            <Col xs={12} md={6} className="right-column d-flex flex-column">
               <h5 className="staff-group-title">Room Assignments</h5>
               <ul className="staff-list">
                 {selectedRooms.map((room) => {
@@ -149,11 +142,12 @@ export default function AddStaff({ showModal, setShowModal }) {
                         {conflicts.length > 0 ? (
                           conflicts.map((conflict, idx) => (
                             <li key={idx}>
-                              <span>{conflict.nurse}</span> ({conflict.startDate.toLocaleDateString()} - {conflict.endDate.toLocaleDateString()})
+                              <span>{conflict.nurse}</span> ({conflict.startDate.toISOString()} -{" "}
+                              {conflict.endDate.toISOString()})
                             </li>
                           ))
                         ) : (
-                          <li>No staff assigned</li>
+                          <li>No conflicts</li>
                         )}
                       </ul>
                     </li>
@@ -163,8 +157,6 @@ export default function AddStaff({ showModal, setShowModal }) {
             </Col>
           </Row>
         </div>
-
-        {/* Footer Buttons */}
         <div className="footer-container">
           <div className="footer-buttons">
             <Button variant="secondary" className="cancel-button" onClick={handleClose}>
