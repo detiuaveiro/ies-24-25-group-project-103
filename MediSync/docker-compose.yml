@@ -134,6 +134,16 @@ services:
     networks:
       - medisync-network
 
+  swagger-ui:
+    image: swaggerapi/swagger-ui
+    container_name: swagger-ui
+    ports:
+      - "8081:8080"
+    volumes:
+      - ./swagger-config:/usr/share/nginx/html/swagger-config
+    environment:
+      - SWAGGER_JSON=/usr/share/nginx/html/swagger-config/combined-api.json
+
 networks:
   medisync-network:
   
