@@ -1,0 +1,2734 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+      "title": "MediSync API",
+      "description": "API for managing everything related to the funcionality of the MediSync App",
+      "version": "1.0.0"
+    },
+    "tags": [
+    {
+      "name": "Nurses",
+      "description": "Endpoints related to nurses"
+    },
+    {
+      "name": "Patients",
+      "description": "Endpoints related to patients"
+    },
+    {
+        "name": "Doctor",
+        "description": "Endpoints related to doctor"
+    },
+    {
+        "name": "HospitalManager",
+        "description": "Endpoints related to hospital manager"
+    },
+    {
+        "name": "Notification",
+        "description": "Endpoints related to notification"
+    },
+    {
+        "name": "User",
+        "description": "Endpoints related to user"
+    },
+    {
+        "name": "Visitor",
+        "description": "Endpoints related to visitor"
+    },
+    {
+        "name": "Authentication",
+        "description": "Endpoints related to authentication"
+    }
+  ],
+    "paths": {
+      "/api/v1/nurses": {
+        "get": {
+            "tags": ["Nurses"],
+          "summary": "Get all nurses.",
+          "description": "Retrieve a list of all nurses in the system.",
+          "security": [
+            {
+              "bearerAuth": []
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "List of nurses.",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "array",
+                    "items": {
+                      "$ref": "#/components/schemas/NurseOutput"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "post": {
+            "tags": ["Nurses"],
+          "summary": "Add a new nurse.",
+          "description": "Create a new nurse record.",
+          "security": [
+            {
+              "bearerAuth": []
+            }
+          ],
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Nurse"
+                }
+              }
+            }
+          },
+          "responses": {
+            "200": {
+              "description": "Nurse created successfully.",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/NurseOutput"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/api/v1/nurses/{id}": {
+        "get": {
+            "tags": ["Nurses"],
+          "summary": "Get nurse by ID.",
+          "description": "Retrieve detailed information about a specific nurse.",
+          "security": [
+            {
+              "bearerAuth": []
+            }
+          ],
+          "parameters": [
+            {
+              "name": "id",
+              "in": "path",
+              "required": true,
+              "schema": {
+                "type": "integer"
+              },
+              "description": "ID of the nurse."
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Nurse details.",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/NurseOutput"
+                  }
+                }
+              }
+            },
+            "404": {
+              "description": "Nurse not found."
+            }
+          }
+        },
+        "put": {
+            "tags": ["Nurses"],
+          "summary": "Update nurse information.",
+          "description": "Update the details of a specific nurse by ID.",
+          "security": [
+            {
+              "bearerAuth": []
+            }
+          ],
+          "parameters": [
+            {
+              "name": "id",
+              "in": "path",
+              "required": true,
+              "schema": {
+                "type": "integer"
+              },
+              "description": "ID of the nurse."
+            }
+          ],
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Nurse"
+                }
+              }
+            }
+          },
+          "responses": {
+            "200": {
+              "description": "Nurse updated successfully.",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/NurseOutput"
+                  }
+                }
+              }
+            },
+            "404": {
+              "description": "Nurse not found."
+            }
+          }
+        },
+        "delete": {
+            "tags": ["Nurses"],
+          "summary": "Delete nurse by ID.",
+          "description": "Remove a nurse record from the system.",
+          "security": [
+            {
+              "bearerAuth": []
+            }
+          ],
+          "parameters": [
+            {
+              "name": "id",
+              "in": "path",
+              "required": true,
+              "schema": {
+                "type": "integer"
+              },
+              "description": "ID of the nurse."
+            }
+          ],
+          "responses": {
+            "204": {
+              "description": "Nurse deleted successfully."
+            },
+            "404": {
+              "description": "Nurse not found."
+            }
+          }
+        }
+      },
+      "/api/v1/nurses/{nurse_id}/patients": {
+        "get": {
+            "tags": ["Nurses"],
+          "summary": "Get patients assigned to a nurse.",
+          "description": "Retrieve a list of patients with vitals assigned to a specific nurse.",
+          "security": [
+            {
+              "bearerAuth": []
+            }
+          ],
+          "parameters": [
+            {
+              "name": "nurse_id",
+              "in": "path",
+              "required": true,
+              "schema": {
+                "type": "integer"
+              },
+              "description": "ID of the nurse."
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "List of patients with vitals.",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "array",
+                    "items": {
+                      "$ref": "#/components/schemas/PatientWithVitals"
+                    }
+                  }
+                }
+              }
+            },
+            "404": {
+              "description": "Nurse not found."
+            }
+          }
+        }
+      },
+      "/api/v1/nurses/{nurse_id}/rooms": {
+        "get": {
+            "tags": ["Nurses"],
+          "summary": "Get rooms assigned to a nurse.",
+          "description": "Retrieve a list of rooms managed by a specific nurse.",
+          "security": [
+            {
+              "bearerAuth": []
+            }
+          ],
+          "parameters": [
+            {
+              "name": "nurse_id",
+              "in": "path",
+              "required": true,
+              "schema": {
+                "type": "integer"
+              },
+              "description": "ID of the nurse."
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "List of rooms.",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "array",
+                    "items": {
+                      "$ref": "#/components/schemas/RoomSimple"
+                    }
+                  }
+                }
+              }
+            },
+            "404": {
+              "description": "Nurse not found."
+            }
+          }
+        }
+      },
+      "/api/v1/nurses/{nurseId}/schedule": {
+        "get": {
+            "tags": ["Nurses"],
+          "summary": "Get schedule entries for a nurse.",
+          "description": "Retrieve a list of schedule entries for a specific nurse.",
+          "security": [
+            {
+              "bearerAuth": []
+            }
+          ],
+          "parameters": [
+            {
+              "name": "nurseId",
+              "in": "path",
+              "required": true,
+              "schema": {
+                "type": "integer"
+              },
+              "description": "ID of the nurse."
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "List of schedule entries.",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "array",
+                    "items": {
+                      "$ref": "#/components/schemas/ScheduleEntryDTO"
+                    }
+                  }
+                }
+              }
+            },
+            "404": {
+              "description": "Nurse not found."
+            }
+          }
+        },
+        "post": {
+            "tags": ["Nurses"],
+          "summary": "Add schedule entry to a nurse.",
+          "description": "Create a new schedule entry for a specific nurse.",
+          "security": [
+            {
+              "bearerAuth": []
+            }
+          ],
+          "parameters": [
+            {
+              "name": "nurseId",
+              "in": "path",
+              "required": true,
+              "schema": {
+                "type": "integer"
+              },
+              "description": "ID of the nurse."
+            }
+          ],
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ScheduleEntry"
+                }
+              }
+            }
+          },
+          "responses": {
+            "200": {
+              "description": "Schedule entry added successfully.",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/NurseOutput"
+                  }
+                }
+              }
+            },
+            "404": {
+              "description": "Nurse not found."
+            }
+          }
+        }
+      },
+      "/api/v1/nurses/{nurseId}/schedule/{entryId}": {
+        "put": {
+            "tags": ["Nurses"],
+          "summary": "Update schedule entry for a nurse.",
+          "description": "Update the details of a specific schedule entry for a nurse.",
+          "security": [
+            {
+              "bearerAuth": []
+            }
+          ],
+          "parameters": [
+            {
+              "name": "nurseId",
+              "in": "path",
+              "required": true,
+              "schema": {
+                "type": "integer"
+              },
+              "description": "ID of the nurse."
+            },
+            {
+              "name": "entryId",
+              "in": "path",
+              "required": true,
+              "schema": {
+                "type": "integer"
+              },
+              "description": "ID of the schedule entry."
+            }
+          ],
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ScheduleEntry"
+                }
+              }
+            }
+          },
+          "responses": {
+            "200": {
+              "description": "Schedule entry updated successfully.",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/NurseOutput"
+                  }
+                }
+              }
+            },
+            "404": {
+              "description": "Nurse or schedule entry not found."
+            }
+          }
+        },
+        "delete": {
+            "tags": ["Nurses"],
+          "summary": "Remove schedule entry from a nurse.",
+          "description": "Delete a specific schedule entry for a nurse.",
+          "security": [
+            {
+              "bearerAuth": []
+            }
+          ],
+          "parameters": [
+            {
+              "name": "nurseId",
+              "in": "path",
+              "required": true,
+              "schema": {
+                "type": "integer"
+              },
+              "description": "ID of the nurse."
+            },
+            {
+              "name": "entryId",
+              "in": "path",
+              "required": true,
+              "schema": {
+                "type": "integer"
+              },
+              "description": "ID of the schedule entry."
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Schedule entry removed successfully.",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/NurseOutput"
+                  }
+                }
+              }
+            },
+            "404": {
+              "description": "Nurse or schedule entry not found."
+            }
+          }
+        }
+      },
+      "/api/v1/patients": {
+      "post": {
+        "tags": ["Patients"],
+        "summary": "Create a new patient.",
+        "description": "Adds a new patient to the system.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Patient"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Patient created successfully.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PatientOutput"
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": ["Patients"],
+        "summary": "Get all patients.",
+        "description": "Returns a list of all registered patients.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of patients.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Patient"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": ["Patients"],
+        "summary": "Delete all patients.",
+        "description": "Removes all patient records from the system.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "All patients deleted."
+          }
+        }
+      }
+    },
+    "/api/v1/patients/{id}": {
+      "get": {
+        "tags": ["Patients"],
+        "summary": "Get patient by ID.",
+        "description": "Retrieves detailed information of a specific patient.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "ID of the patient."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Patient found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PatientWithVitals"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Patient not found."
+          }
+        }
+      },
+      "put": {
+        "tags": ["Patients"],
+        "summary": "Update patient information.",
+        "description": "Updates the details of a patient specified by ID.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "ID of the patient."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Patient"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Patient updated successfully.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Patient"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Patient not found."
+          }
+        }
+      },
+      "delete": {
+        "tags": ["Patients"],
+        "summary": "Delete a patient by ID.",
+        "description": "Removes a patient record from the system.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "ID of the patient."
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Patient deleted successfully."
+          }
+        }
+      }
+    },
+    "/api/v1/patients/{id}/bed": {
+      "post": {
+        "tags": ["Patients"],
+        "summary": "Assign a patient to a bed.",
+        "description": "Links a patient to a specific bed.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "ID of the patient."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "id":{
+                    "type":"integer",
+                    "description":"Unique ID of the wanted bed",
+                    "example":9
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Patient assigned to bed successfully.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Bed"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Patient not found."
+          }
+        }
+      }
+    },
+    "/api/v1/patients/{id}/doctor": {
+      "post": {
+        "tags": ["Patients"],
+        "summary": "Assign a patient to a doctor.",
+        "description": "Links a patient to a specific doctor.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "ID of the patient."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type":"integer",
+                "description":"Id of the medic",
+                "example":6
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Patient assigned to doctor successfully.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PatientOutput"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Patient not found."
+          }
+        }
+      }
+    },
+    "/api/v1/patients/{id}/medications": {
+      "get": {
+        "tags": ["Patients"],
+        "summary": "Get medications for a patient.",
+        "description": "Lists all medications associated with a specific patient.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "ID of the patient."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of medications.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/MedicationOutput"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": ["Patients"],
+        "summary": "Add medication for a patient.",
+        "description": "Creates a medication record for a patient.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "ID of the patient."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Medication"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Medication created for the patient.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PatientOutput"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/patients/{id}/medications/{medicationId}": {
+      "delete": {
+        "tags": ["Patients"],
+        "summary": "Remove medication from a patient.",
+        "description": "Deletes a specific medication record for a patient.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "ID of the patient."
+          },
+          {
+            "name": "medicationId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "ID of the medication."
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Medication removed successfully."
+          }
+        }
+      },
+      "put": {
+        "tags": ["Patients"],
+        "summary": "Update medication for a patient.",
+        "description": "Updates a specific medication record for a patient.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "ID of the patient."
+          },
+          {
+            "name": "medicationId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "ID of the medication."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Medication"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Medication updated successfully.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MedicationOutput"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/patients/vitals/{bed_id}": {
+      "put": {
+        "tags": ["Patients"],
+        "summary": "Post vitals for a bed.",
+        "description": "Updates the vitals of a patient linked to a specific bed.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "bed_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "ID of the bed."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "$ref":"#/components/schemas/VitalsInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Vitals updated successfully."
+          }
+        }
+      }
+    },
+    "/api/v1/users": {
+      "get": {
+        "tags": ["User"],
+        "summary": "Returns all users.",
+        "description": "Lists all users registered in the system.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of users.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/User"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": ["User"],
+        "summary": "Creates a new user.",
+        "description": "Creates a user record in the system.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UserInput"
+              }
+            }
+          },
+          "description": "The user to be created."
+        },
+        "parameters": [
+          {
+            "name": "password",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The user's password."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "User created successfully.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict - User could not be created."
+          }
+        }
+      },
+      "delete": {
+        "tags": ["User"],
+        "summary": "Removes a user.",
+        "description": "Deletes the record of an existing user.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "User deleted successfully."
+          }
+        }
+      }
+    },
+    "/api/v1/users/{id}/profile-picture": {
+      "post": {
+        "tags": ["User"],
+        "summary": "Uploads a profile picture for a user.",
+        "description": "Uploads and saves a profile picture for a specific user.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "User ID."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "file": {
+                    "type": "string",
+                    "format": "binary",
+                    "description": "Profile picture file."
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Profile picture URL.",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string",
+                  "example": "https://example.com/uploads/profile_picture.jpg"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Failed to upload the picture."
+          }
+        }
+      }
+    },
+
+    "/api/v1/visitors": {
+      "post": {
+        "tags": ["Visitor"],
+        "summary": "Checks if a visitor is allowed.",
+        "description": "Verifies if a visitor is allowed based on their name and phone number.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/VisitorDTO"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Visitor is allowed.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Visitor not allowed.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/visitors/checkcode": {
+      "post": {
+        "tags": ["Visitor"],
+        "summary": "Verifies a code for visitor validation.",
+        "description": "Checks the validity of a code and returns the corresponding bed if valid.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CodeVerification"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Code valid, returns bed information.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Invalid code.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/visitors/add/{id}": {
+      "post": {
+        "tags": ["Visitor"],
+        "summary": "Adds a visitor.",
+        "description": "Adds a new visitor associated with a specific ID.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "ID of the related entity."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type":"string",
+                "description":"Phone number of the visitor.",
+                "example":"+351912345679"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Visitor added successfully.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Visitor"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/visitors/{id}": {
+      "delete": {
+        "tags": ["Visitor"],
+        "summary": "Deletes a visitor by ID.",
+        "description": "Removes the record of a visitor from the system.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "ID of the visitor to be deleted."
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Visitor deleted successfully."
+          }
+        }
+      }
+    },
+    "/api/v1/auth/login": {
+      "post": {
+        "tags": ["Authentication"],
+        "summary": "Performs user authentication.",
+        "description": "Validates the credentials provided by the user and returns a JWT token if valid.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "username": {
+                    "type": "string",
+                    "description": "Username of the user attempting to authenticate.",
+                    "example": "johndoe"
+                  },
+                  "password": {
+                    "type": "string",
+                    "description": "User's password.",
+                    "example": "Password123"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Authentication successful. Returns the JWT token and user information.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "user": {
+                      "type": "object",
+                      "description": "Information about the authenticated user.",
+                      "properties": {
+                        "id": {
+                          "type": "integer",
+                          "description": "Unique ID of the user.",
+                          "example": 1
+                        },
+                        "username": {
+                          "type": "string",
+                          "description": "User's username.",
+                          "example": "johndoe"
+                        },
+                        "name": {
+                          "type": "string",
+                          "description": "User's full name.",
+                          "example": "John Doe"
+                        },
+                        "email": {
+                          "type": "string",
+                          "description": "User's email address.",
+                          "example": "johndoe@example.com"
+                        },
+                        "password": {
+                          "type": "string",
+                          "description": "User's password.",
+                          "example": "Password123"
+                        },
+                        "role": {
+                          "type": "string",
+                          "description": "User's role.",
+                          "example": "ROLE"
+                        },
+                        "profilePictureUrl": {
+                          "type": "string",
+                          "description": "URL of the profile picture.",
+                          "example": "https://example.com/uploads/profile_picture.jpg"
+                        },
+                        "enabled": {
+                          "type": "boolean",
+                          "description": "User's status (true: active, false: inactive (aka: removed)).",
+                          "example": true
+                        }
+                      }
+                    },
+                    "token": {
+                      "type": "string",
+                      "description": "JWT token generated for subsequent authentication.",
+                      "example": "eyJhbGciOiJIUzM4NCJ9.eyJzdWIiOiJpZXNsb3ZlciIsImlhdCI6MTczMjk4MzQ5OSwiZXhwIjoxNzMyOTg3MDk5fQ.W_gP35D8oZP-8LTECgnxeFLqqBOht-eSr7YBTSST76H41Ylyk74FAc7cygYBscSd"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request. The provided credentials are incorrect.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string",
+                  "example": "Invalid username or password"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/doctors": {
+      "post": {
+        "tags": ["Doctor"],
+        "summary": "Creates a new doctor.",
+        "description": "Registers a doctor in the system.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Doctor"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Doctor successfully created.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DoctorOutput"
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": ["Doctor"],
+        "summary": "Retrieves all doctors.",
+        "description": "Lists all doctors registered in the system.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of doctors.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/DoctorOutput"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/doctors/{id}": {
+      "get": {
+        "tags": ["Doctor"],
+        "summary": "Retrieves a doctor by ID.",
+        "description": "Fetches detailed information about a specific doctor.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Doctor's ID."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Doctor found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DoctorOutput"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Doctor not found."
+          }
+        }
+      },
+      "put": {
+        "tags": ["Doctor"],
+        "summary": "Updates doctor details.",
+        "description": "Updates information for a specified doctor by ID.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Doctor's ID."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Doctor"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Doctor successfully updated.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DoctorOutput"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Doctor not found."
+          }
+        }
+      },
+      "delete": {
+        "tags": ["Doctor"],
+        "summary": "Deletes a doctor by ID.",
+        "description": "Removes a doctor's record from the system.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Doctor's ID."
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Doctor successfully deleted."
+          }
+        }
+      }
+    },
+    "/api/v1/doctors/{id}/patients": {
+      "get": {
+        "tags": ["Doctor"],
+        "summary": "Lists a doctor's patients.",
+        "description": "Returns a list of patients associated with a specific doctor.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Doctor's ID."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of patients.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/PatientOutput"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Doctor not found."
+          }
+        }
+      }
+    },
+    "/api/v1/hospital": {
+      "post": {
+        "tags": ["HospitalManager"],
+        "summary": "Creates a new hospital manager.",
+        "description": "Registers a new hospital manager in the system.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Hospital manager created successfully.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HospitalManager"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/hospital/rooms": {
+      "post": {
+        "tags": ["HospitalManager"],
+        "summary": "Adds new rooms to the hospital.",
+        "description": "Registers new rooms in the system.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Rooms added successfully.",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string",
+                  "example": "Rooms added successfully"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": ["HospitalManager"],
+        "summary": "Removes all rooms from the hospital.",
+        "description": "Deletes all rooms registered in the system.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "All rooms successfully removed.",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string",
+                  "example": "All rooms successfully removed"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Error removing rooms.",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string",
+                  "example": "Error removing rooms: (error message)"
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": ["HospitalManager"],
+        "summary": "Returns all hospital rooms.",
+        "description": "Lists all rooms registered in the system.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of rooms.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Room"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/hospital/rooms/{id}": {
+      "get": {
+        "tags": ["HospitalManager"],
+        "summary": "Returns a room by ID.",
+        "description": "Fetches detailed information about a specific room by its ID.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Room ID."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Room found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Room"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Room not found.",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string",
+                  "example": "Error getting room with id {id}"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/hospital/rooms/number/{roomNumber}": {
+      "get": {
+        "tags": ["HospitalManager"],
+        "summary": "Returns a room by number.",
+        "description": "Fetches detailed information about a specific room by its number.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "roomNumber",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Room number."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Room found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Room"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Room not found.",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string",
+                  "example": "Room not found"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/hospital/beds": {
+      "get": {
+        "tags": ["HospitalManager"],
+        "summary": "Returns all hospital beds.",
+        "description": "Lists all beds registered in the system.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of beds.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Bed"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/hospital/rooms/occupants": {
+      "get": {
+        "tags": ["HospitalManager"],
+        "summary": "Returns the occupancy of all rooms.",
+        "description": "Lists the current patient occupancy for each hospital room.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of room occupancy.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/RoomOccupancyDTO"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/notifications/user/{userId}": {
+      "post": {
+        "tags": ["Notification"],
+        "summary": "Sends a notification to a user.",
+        "description": "Creates and sends a new notification to the specified user by ID.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "ID of the user who will receive the notification."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Notification"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Notification successfully sent.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotificationOutput"
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": ["Notification"],
+        "summary": "Retrieves notifications for a user.",
+        "description": "Fetches all notifications associated with the given user ID.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "ID of the user whose notifications will be retrieved."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of notifications for the user.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/NotificationOutput"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/notifications/{id}": {
+      "delete": {
+        "tags": ["Notification"],
+        "summary": "Deletes a notification by ID.",
+        "description": "Removes a specific notification based on its ID.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "ID of the notification to be removed."
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Notification successfully removed."
+          },
+          "404": {
+            "description": "Notification not found."
+          }
+        }
+      }
+    }
+    },
+    "components": {
+      "securitySchemes": {
+        "bearerAuth": {
+          "type": "http",
+          "scheme": "bearer",
+          "bearerFormat": "JWT"
+        }
+      },
+      "schemas": {
+        "Nurse": {
+          "type": "object",
+          "properties": {
+            "username": {
+              "type": "string",
+              "description": "Username of the nurse.",
+              "example":"bananinha03"
+            },
+            "name": {
+              "type": "string",
+              "description": "Name of the nurse.",
+              "example":"Diana"
+            },
+            "email": {
+              "type": "string",
+              "description": "Email of the nurse.",
+              "example":"dianabanana@gmail.com"
+            },
+            "role": {
+              "type": "string",
+              "description": "Role of the nurse.",
+              "example":"NURSE"
+            },
+            "password": {
+              "type": "string",
+              "description": "Password of the nurse.",
+              "example":"Password123"
+            }
+          }
+        },
+        "NurseOutput": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "integer",
+              "description": "Unique ID of the nurse.",
+              "example":123
+            },
+            "username": {
+              "type": "string",
+              "description": "Unique ID of the nurse.",
+              "example":"bananinha03"
+            },
+            "name": {
+              "type": "string",
+              "description": "Name of the nurse.",
+              "example":"Diana"
+            },
+            "email": {
+              "type": "string",
+              "description": "Email of the nurse.",
+              "example":"dianabanana@gmail.com"
+            },
+            "role": {
+              "type": "string",
+              "description": "Role of the nurse.",
+              "example":"NURSE"
+            },
+            "password": {
+              "type": "string",
+              "description": "Password of the nurse.",
+              "example":"Password123"
+            },
+            "profilePictureUrl": {
+                "type": "string",
+                "description": "URL of the nurse profile picture.",
+                "example": "https://example.com/uploads/profile_picture.jpg"
+            },
+            "enabled": {
+                "type": "boolean",
+                "description": "Status of the nurse (true: active, false: inactive (aka: removed)",
+                "example": true
+            },
+            "schedule":{
+                "type":"array",
+                "description":"List of the Schedule Entries of a nurse",
+                "items": {
+                      "$ref": "#/components/schemas/ScheduleEntryDTO"
+                    }
+            }
+          }
+        },
+        "NotificationOutput": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "integer",
+              "description": "Unique ID of the notification.",
+              "example": 123
+            },
+            "title": {
+              "type": "string",
+              "description": "Title of the notification.",
+              "example": "Nova Mensagem"
+            },
+            "description": {
+              "type": "string",
+              "description": "Description of the notification.",
+              "example": "Você recebeu uma nova mensagem no sistema."
+            },
+            "date": {
+              "type": "string",
+              "format": "date-time",
+              "description": "Date of the notification.",
+              "example": "2024-11-28T15:35:00"
+            },
+            "type":{
+              "type":"string",
+              "description":"Type of the notification",
+              "example":"CLEANPREP (or SCHEDULING or DISCHARGE)"
+            }
+          }
+      },
+      "Notification": {
+          "type": "object",
+          "properties": {
+            "title": {
+              "type": "string",
+              "description": "Title of the notification.",
+              "example": "Nova Mensagem"
+            },
+            "description": {
+              "type": "string",
+              "description": "Description of the notification.",
+              "example": "Você recebeu uma nova mensagem no sistema."
+            },
+            "date": {
+              "type": "string",
+              "format": "date-time",
+              "description": "Date of the notification.",
+              "example": "2024-11-28T15:35:00"
+            },
+            "type":{
+              "type":"string",
+              "description":"Type of the notification",
+              "example":"CLEANPREP (or SCHEDULING or DISCHARGE)"
+            }
+          }
+      },
+      "UserINput": {
+          "type": "object",
+          "properties": {
+              "username": {
+                  "type": "string",
+                  "example": "ieslover"
+              },
+              "name": {
+                  "type": "string",
+                  "example": "ies"
+              },
+              "email": {
+                  "type": "string",
+                  "example": "ieslover"
+              },
+              "role": {
+                  "type": "string",
+                  "example": "HOSPITAL_MANAGER"
+              }
+          }
+      },
+        "User": {
+          "type": "object",
+          "properties": {
+              "id": {
+                  "type": "integer",
+                  "example": 1
+              },
+              "username": {
+                  "type": "string",
+                  "example": "ieslover"
+              },
+              "name": {
+                  "type": "string",
+                  "example": "ies"
+              },
+              "email": {
+                  "type": "string",
+                  "example": "ieslover"
+              },
+              "password": {
+                  "type": "string",
+                  "example": "ieslover"
+              },
+              "role": {
+                  "type": "string",
+                  "example": "HOSPITAL_MANAGER"
+              },
+              "profilePictureUrl": {
+                  "type": ["string", "null"],
+                  "example": null
+              },
+              "enabled": {
+                  "type": "boolean",
+                  "example": true
+              }
+          }
+      },
+        "PatientWithVitals": {
+            "type": "object",
+            "properties": {
+                "patient": {
+                "$ref": "#/components/schemas/PatientOutput"
+                },
+                "vitals": {
+                "$ref": "#/components/schemas/Vitals"
+                }
+            }
+            },
+            "Vitals": {
+            "type": "object",
+            "properties": {
+                "HeartRate": {
+                "type": ["number", "null"],
+                "format": "double",
+                "description": "Heart rate of the patient in beats per minute.",
+                "example": 10.0
+                },
+                "BloodPressureDiastolic": {
+                "type": ["number", "null"],
+                "format": "double",
+                "description": "Diastolic blood pressure of the patient in mmHg.",
+                "example": 10.0
+                },
+                "BloodPressureSystolic": {
+                "type": ["number", "null"],
+                "format": "double",
+                "description": "Systolic blood pressure of the patient in mmHg.",
+                "example": 10.0
+                },
+                "Temperature": {
+                "type": ["number", "null"],
+                "format": "double",
+                "description": "Body temperature of the patient in Celsius.",
+                "example": 10.0
+                },
+                "OxygenSaturation": {
+                "type": ["number", "null"],
+                "format": "double",
+                "description": "Oxygen saturation level of the patient as a percentage.",
+                "example": 10.0
+                }
+            }
+            },
+        "VitalsInput": {
+            "type": "object",
+            "properties": {
+                "heartbeat": {
+                "type": ["string", "null"],
+                "description": "Heart rate of the patient in beats per minute.",
+                "example": "10.0"
+                },
+                "bloodPressure": {
+                "type": ["array", "null"],
+                "description": "Diastolic and Systolic blood pressure of the patient in mmHg.",
+                "example": ["120","80"]
+                },
+                "temperature": {
+                "type": ["string", "null"],
+                "description": "Body temperature of the patient in Celsius.",
+                "example": "36.0"
+                },
+                "o2": {
+                "type": ["string", "null"],
+                "description": "Oxygen saturation level of the patient as a percentage.",
+                "example": "98"
+                }
+            }
+            },
+
+        "Patient": {
+            "type": "object",
+            "properties": {
+                "name": {
+                        "type": "string",
+                        "description": "Name of the person.",
+                        "example": "Ricardo"
+                    },
+                    "gender": {
+                        "type": "string",
+                        "description": "Gender of the person.",
+                        "example": "Male"
+                    },
+                    "birthDate": {
+                        "type": "string",
+                        "format": "date-time",
+                        "description": "Birth date of the person in ISO 8601 format.",
+                        "example": "1000-10-10T00:00:00.000+00:00"
+                    },
+                    "estimatedDischargeDate": {
+                        "type": "string",
+                        "format": "date-time",
+                        "description": "Estimated discharge date in ISO 8601 format.",
+                        "example": "2024-12-12T00:00:00.000+00:00"
+                    },
+                    "weight": {
+                        "type": "number",
+                        "format": "float",
+                        "description": "Weight of the person in kilograms.",
+                        "example": 72.5
+                    },
+                    "height": {
+                        "type": "number",
+                        "format": "float",
+                        "description": "Height of the person in centimeters.",
+                        "example": 150.0
+                    },
+                    "conditions": {
+                        "type": "array",
+                        "description": "List of medical conditions of the person.",
+                        "items": {
+                        "type": "string",
+                        "example": "Diabetes"
+                        },
+                        "example": ["Diabetes", "Hypertension"]
+                    },
+                    "observations": {
+                        "type": "array",
+                        "description": "List of additional observations about the person.",
+                        "items": {
+                        "type": "string",
+                        "example": "Requires wheelchair assistance"
+                        },
+                        "example": ["Requires wheelchair assistance", "Prefers a quiet environment"]
+                    },
+                    "discharged": {
+                        "type": "boolean",
+                        "description": "Indicates whether the person has been discharged.",
+                        "example": false
+                    }
+            }
+        },
+        "PatientOutput": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "integer",
+                    "description": "Unique ID of the patient.",
+                    "example": 1
+                },
+                "name": {
+                        "type": "string",
+                        "description": "Name of the person.",
+                        "example": "Ricardo"
+                    },
+                    "gender": {
+                        "type": "string",
+                        "description": "Gender of the person.",
+                        "example": "Male"
+                    },
+                    "birthDate": {
+                        "type": "string",
+                        "format": "date-time",
+                        "description": "Birth date of the person in ISO 8601 format.",
+                        "example": "1000-10-10T00:00:00.000+00:00"
+                    },
+                    "estimatedDischargeDate": {
+                        "type": "string",
+                        "format": "date-time",
+                        "description": "Estimated discharge date in ISO 8601 format.",
+                        "example": "2024-12-12T00:00:00.000+00:00"
+                    },
+                    "weight": {
+                        "type": "number",
+                        "format": "float",
+                        "description": "Weight of the person in kilograms.",
+                        "example": 72.5
+                    },
+                    "height": {
+                        "type": "number",
+                        "format": "float",
+                        "description": "Height of the person in centimeters.",
+                        "example": 150.0
+                    },
+                    "conditions": {
+                        "type": "array",
+                        "description": "List of medical conditions of the person.",
+                        "items": {
+                        "type": "string",
+                        "example": "Diabetes"
+                        },
+                        "example": ["Diabetes", "Hypertension"]
+                    },
+                    "observations": {
+                        "type": "array",
+                        "description": "List of additional observations about the person.",
+                        "items": {
+                        "type": "string",
+                        "example": "Requires wheelchair assistance"
+                        },
+                        "example": ["Requires wheelchair assistance", "Prefers a quiet environment"]
+                    },
+                    "assignedDoctor":{
+                        "$ref": "#/components/schemas/Doctor"
+                    },
+                    "discharged": {
+                        "type": "boolean",
+                        "description": "Indicates whether the person has been discharged.",
+                        "example": false
+                    }
+            }
+        },
+        "HospitalManager": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "description": "Unique ID of the hospital manager.",
+            "example": 1
+          },
+          "name": {
+            "type": "string",
+            "description": "Name of the hospital manager.",
+            "example": "Dr. John Smith"
+          }
+        }
+      },
+      "Room": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "description": "Unique Id of the room.",
+            "example": 101
+          },
+          "roomNumber": {
+            "type": "integer",
+            "description": "Number of the room.",
+            "example": 11
+          },
+          "scheduleEntries": {
+            "type": "array",
+            "description": "Schedule entrys in the room.",
+            "items": {
+                      "$ref": "#/components/schemas/ScheduleEntry"
+                    }
+          }
+        }
+      },
+      "RoomSimple": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "description": "Unique Id of the room.",
+            "example": 101
+          },
+          "roomNumber": {
+            "type": "integer",
+            "description": "Number of the room.",
+            "example": 11
+          },
+          "scheduleEntries": {
+            "type": "array",
+            "description": "Schedule entrys in the room.",
+            "items": {
+                      "type":"integer",
+                      "description":"ID of the schedule entry.",
+                      "example":1
+                    }
+          }
+        }
+      },
+        "ScheduleEntry": {
+          "type": "object",
+          "properties": {
+              "start_time": {
+                  "type": "string",
+                  "format": "date-time",
+                  "example": "2024-12-01T08:00:00Z"
+              },
+              "end_time": {
+                  "type": "string",
+                  "format": "date-time",
+                  "example": "2024-12-01T16:00:00Z"
+              },
+              "interval": {
+                  "type": "boolean",
+                  "example": false
+              },
+              "room": {
+                  "type": "array",
+                  "items": {
+                      "type": "object",
+                      "properties": {
+                          "id": {
+                              "type": "integer",
+                              "example": 2
+                          }
+                      }
+                  },
+                  "example": [
+                      {
+                          "id": 2
+                      },
+                      {
+                          "id": 3
+                      }
+                  ]
+              }
+          }
+      },
+      "ScheduleEntryDTO": {
+          "type": "object",
+          "properties": {
+              "id":{
+                "type":"integer",
+                "description":"UNique ID of the schedule entry",
+                "exmaple":1
+              },
+              "start_time": {
+                  "type": "string",
+                  "format": "date-time",
+                  "example": "2024-12-01T08:00:00Z"
+              },
+              "end_time": {
+                  "type": "string",
+                  "format": "date-time",
+                  "example": "2024-12-01T16:00:00Z"
+              },
+              "room": {
+                  "type": "array",
+                  "items": {
+                      "$ref":"#/components/schemas/RoomSimple"
+              }
+          },
+          "interval": {
+            "type": "boolean",
+            "example": false
+        },
+        "roomsNumbers": {
+          "type": "array",
+          "example": ["12","13"]
+      }
+      }
+    },
+        "Bed": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "description": "Unique ID of the bed.",
+            "example": 1
+          },
+          "bedNumber": {
+            "type": "string",
+            "description": "Number of the bed.",
+            "example": "111"
+          },
+          "room": {
+            "$ref": "#/components/schemas/Room"
+          },
+          "assignedPatient": {
+            "$ref": "#/components/schemas/PatientOutput"
+          },
+          "cleaned": {
+            "type": "boolean",
+            "description": "State of the bed (\"true\", \"false\").",
+            "example": true
+          }
+        }
+      },
+        "Medication": {
+            "type": "object",
+            "properties": {
+            "name": {
+                "type": "string",
+                "example": "Aspirin"
+            },
+            "hourInterval":{
+              "type":"string",
+              "example":"8hour"
+            },
+            "dosage": {
+                "type": "string",
+                "example": "500 mg"
+            }
+            }
+        },
+        "MedicationOutput": {
+          "type": "object",
+          "properties": {
+              "id": {
+                  "type": "integer",
+                  "example": 1
+              },
+              "name": {
+                  "type": "string",
+                  "example": "aspirina"
+              },
+              "hourInterval": {
+                  "type": "string",
+                  "example": "8hour"
+              },
+              "dosage": {
+                  "type": "string",
+                  "example": "500 mg"
+              },
+              "hasTaken": {
+                  "type": "boolean",
+                  "example": false
+              },
+              "lastTaken": {
+                  "type": ["string", "null"],
+                  "example": null
+              },
+              "patient": {
+                  "type": "integer",
+                  "example": 1
+              }
+          }
+      },
+
+        "Doctor": {
+            "type": "object",
+            "properties": {
+              "username": {
+                "type": "string",
+                "description": "Username of the doctor.",
+                "example":"bananinha03"
+              },
+              "name": {
+                "type": "string",
+                "description": "Name of the doctor.",
+                "example":"Diana"
+              },
+              "email": {
+                "type": "string",
+                "description": "Email of the doctor.",
+                "example":"dianabanana@gmail.com"
+              },
+              "role": {
+                "type": "string",
+                "description": "Role of the doctor.",
+                "example":"DOCTOR"
+              },
+              "password": {
+                "type": "string",
+                "description": "Password of the doctor.",
+                "example":"Password123"
+              }
+            }
+        },
+        "DoctorOutput": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "integer",
+                "description": "Unique ID of the doctor.",
+                "example":123
+              },
+              "username": {
+                "type": "string",
+                "description": "Unique ID of the doctor.",
+                "example":"bananinha03"
+              },
+              "name": {
+                "type": "string",
+                "description": "Name of the doctor.",
+                "example":"Diana"
+              },
+              "email": {
+                "type": "string",
+                "description": "Email of the doctor.",
+                "example":"dianabanana@gmail.com"
+              },
+              "role": {
+                "type": "string",
+                "description": "Role of the doctor.",
+                "example":"NURSE"
+              },
+              "password": {
+                "type": "string",
+                "description": "Password of the doctor.",
+                "example":"Password123"
+              },
+              "profilePictureUrl": {
+                  "type": "string",
+                  "description": "URL of the doctor profile picture.",
+                  "example": "https://example.com/uploads/profile_picture.jpg"
+              },
+              "enabled": {
+                  "type": "boolean",
+                  "description": "Status of the doctor (true: active, false: inactive (aka: removed)",
+                  "example": true
+              }
+            }
+        },
+        "VisitorDTO": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Name of the visitor.",
+            "example": "John Smith"
+          },
+          "phoneNumber": {
+            "type": "string",
+            "description": "Phone number of the visitor.",
+            "example": "+1234567890"
+          }
+        }
+      },
+      "RoomOccupancyDTO": {
+        "type": "object",
+        "properties": {
+            "id": {
+            "type": "integer",
+            "description": "Unique identifier of the room.",
+            "example": 1
+            },
+            "roomNumber": {
+            "type": "string",
+            "description": "Room number.",
+            "example": "11"
+            },
+            "currentPatients": {
+            "type": "integer",
+            "description": "Current number of patients in the room.",
+            "example": 0
+            },
+            "maxPatients": {
+            "type": "integer",
+            "description": "Maximum number of patients allowed in the room.",
+            "example": 4
+            },
+            "currentStaff": {
+            "type": "integer",
+            "description": "Current number of staff members in the room.",
+            "example": 0
+            },
+            "maxStaff": {
+            "type": "integer",
+            "description": "Maximum number of staff members allowed in the room.",
+            "example": 8
+            }
+        }
+        },
+
+      "CodeVerification": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string",
+            "description": "Verification code for the visitor.",
+            "example": "123456"
+          },
+          "phoneNumber": {
+            "type": "string",
+            "description": "Phone number associated with the code.",
+            "example": "+1234567890"
+          }
+        }
+      },
+      "Visitor": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "description": "Unique ID of the visitor.",
+            "example": 1
+          },
+          "phoneNumber": {
+            "type": "string",
+            "description": "Phone number of the visitor.",
+            "example": "+1234567890"
+          },
+          "patient":{
+            "$ref":"#/components/schemas/PatientOutput"
+          }
+        }
+      }
+      }
+    }
+  }
