@@ -14,6 +14,7 @@ import Rooms from './Rooms';
 import RoomPage from './RoomPage';
 import DoctorPatients from "./DoctorPatients";
 import FloorOverview from './FloorOverview';
+import VisitorInstructions from './VisitorInstructions';
 
 function App() {
   return (
@@ -42,6 +43,7 @@ function Main() {
           <Route path="/park" element={<DischargePatient showModal={showModal} setShowModal={setShowModal}/>} />
           <Route path="/doctor/patients" element={<DoctorPatients />} />
           <Route path="/rooms/overview" element={<FloorOverview />} />
+          <Route path="/visitorInstructions" element={<VisitorInstructions />} />
         </Routes>
       </Header>}
       <Routes>
