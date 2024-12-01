@@ -6,21 +6,20 @@
     font-family: 'Roboto', sans-serif;
     color: #333333;
     box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.1);
-    min-height: 500px; /* Increase height to make the modal taller */
+    min-height: 500px;
     display: flex;
-    flex-direction: column; /* Ensure content is stacked vertically */
+    flex-direction: column;
 }
 
-/* Modal Body to stretch content */
 .add-staff-modal .modal-body {
     display: flex;
     flex-direction: column;
-    flex-grow: 1; /* Allow the body to grow and take available space */
+    flex-grow: 1;
 }
 
 .add-staff-modal .modal-dialog {
     max-width: 1000px;
-    min-height: 700px; /* Optional: Adjusts the height of the modal dialog */
+    min-height: 700px;
 }
 
 /* Content Grid Layout */
@@ -28,7 +27,7 @@
     display: flex;
     gap: 20px;
     flex-wrap: wrap;
-    flex-grow: 1; /* Allow the grid to take available space */
+    flex-grow: 1;
 }
 
 /* Left Column */
@@ -53,34 +52,17 @@
     margin-left: 10px;
 }
 
-/* Add to Group Button */
-.add-staff-modal .add-to-group-button {
-    padding: 10px 16px; /* Make the button wider */
-    font-size: 14px;
-    background-color: #007bff;
-    color: #ffffff;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    margin-top: 5px; /* Push it slightly down */
-}
-
-.add-staff-modal .add-to-group-button:hover {
-    background-color: #0056b3;
-}
-
 /* Duration Fields Layout */
 .add-staff-modal .duration-fields {
     display: flex;
     align-items: center;
-    gap: 10px; /* Adjusted spacing between fields */
+    gap: 10px;
 }
 
 .add-staff-modal .duration-field {
-    flex: 1; /* Ensures DatePicker fields remain wide */
+    flex: 1;
 }
 
-/* Right Column */
 .add-staff-modal .right-column {
     flex: 1;
     background-color: #f7f7f7;
@@ -88,7 +70,7 @@
     border-radius: 8px;
     display: flex;
     flex-direction: column;
-    justify-content: space-between; /* Make the right column stretch down */
+    justify-content: space-between;
 }
 
 .add-staff-modal .staff-group-title {
@@ -101,7 +83,7 @@
 .add-staff-modal .staff-list {
     list-style: none;
     padding: 0;
-    flex-grow: 1; /* Make the staff list take all available space */
+    flex-grow: 1;
 }
 
 .add-staff-modal .staff-list li {
@@ -112,13 +94,11 @@
 
 /* Footer Buttons */
 .add-staff-modal .footer-buttons {
-    gap: 10px; /* Spacing between the buttons */
+    gap: 10px;
     margin-top: 20px;
-    padding-right: 15px; /* Ensures buttons have spacing from the right edge */
+    padding-right: 15px;
     display: flex;
     gap: 10px;
-    right: auto;
-    padding-bottom: 10px; /* Ensure buttons are at the bottom */
 }
 
 /* Button Styling */
@@ -162,14 +142,29 @@
     border: 1px solid #cccccc;
     border-radius: 5px;
     padding: 8px;
-    color: #333333; /* Ensure selected date text is visible */
+    color: #333333;
 }
 
 .add-staff-modal .duration-picker::placeholder {
-    color: #666666; /* Placeholder color */
+    color: #666666;
 }
 
 .add-staff-modal .react-datepicker__day--selected {
     background-color: #007bff !important;
-    color: #ffffff !important; /* Ensure the selected day is visible */
+    color: #ffffff !important;
 }
+/* Conflict Highlighting */
+.add-staff-modal .staff-list li.conflict {
+    background-color: #f8d7da; /* Red background for conflicts */
+    border-left: 5px solid #dc3545; /* Red border for conflicts */
+    padding: 5px;
+    margin-bottom: 5px;
+}
+
+/* Displaying conflicts in other rooms */
+.add-staff-modal .staff-list li {
+    font-size: 14px;
+    color: #555555;
+    margin-bottom: 8px;
+}
+

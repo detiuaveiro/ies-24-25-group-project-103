@@ -4,39 +4,7 @@ import Select from "react-select";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import "./AddStaff.css";
-
-const nurses = [
-  { value: "nurse1", label: "Nurse A" },
-  { value: "nurse2", label: "Nurse B" },
-  { value: "nurse3", label: "Nurse C" },
-];
-
-const rooms = [
-  { value: "room1", label: "Room 1" },
-  { value: "room2", label: "Room 2" },
-  { value: "room3", label: "Room 3" },
-];
-
-const existingAssignments = [
-  {
-    nurse: "Nurse A",
-    room: "Room 1",
-    startDate: new Date("2024-11-26T08:00:00Z"),
-    endDate: new Date("2024-12-02T08:00:00Z"),
-  },
-  {
-    nurse: "Nurse B",
-    room: "Room 2",
-    startDate: new Date("2024-11-27T08:00:00Z"),
-    endDate: new Date("2024-12-01T08:00:00Z"),
-  },
-  {
-    nurse: "Nurse C",
-    room: "Room 3",
-    startDate: new Date("2024-11-29T08:00:00Z"),
-    endDate: new Date("2024-12-03T08:00:00Z"),
-  },
-];
+import CONFIG from "./config";
 
 export default function AddStaff({ showModal, setShowModal }) {
   const [startDate, setStartDate] = useState(null);
@@ -44,28 +12,96 @@ export default function AddStaff({ showModal, setShowModal }) {
   const [selectedNurse, setSelectedNurse] = useState(null);
   const [selectedRooms, setSelectedRooms] = useState([]);
   const [roomAssignments, setRoomAssignments] = useState({});
+  const [nurses, setNurses] = useState([]);
+  const [rooms, setRooms] = useState([]);
+  const baseUrl = CONFIG.API_URL;
+  const bearerToken = "Bearer " + localStorage.getItem("token");
 
-  const handleClose = () => setShowModal(false);
+  useEffect(() => {
+    fetchData("/nurses", setNurses, "Failed to fetch nurses");
+    fetchData("/hospital/rooms", setRooms, "Failed to fetch rooms");
+  }, []);
 
-  const handleSave = () => {
-    console.log("Staff added!");
-    handleClose();
+  const fetchData = (endpoint, setState, errorMsg) => {
+    fetch(baseUrl + endpoint, {
+      method: "GET",
+      headers: { Authorization: bearerToken },
+    })
+      .then((response) => {
+        if (!response.ok) throw new Error(errorMsg);
+        return response.json();
+      })
+      .then((data) => {
+        if (endpoint === "/nurses") {
+          setState(data);
+        } else if (endpoint === "/hospital/rooms") {
+          setState(data.map((room) => ({ value: room.id, label: `Room ${room.roomNumber}` })));
+        }
+      })
+      .catch((error) => console.error(error));
   };
 
   useEffect(() => {
-    const updatedAssignments = {};
-    selectedRooms.forEach((room) => {
-      const conflicts = existingAssignments.filter(
-        (assignment) =>
-          assignment.room === room.label &&
-          ((startDate >= assignment.startDate && startDate <= assignment.endDate) ||
-            (endDate >= assignment.startDate && endDate <= assignment.endDate) ||
-            (startDate <= assignment.startDate && endDate >= assignment.endDate))
-      );
-      updatedAssignments[room.value] = conflicts;
-    });
-    setRoomAssignments(updatedAssignments);
-  }, [selectedRooms, startDate, endDate]);
+    if (selectedNurse) {
+      const updatedAssignments = {};
+
+      // Check all rooms for conflicts with the selected nurse's schedule
+      rooms.forEach((room) => {
+        const conflicts = (selectedNurse.schedule || []).filter(
+          (schedule) =>
+            schedule.room.some((r) => r.id === room.value) &&
+            ((new Date(startDate) >= new Date(schedule.start_time) &&
+              new Date(startDate) <= new Date(schedule.end_time)) ||
+              (new Date(endDate) >= new Date(schedule.start_time) &&
+                new Date(endDate) <= new Date(schedule.end_time)) ||
+              (new Date(startDate) <= new Date(schedule.start_time) &&
+                new Date(endDate) >= new Date(schedule.end_time)))
+        ).map((conflict) => ({
+          ...conflict,
+          nurse: conflict.nurse || { name: selectedNurse.name },
+          isConflict: true, // Mark as a conflict
+        }));
+
+        if (conflicts.length > 0 || selectedRooms.some((r) => r.value === room.value)) {
+          updatedAssignments[room.value] = conflicts;
+        }
+      });
+
+      setRoomAssignments(updatedAssignments);
+    }
+  }, [rooms, selectedRooms, startDate, endDate, selectedNurse]);
+
+  const handleSave = () => {
+    if (selectedNurse && selectedRooms.length && startDate && endDate) {
+      const payload = {
+        start_time: startDate.toISOString(),
+        end_time: endDate.toISOString(),
+        rooms: selectedRooms.map((room) => ({ id: room.value })),
+      };
+
+      fetch(`${baseUrl}/nurses/${selectedNurse.id}/schedule`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: bearerToken,
+        },
+        body: JSON.stringify(payload),
+      })
+        .then((response) => {
+          if (!response.ok) throw new Error("Failed to save schedule");
+          return response.json();
+        })
+        .then(() => {
+          console.log("Schedule saved successfully!");
+          setShowModal(false);
+        })
+        .catch((error) => console.error(error));
+    } else {
+      console.error("Please fill in all fields before saving.");
+    }
+  };
+
+  const handleClose = () => setShowModal(false);
 
   return (
     <Modal show={showModal} onHide={handleClose} centered className="add-staff-modal">
@@ -78,9 +114,12 @@ export default function AddStaff({ showModal, setShowModal }) {
                 <Col>
                   <label>Staff</label>
                   <Select
-                    options={nurses}
-                    value={selectedNurse}
-                    onChange={setSelectedNurse}
+                    options={nurses.map((nurse) => ({
+                      value: nurse,
+                      label: nurse.name,
+                    }))}
+                    value={selectedNurse ? { value: selectedNurse, label: selectedNurse.name } : null}
+                    onChange={(option) => setSelectedNurse(option?.value || null)}
                     placeholder="Select Nurse"
                   />
                 </Col>
@@ -133,17 +172,20 @@ export default function AddStaff({ showModal, setShowModal }) {
             <Col xs={12} md={6} className="right-column d-flex flex-column">
               <h5 className="staff-group-title">Room Assignments</h5>
               <ul className="staff-list">
-                {selectedRooms.map((room) => {
-                  const conflicts = roomAssignments[room.value] || [];
+                {Object.entries(roomAssignments).map(([roomId, conflicts]) => {
+                  const room = rooms.find((r) => r.value === parseInt(roomId));
                   return (
-                    <li key={room.value}>
-                      <strong>{room.label}</strong>
+                    <li key={roomId}>
+                      <strong>{room?.label || `Room ${roomId}`}</strong>
                       <ul>
                         {conflicts.length > 0 ? (
                           conflicts.map((conflict, idx) => (
-                            <li key={idx}>
-                              <span>{conflict.nurse}</span> ({conflict.startDate.toISOString()} -{" "}
-                              {conflict.endDate.toISOString()})
+                            <li
+                              key={idx}
+                              className={conflict.isConflict ? "conflict" : ""}
+                            >
+                              <span>{conflict.nurse.name}</span> (
+                              {conflict.start_time} - {conflict.end_time})
                             </li>
                           ))
                         ) : (
@@ -159,10 +201,10 @@ export default function AddStaff({ showModal, setShowModal }) {
         </div>
         <div className="footer-container">
           <div className="footer-buttons">
-            <Button variant="secondary" className="cancel-button" onClick={handleClose}>
+            <Button variant="secondary" onClick={handleClose}>
               Cancel
             </Button>
-            <Button variant="primary" className="confirm-button" onClick={handleSave}>
+            <Button variant="primary" onClick={handleSave}>
               Add Staff
             </Button>
           </div>
