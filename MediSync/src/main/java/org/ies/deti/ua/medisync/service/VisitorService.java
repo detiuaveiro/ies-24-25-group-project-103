@@ -1,5 +1,6 @@
 package org.ies.deti.ua.medisync.service;
 
+import java.util.List;
 import java.util.Random;
 
 import org.ies.deti.ua.medisync.model.Code;
@@ -59,11 +60,16 @@ public class VisitorService {
     }
 
     public boolean checkIfVisitorIsAllowed(String name, String phoneNumber) {
+        
         Visitor visitor = visitorRepository.findByPhoneNumber(phoneNumber);
-        String patientName = visitor.getPatient().getName();
-        if (patientName.equalsIgnoreCase(name) && visitor.getPhoneNumber().equals(phoneNumber)) {
-           generateCode(visitor.getPatient(), phoneNumber);
-            return true;
+        
+        if (visitor != null && visitor.getPatient() != null) {
+            String patientName = visitor.getPatient().getName();
+            
+            if (visitor.getPhoneNumber().equals(phoneNumber)) {
+                String generatedCode = generateCode(visitor.getPatient(), phoneNumber);
+                return true;
+            }
         }
         return false;
     }
@@ -71,17 +77,21 @@ public class VisitorService {
     public String generateCode(Patient patient, String phoneNumber) {
         Random random = new Random();
         String code = String.format("%06d", random.nextInt(1000000));
-        if (codeRepository.findByPatientId(patient.getId()) == null) {
+        
+        Code existingCode = codeRepository.findByPhoneNumber(phoneNumber)
+            .stream()
+            .findFirst()
+            .orElse(null);
+            
+        if (existingCode == null) {
             Code newCode = new Code(code, phoneNumber, patient);
-            codeRepository.save(newCode);
-            sendVisitorNotification(code, phoneNumber);
-        }
-        else {
-            Code existingCode = codeRepository.findByPatientId(patient.getId());
+            Code savedCode = codeRepository.save(newCode);
+        } else {
             existingCode.setCode(code);
-            codeRepository.save(existingCode);
-            sendVisitorNotification(code, phoneNumber);   
+            Code savedCode = codeRepository.save(existingCode);
         }
+        
+        sendVisitorNotification(code, phoneNumber);
         return code;
     }
 
@@ -91,10 +101,12 @@ public class VisitorService {
     }
 
     public String verifyVisitorCode(String code, String phoneNumber) {
-        
         Code foundCode = codeRepository.findByCodeAndPhoneNumber(code, phoneNumber);
+        
         if (foundCode != null) {
-            return patientService.getPatientBed(foundCode.getPatient()).toString();
+            Patient patient = foundCode.getPatient();
+            String bed = patientService.getPatientBed(patient).toString();
+            return bed;
         }
         return null;
     }

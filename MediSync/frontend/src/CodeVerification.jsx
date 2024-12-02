@@ -1,15 +1,15 @@
 import React, { useState, useRef } from 'react';
 import axios from 'axios';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import styles from './CodeVerification.module.css';
 import CONFIG from './config';
 
 function CodeVerification() {
   const [code, setCode] = useState('');
   const [activeIndex, setActiveIndex] = useState(0);
-
   const [errorMessage, setErrorMessage] = useState('');
   const location = useLocation();
+  const navigate = useNavigate();
   const inputRef = useRef(null);
   const phoneNumber = location.state?.phoneNumber || '';
   const baseUrl = CONFIG.API_URL;
@@ -33,21 +33,49 @@ function CodeVerification() {
 
   const checkCode = async (code) => {
     try {
+      const payload = { 
+        code: code.toString(), // ensure code is string
+        phoneNumber: phoneNumber.trim() // remove any whitespace
+      };
+      console.log('Sending payload:', payload);
+      
       const response = await axios.post(
         `${baseUrl}/visitors/checkcode`,
-        { code: code, phoneNumber: phoneNumber },
+        payload,
         { withCredentials: true }
       );
 
-      console.log('Valid code, bed:', response.data); // Handle success as needed
+      const responseText = response.data;
+      const bedMatch = responseText.match(/Bed (\d+)/);
+      const roomMatch = responseText.match(/room (\d+)/);
+      const bedNumber = bedMatch ? bedMatch[1] : '';
+      const roomNumber = roomMatch ? roomMatch[1] : '';
+
+      navigate('/visitorInstructions', {
+        state: {
+          bed: {
+            bedNumber: bedNumber,
+            room: {
+              roomNumber: roomNumber
+            }
+          }
+        }
+      });
     } catch (error) {
+      console.log('Error details:', {
+        status: error.response?.status,
+        data: error.response?.data,
+        payload: error.config?.data
+      });
+      
       if (error.response && error.response.status === 403) {
         setErrorMessage('The code you entered is not valid. Please try again.');
       } else {
         setErrorMessage('An error occurred while verifying the code. Please try again later.');
       }
     }
-  };
+};
+
 
   return (
     <div className={styles.page}>
