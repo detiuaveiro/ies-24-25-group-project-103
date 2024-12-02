@@ -156,7 +156,7 @@ services:
     working_dir: /app/scripts
     command: sh -c "pip install -r script_requirements.txt && python3 vitals_producer.py"
     environment:
-      - KAFKA_BROKER=kafka:9092
+      - KAFKA_BROKER= "${GENERATOR_KAFKACONNECT}"
     networks:
       - medisync-network
 
