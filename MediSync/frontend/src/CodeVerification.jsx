@@ -45,12 +45,18 @@ function CodeVerification() {
         { withCredentials: true }
       );
 
+      const responseText = response.data;
+      const bedMatch = responseText.match(/Bed (\d+)/);
+      const roomMatch = responseText.match(/room (\d+)/);
+      const bedNumber = bedMatch ? bedMatch[1] : '';
+      const roomNumber = roomMatch ? roomMatch[1] : '';
+
       navigate('/visitorInstructions', {
         state: {
           bed: {
-            bedNumber: response.data.bedNumber,
+            bedNumber: bedNumber,
             room: {
-              roomNumber: response.data.roomNumber
+              roomNumber: roomNumber
             }
           }
         }
