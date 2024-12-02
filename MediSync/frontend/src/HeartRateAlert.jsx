@@ -22,10 +22,15 @@ export default function HeartRateAlert({ showModal, setShowModal, patient, value
         setShowModal(false);
     }
 
+    if (!showModal) {
+        return null; 
+    }
+
     return (
         <>
             <Modal show={showModal} onHide={handleClose} className="heart-rate" centered>
                 <Modal.Body className="custom-modal-body">
+                    <button className="close-button" onClick={handleClose}>&times;</button>
                     <div className="alert-text">
                         <span className="heart-rate">{value}</span><span className="bpm">bpm</span>
                     </div>

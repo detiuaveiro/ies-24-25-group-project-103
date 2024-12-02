@@ -22,9 +22,14 @@ export default function TemperatureAlert({ showModal, setShowModal, patient, val
         setShowModal(false);
     }
 
+    if (!showModal) {
+        return null; 
+    }
+    
     return (
         <>
             <Modal show={showModal} onHide={handleClose} className="temperature" centered>
+            <button className="close-button" onClick={handleClose}>&times;</button>
                 <Modal.Body className="custom-modal-body">
                     <div className="alert-text">
                         <span className="temperature">{value}</span><span className="c">°C</span>
