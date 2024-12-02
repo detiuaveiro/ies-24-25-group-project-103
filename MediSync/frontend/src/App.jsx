@@ -18,6 +18,7 @@ import OxygenSaturationAlert from './OxygenSaturationAlert';
 import HeartRateAlert from './HeartRateAlert';
 import TemperatureAlert from './TemperatureAlert';
 import BloodPressureAlert from './BloodPressureAlert';
+import VisitorInstructions from './VisitorInstructions';
 import CONFIG from './config';
 function App() {
   return (
@@ -44,8 +45,9 @@ function Main() {
   const role = user ? JSON.parse(user).role : null;
   const nurseId = user ? JSON.parse(user).id : null;
   const baseUrl = CONFIG.API_URL;
-
-  const headerExcludedRoutes = ['/', '/verify'];
+  const [showModal, setShowModal] = useState(true);
+  const headerExcludedRoutes = ['/', '/verify', '/visitorInstructions'];
+  
   const shouldShowHeader = !headerExcludedRoutes.includes(location.pathname);
     useEffect(() => {
       setBpModalState(new Array(bpAlerts.length).fill(true));
@@ -243,6 +245,7 @@ return (
         <Routes>
           <Route path="/" element={<Login />} />
           <Route path="/verify" element={<CodeVerification />} />
+          <Route path="/visitorInstructions" element={<VisitorInstructions />} />
         </Routes>
       )}
   </>
