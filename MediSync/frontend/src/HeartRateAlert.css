@@ -1,114 +1,116 @@
 @import url('https://fonts.googleapis.com/css2?family=Karantina:wght@400;700&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;600&display=swap');
 
-
-
 /* Modal styling */
 .heart-rate {
     .modal-content {
-        background-color: #A75D5D; /* Tamer red tone for the background */
+        background-color: #F8D7DA; /* Soft red background */
         color: #000; /* Black text for better contrast */
-        text-align: center; /* Center the modal content */
-        padding: 30px; /* Add more padding for better spacing */
-        width: 90%; /* Adjust width for phone screens */
-        max-width: 400px; /* Make the modal narrow */
-        height: 60vh; /* Make the modal longer in height */
-        max-height: 600px; /* Cap the height for responsiveness */
-        margin: auto; /* Center modal */
+        text-align: center;
+        padding: 30px;
+        width: 90%;
+        max-width: 400px;
+        height: 60vh;
+        max-height: 600px;
+        margin: auto;
         border-radius: 85px;
-        background: #A75D5D;
-        box-shadow: 0.687px 2.748px 14.291px 0px #DE9D9D;
+        box-shadow: 0 4px 15px rgba(220, 53, 69, 0.5); /* Red shadow */
     }
-    
+
     /* Modal body styling */
     .custom-modal-body {
         display: flex;
         flex-direction: column;
         align-items: center;
         justify-content: space-evenly;
-        height: 100%; /* Ensure content is vertically distributed */
+        height: 100%;
     }
-    
-    /* Heart icon styling */
-    .heart-icon {
-        margin-left: -15px; 
-    }
-    
+
     /* Alert text styling */
     .alert-text {
-        color: #D43B3B;
-        text-shadow: 3.98px 4.195px 0px rgba(0, 0, 0, 0.51);
-        font-family: Karantina;
-        font-size: 6em;
-        font-weight: 10em;
-        font-style: normal;
-        line-height: normal;
+        color: #DC3545; /* Deep red for text */
+        text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2); /* Subtle shadow */
+        font-family: 'Karantina', cursive;
+        font-size: 5rem;
+        line-height: 1.2;
     }
-    
+
     .alert-text .bpm {
-        color: #D43B3B;
-        font-family: Karantina;
-        font-size: 0.6em;
-        font-style: normal;
-        line-height: normal;
+        font-family: 'Karantina', cursive;
+        font-size: 0.5em;
     }
-    
-    
-    
+
     /* Patient info styling */
     .patient-info {
-        font-size: 1.5em; /* Slightly larger than normal text */
-        
-        color: #000; /* Black text for readability */
+        font-size: 1.2rem;
+        color: #4A4A4A; /* Dark gray for readability */
         text-transform: uppercase;
-    }
-    
-    .patient-status {
-        color: #FFF;
-        font-family: Kanit;
-        font-style: normal;
-        line-height: normal;
-        font-size: 0.9em; /* Larger size for the name */
-        margin-bottom: 5px; /* Add some space below */
-        text-transform: uppercase;
-    }
-    
-    /* Patient name styling */
-    .patient-name {
-        color: #FFF;
-        font-family: Kanit;
-        font-style: normal;
-        line-height: normal;
-        font-size: 1.5em; /* Larger size for the name */
-        margin-bottom: 5px; /* Add some space below */
-        text-transform: uppercase;
-    }
-    
-    /* Room info styling */
-    .patient-room {
-        color: #FFF;
         text-align: center;
-        font-family: Kanit;
-        font-weight: bold; /* Bold text for prominence */
-        line-height: normal;
-        font-size: 1.5em; /* Slightly smaller than name but still prominent */
-        text-transform: uppercase;
     }
-    
-    /* Ensure modal is responsive on smaller screens */
+
+    .patient-status {
+        font-family: 'Kanit', sans-serif;
+        font-size: 1.2rem;
+        color: #FF0000; /* Vibrant red for emphasis */
+        margin-bottom: 0.5rem;
+    }
+
+    .patient-name {
+        font-family: 'Kanit', sans-serif;
+        font-size: 1.4rem;
+        color: #C82333; /* Slightly darker red for differentiation */
+        margin-bottom: 0.5rem;
+    }
+
+    .patient-room {
+        font-family: 'Kanit', sans-serif;
+        font-size: 1.2rem;
+        color: #C82333; /* Match name color */
+        font-weight: bold;
+    }
+
+    /* Responsive styling */
     @media (max-width: 576px) {
         .modal-content {
-            padding: 20px; /* Adjust padding for smaller screens */
-        }
-        .heart-icon {
-            font-size: 120px !important; /* Slightly smaller heart icon */
+            padding: 20px;
         }
         .alert-text {
-            font-size: 2em; /* Adjust text size for smaller screens */
+            font-size: 3rem;
         }
         .patient-info {
-            font-size: 1.3em; /* Adjust info size for smaller screens */
+            font-size: 1rem;
         }
     }
-    
+}
+
+.heart-rate .modal-content .close-button {
+    position: absolute;
+    top: 0px;
+    right: -120px;
+    z-index: 10;
+    background: none;
+    border: none;
+    font-size: 2.5rem;
+    color: #DC3545; /* Deep red for close button */
+    cursor: pointer;
+    outline: none;
+    animation: glow-zoom 1.5s infinite;
+    transition: transform 0.2s ease-in-out;
+}
+
+.heart-rate .modal-content .close-button:hover {
+    transform: scale(1.3);
+    color: #FF0000; /* Brighter red on hover */
+}
+
+/* Glow and zoom effect */
+@keyframes glow-zoom {
+    0%, 100% {
+        transform: scale(1);
+        text-shadow: 0 0 5px #DC3545, 0 0 15px #DC3545;
+    }
+    50% {
+        transform: scale(1.2);
+        text-shadow: 0 0 15px #FF0000, 0 0 30px #FF0000;
+    }
 }

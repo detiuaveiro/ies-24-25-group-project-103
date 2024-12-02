@@ -1,94 +1,54 @@
-import React, { useEffect, useState } from "react";
-import axios from "axios";
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { FaHeartbeat, FaLungs, FaThermometerHalf, FaTachometerAlt } from "react-icons/fa";
 import "./RoomPage.css";
-import CONFIG from "./config";
 
-const RoomPage = () => {
-  const [rooms, setRooms] = useState([]);
-  const [scheduledRooms, setScheduledRooms] = useState([]);
+const RoomPage = ({ vitalsData }) => {
+  if (!vitalsData) {
+    return <p>Loading...</p>;
+  }
+
+  const rooms = vitalsData;
+  console.log(vitalsData);
+  console.log(rooms);
   const [filter, setFilter] = useState("HeartRate");
-  const token = localStorage.getItem("token");
-  const user = localStorage.getItem("user");
-  const nurseId = user ? JSON.parse(user).id : null;
-  const baseUrl = CONFIG.API_URL;
 
-  const axiosInstance = axios.create({
-    baseURL: `${baseUrl}`,
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  });
-
-  const fetchData = async () => {
-    if (!nurseId) return;
-
-    try {
-      const scheduleResponse = await axiosInstance.get(`/nurses/${nurseId}/schedule`);
-      const roomResponse = await axiosInstance.get(`/nurses/${nurseId}/roomswithpatients`);
-      const schedules = scheduleResponse.data;
-      const currentDateTime = new Date();
-      const currentSchedule = schedules.find((schedule) => {
-        const startTime = new Date(schedule.start_time);
-        const endTime = new Date(schedule.end_time);
-        return currentDateTime >= startTime && currentDateTime <= endTime;
-      });
-
-      const assignedRooms = currentSchedule ? currentSchedule.roomsNumbers : [];
-      setScheduledRooms(assignedRooms);
-      setRooms(roomResponse.data);
-    } catch (error) {
-      console.error("Error fetching data:", error);
-    }
-  };
-
-  useEffect(() => {
-    fetchData(); 
-
-    const interval = setInterval(() => {
-      fetchData(); 
-    }, 10000);
-
-    return () => clearInterval(interval);
-  }, [nurseId]);
-
-  const filteredRooms = rooms.filter((room) => scheduledRooms.includes(room.roomNumber));
+  const filteredRooms = rooms || [];
 
   const getVitalValue = (vitals) => {
     switch (filter) {
       case "HeartRate":
         return {
-          value: vitals.HeartRate, // Raw value for logic
-          display: vitals.HeartRate, // Same value for rendering
+          value: vitals?.HeartRate || "N/A",
+          display: vitals?.HeartRate || "N/A",
           icon: <FaHeartbeat />,
           unit: "bpm",
         };
       case "Oxygen":
         return {
-          value: vitals.OxygenSaturation,
-          display: vitals.OxygenSaturation,
+          value: vitals?.OxygenSaturation || "N/A",
+          display: vitals?.OxygenSaturation || "N/A",
           icon: <FaLungs />,
           unit: "%",
         };
       case "Temperature":
         return {
-          value: vitals.Temperature,
-          display: vitals.Temperature,
+          value: vitals?.Temperature || "N/A",
+          display: vitals?.Temperature || "N/A",
           icon: <FaThermometerHalf />,
           unit: "°C",
         };
       case "BloodPressure":
-        const systolic = vitals.BloodPressureSystolic;
-        const diastolic = vitals.BloodPressureDiastolic;
+        const systolic = vitals?.BloodPressureSystolic || "N/A";
+        const diastolic = vitals?.BloodPressureDiastolic || "N/A";
         return {
-          value: `${systolic}/${diastolic}`, 
+          value: systolic !== "N/A" && diastolic !== "N/A" ? `${systolic}/${diastolic}` : "N/A",
           display: (
             <>
               {systolic}
               <span className="diastolic">/{diastolic}</span>
             </>
-          ), 
+          ),
           icon: <FaTachometerAlt />,
           unit: "mmHg",
         };
@@ -96,7 +56,7 @@ const RoomPage = () => {
         return { value: "N/A", display: "N/A", icon: null, unit: "" };
     }
   };
-  
+
   const getCardBackground = (value) => {
     if (value === "N/A") return "neutral";
 
@@ -131,20 +91,19 @@ const RoomPage = () => {
 
   return (
     <div className="room-container">
-    <div className="header">
-      <h1>Assigned Rooms</h1>
-      <select
-        value={filter}
-        onChange={(e) => setFilter(e.target.value)}
-        className="filter-dropdown"
-      >
-        <option value="HeartRate">Heart Rate</option>
-        <option value="Oxygen">Oxygen Saturation</option>
-        <option value="Temperature">Temperature</option>
-        <option value="BloodPressure">Blood Pressure</option>
-      </select>
-    </div>
-
+      <div className="header">
+        <h1>Assigned Rooms</h1>
+        <select
+          value={filter}
+          onChange={(e) => setFilter(e.target.value)}
+          className="filter-dropdown"
+        >
+          <option value="HeartRate">Heart Rate</option>
+          <option value="Oxygen">Oxygen Saturation</option>
+          <option value="Temperature">Temperature</option>
+          <option value="BloodPressure">Blood Pressure</option>
+        </select>
+      </div>
 
       {filteredRooms.length > 0 ? (
         <div className="room-grid">
@@ -153,8 +112,7 @@ const RoomPage = () => {
               <h2>Room {room.roomNumber}</h2>
               <div className="beds-grid">
                 {[...Array(4)].map((_, index) => {
-                  const bed = room.beds[index];
-                  console.log(bed);
+                  const bed = room.beds?.[index];
                   const vital = bed && bed.patient ? getVitalValue(bed.patient.vitals) : null;
                   return (
                     <div
@@ -162,15 +120,18 @@ const RoomPage = () => {
                       className={`bed-card ${vital ? getCardBackground(vital.value) : "empty"}`}
                     >
                       {bed && bed.patient ? (
-                        <Link to={`/patients/${bed.patient.patient.id}`} style={{ textDecoration: 'none' }}>
-                        <>
-                          <h3 className="patient-name">{bed.patient.patient.name}</h3>
-                          <div className="bed-icon">{vital.icon}</div>
-                          <p className="bed-value">
-                            {vital.display}
-                            <span>{vital.unit}</span>
-                          </p>
-                        </>
+                        <Link
+                          to={`/patients/${bed.patient.patient.id}`}
+                          style={{ textDecoration: "none" }}
+                        >
+                          <>
+                            <h3 className="patient-name">{bed.patient.patient.name}</h3>
+                            <div className="bed-icon">{vital.icon}</div>
+                            <p className="bed-value">
+                              {vital.display}
+                              <span>{vital.unit}</span>
+                            </p>
+                          </>
                         </Link>
                       ) : (
                         <p>No patient</p>
@@ -182,7 +143,6 @@ const RoomPage = () => {
             </div>
           ))}
         </div>
-
       ) : (
         <p>No rooms assigned for the current schedule.</p>
       )}
