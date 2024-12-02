@@ -27,7 +27,7 @@ function App() {
 function Main() {
   const location = useLocation();
   const [showModal, setShowModal] = useState(true);
-  const headerExcludedRoutes = ['/', '/verify'];
+  const headerExcludedRoutes = ['/', '/verify', '/visitorInstructions'];
   const shouldShowHeader = !headerExcludedRoutes.includes(location.pathname);
 
   return (
@@ -43,12 +43,12 @@ function Main() {
           <Route path="/park" element={<DischargePatient showModal={showModal} setShowModal={setShowModal}/>} />
           <Route path="/doctor/patients" element={<DoctorPatients />} />
           <Route path="/rooms/overview" element={<FloorOverview />} />
-          <Route path="/visitorInstructions" element={<VisitorInstructions />} />
         </Routes>
       </Header>}
       <Routes>
         <Route path="/" element={<Login />} />
         <Route path="/verify" element={<CodeVerification />} />
+        <Route path="/visitorInstructions" element={<VisitorInstructions />} />
       </Routes>
     </>
   );

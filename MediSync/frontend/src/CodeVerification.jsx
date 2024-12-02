@@ -47,8 +47,12 @@ function CodeVerification() {
 
       navigate('/visitorInstructions', {
         state: {
-          bed: response.data,
-          phoneNumber: phoneNumber
+          bed: {
+            bedNumber: response.data.bedNumber,
+            room: {
+              roomNumber: response.data.roomNumber
+            }
+          }
         }
       });
     } catch (error) {
