@@ -13,3 +13,7 @@ react-dom
 react-icons
 react-router-dom
 react
+chart.js
+chartjs-adapter-date-fns
+react-chartjs-2
+react-select

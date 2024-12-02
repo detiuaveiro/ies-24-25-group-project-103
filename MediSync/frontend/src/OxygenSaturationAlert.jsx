@@ -17,9 +17,14 @@ export default function OxygenSaturationAlert({showModal, setShowModal, patient,
         setShowModal(false);
     }
 
+    if (!showModal) {
+        return null; 
+    }
+    
     return (
         <>
             <Modal show={showModal} onHide={handleClose} className="oxygen-saturation" centered>
+            <button className="close-button" onClick={handleClose}>&times;</button>
                 <Modal.Body className="custom-modal-body">
                     <div className="alert-text">
                         <span className="o2">{value}</span><span className="percent">%</span>

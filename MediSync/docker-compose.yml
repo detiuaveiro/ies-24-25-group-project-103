@@ -91,9 +91,78 @@ services:
       networks:
         - medisync-network
 
+  zookeeper:
+    image: confluentinc/cp-zookeeper:7.4.4
+    environment:
+      ZOOKEEPER_CLIENT_PORT: "${ZOOKEEPER_CLIENT_PORT}"
+      ZOOKEEPER_TICK_TIME: 2000
+    ports:
+      - "${ZOOKEEPER_PORT}"
+    networks:
+      - medisync-network
+
+  kafka:
+    image: confluentinc/cp-kafka:7.4.4
+    depends_on:
+      - zookeeper
+    ports:
+      - "${KAFKA_PORT}"
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: "$KAFKA_ZOOKEPER_CONNECT"
+      KAFKA_ADVERTISED_LISTENERS: "${KAFKA_ADVERTISED_LISTENERS}"
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_LOG_RETENTION_MS: 5000
+      KAFKA_LOG_RETENTION_CHECK_INTERVAL_MS: 5000
+    networks:
+      - medisync-network
+    healthcheck:
+      test: ["CMD", "kafka-broker-api-versions", "--bootstrap-server", "${KAFKA_HEALHTCHECK_PORT}"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  kafdrop:
+    image: obsidiandynamics/kafdrop:4.0.2
+    ports:
+      - "${KAFDROP_PORT}"
+    environment:
+      KAFKA_BROKERCONNECT: "${KAFDROP_BROKERCONNECT}"
+      SERVER_SERVLET_CONTEXTPATH: "/"
+    networks:
+      - medisync-network
+
+  swagger-ui:
+    image: swaggerapi/swagger-ui
+    container_name: swagger-ui
+    ports:
+      - "8081:8080"
+    volumes:
+      - ./swagger-config:/usr/share/nginx/html/swagger-config
+    environment:
+      - SWAGGER_JSON=/usr/share/nginx/html/swagger-config/combined-api.json
+
+
+  vitals-generator:
+    image: python:3.10-slim
+    depends_on:
+      kafka:
+        condition: service_healthy
+    volumes:
+      - ./vitals_generation/vitals_generation/vitals_producer.py:/app/scripts/vitals_producer.py
+      - ./vitals_generation/vitals_generation/script_requirements.txt:/app/scripts/script_requirements.txt
+    working_dir: /app/scripts
+    command: sh -c "pip install -r script_requirements.txt && python3 vitals_producer.py"
+    environment:
+      - KAFKA_BROKER= "${GENERATOR_KAFKACONNECT}"
+    networks:
+      - medisync-network
+
 networks:
   medisync-network:
-
+  
 volumes:
   db:
   influxdb_data:

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import "./Schedule.css";
+import CONFIG from "./config";
 
 const Schedule = () => {
   const [scheduleEntries, setScheduleEntries] = useState([]);
@@ -13,6 +14,8 @@ const Schedule = () => {
   const token = localStorage.getItem('token');
 
   const hours = Array.from({ length: 24 }, (_, i) => (9 + i) % 24); // From 9 AM to 8 AM next day
+
+  const baseUrl = CONFIG.API_URL;
 
   // Update days whenever currentDate changes
   useEffect(() => {
@@ -27,7 +30,7 @@ const Schedule = () => {
   useEffect(() => {
     const fetchSchedule = async () => {
       try {
-        const response = await axios.get(`http://localhost:8080/api/v1/nurses/${nurseId}/schedule`, {
+        const response = await axios.get(`${baseUrl}/nurses/${nurseId}/schedule`, {
           headers: {
             'Authorization': `Bearer ${token}`  // Attach token to request
           }
@@ -47,7 +50,7 @@ const Schedule = () => {
       setError("Nurse ID is missing.");
       setLoading(false);
     }
-  }, [nurseId]);
+  }, [nurseId, baseUrl, token]);
 
   const handleDayChange = (direction) => {
     setCurrentDate((prevDate) => {

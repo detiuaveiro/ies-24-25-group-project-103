@@ -5,15 +5,18 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBars, faTimes, faClipboardList, faArrowRightFromBracket, faBedPulse, faComment } from '@fortawesome/free-solid-svg-icons';
 import axios from 'axios';
 import EventNoteIcon from '@mui/icons-material/EventNote';
+import CONFIG from './config';
 
 function Header({ children }) {
     const [profileImage, setProfileImage] = useState(null);
     const [isMenuOpen, setIsMenuOpen] = useState(false); // State to manage mobile menu
     const role = localStorage.getItem('userRole');
-    const name = JSON.parse(localStorage.getItem('user')).name;
-    const user = JSON.parse(localStorage.getItem('user'));
-    const imageUrl = user.profilePictureUrl;
-    const fullImageUrl = `http://localhost:8080/uploads/${imageUrl}`;
+    const name = JSON.parse(localStorage.getItem('user')).name || 'Visitor';
+    const userStr = localStorage.getItem('user');
+    const user = userStr ? JSON.parse(userStr) : null;
+    const imageUrl = user?.profilePictureUrl;
+    const baseUrl = CONFIG.API_URL;
+    const fullImageUrl = imageUrl ? `${baseUrl}/uploads/${imageUrl}` : null;
     const token = localStorage.getItem('token');
 
     useEffect(() => {
@@ -120,7 +123,8 @@ function Header({ children }) {
                     </Link>
                     ) : null}
                     <div className={styles.logoutButton} onClick={handleLogout}>
-                        <FontAwesomeIcon icon={faArrowRightFromBracket} size="2x" />
+                        <FontAwesomeIcon icon={faArrowRightFromBracket} size="2x" className='logout111' />
+                        <span className={styles.logoutText}>Log-out</span>
                     </div>
                 </nav>
             </header>
