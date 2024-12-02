@@ -117,7 +117,7 @@ export default function AddStaff({ showModal, setShowModal }) {
       const payload = {
         start_time: startDate.toISOString(),
         end_time: endDate.toISOString(),
-        rooms: selectedRooms.map((room) => ({ id: room.value })),
+        room: selectedRooms.map((room) => ({ id: room.value })),
       };
 
       fetch(`${baseUrl}/nurses/${selectedNurse.id}/schedule`, {
