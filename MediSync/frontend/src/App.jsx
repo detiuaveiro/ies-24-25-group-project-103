@@ -14,6 +14,7 @@ import Rooms from './Rooms';
 import RoomPage from './RoomPage';
 import DoctorPatients from "./DoctorPatients";
 import FloorOverview from './FloorOverview';
+import VisitorInstructions from './VisitorInstructions';
 
 function App() {
   return (
@@ -26,7 +27,7 @@ function App() {
 function Main() {
   const location = useLocation();
   const [showModal, setShowModal] = useState(true);
-  const headerExcludedRoutes = ['/', '/verify'];
+  const headerExcludedRoutes = ['/', '/verify', '/visitorInstructions'];
   const shouldShowHeader = !headerExcludedRoutes.includes(location.pathname);
 
   return (
@@ -47,6 +48,7 @@ function Main() {
       <Routes>
         <Route path="/" element={<Login />} />
         <Route path="/verify" element={<CodeVerification />} />
+        <Route path="/visitorInstructions" element={<VisitorInstructions />} />
       </Routes>
     </>
   );

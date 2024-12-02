@@ -11,11 +11,12 @@ function Header({ children }) {
     const [profileImage, setProfileImage] = useState(null);
     const [isMenuOpen, setIsMenuOpen] = useState(false); // State to manage mobile menu
     const role = localStorage.getItem('userRole');
-    const name = JSON.parse(localStorage.getItem('user')).name;
-    const user = JSON.parse(localStorage.getItem('user'));
-    const imageUrl = user.profilePictureUrl;
+    const name = JSON.parse(localStorage.getItem('user')).name || 'Visitor';
+    const userStr = localStorage.getItem('user');
+    const user = userStr ? JSON.parse(userStr) : null;
+    const imageUrl = user?.profilePictureUrl;
     const baseUrl = CONFIG.API_URL;
-    const fullImageUrl = `${baseUrl}/uploads/${imageUrl}`;
+    const fullImageUrl = imageUrl ? `${baseUrl}/uploads/${imageUrl}` : null;
     const token = localStorage.getItem('token');
 
     useEffect(() => {
