@@ -3,7 +3,7 @@ import json
 import random
 import time
 
-producer = KafkaProducer(bootstrap_servers=['localhost:29092'], value_serializer=lambda m: json.dumps(m).encode('ascii'))
+producer = KafkaProducer(bootstrap_servers=['kafka:9092'], value_serializer=lambda m: json.dumps(m).encode('ascii'))
 
 nBeds = 96
 curVitals = {}

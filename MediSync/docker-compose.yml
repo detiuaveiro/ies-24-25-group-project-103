@@ -144,6 +144,22 @@ services:
     environment:
       - SWAGGER_JSON=/usr/share/nginx/html/swagger-config/combined-api.json
 
+
+  vitals-generator:
+    image: python:3.10-slim
+    depends_on:
+      kafka:
+        condition: service_healthy
+    volumes:
+      - ./vitals_generation/vitals_generation/vitals_producer.py:/app/scripts/vitals_producer.py
+      - ./vitals_generation/vitals_generation/script_requirements.txt:/app/scripts/script_requirements.txt
+    working_dir: /app/scripts
+    command: sh -c "pip install -r script_requirements.txt && python3 vitals_producer.py"
+    environment:
+      - KAFKA_BROKER=kafka:9092
+    networks:
+      - medisync-network
+
 networks:
   medisync-network:
   
