@@ -16,3 +16,4 @@ react
 chart.js
 chartjs-adapter-date-fns
 react-chartjs-2
+react-select

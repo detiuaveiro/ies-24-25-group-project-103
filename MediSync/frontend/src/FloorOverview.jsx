@@ -4,6 +4,7 @@ import styles from './FloorOverview.module.css';
 import AddIcon from '@mui/icons-material/Add';
 import CreatePatient from './CreatePatient';
 import CONFIG from './config';
+import AddStaff from './AddStaff';
 
 function FloorOverview() {
     const [beds, setBeds] = useState([]);
@@ -11,6 +12,7 @@ function FloorOverview() {
     const [selectedFloor, setSelectedFloor] = useState('1');
     const token = localStorage.getItem('token');
     const [showPatientsModal, setShowPatientsModal] = useState(false);
+    const [showStaffModal, setShowStaffModal] = useState(false);
     const baseUrl = CONFIG.API_URL;
 
     useEffect(() => {
@@ -51,6 +53,10 @@ function FloorOverview() {
 
     const addPatient = () => {
         setShowPatientsModal(true);
+    };
+
+    const addStaff = () => {
+        setShowStaffModal(true);
     };
 
 
@@ -119,7 +125,7 @@ function FloorOverview() {
                     <button className={styles.addButton} onClick={addPatient}>
                         <AddIcon /> Add Patient
                     </button>
-                    <button className={styles.addButton}>
+                    <button className={styles.addButton} onClick={addStaff}>
                         <AddIcon /> Add Staff
                     </button>
                 </div>
@@ -158,6 +164,8 @@ function FloorOverview() {
                     name: doctor.name
                 }))}
             />
+
+            <AddStaff showModal={showStaffModal} setShowModal={setShowStaffModal} />
         </div>
     );
 }
