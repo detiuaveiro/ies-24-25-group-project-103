@@ -22,7 +22,7 @@ MediSync is a multi-layered service that helps with hospital management by integ
 │   ├── Dockerfile              -- Dockerfile for the backend
 │   ├──src/                     -- Backend source code
 │   ├──frontend/                -- Frontend source code
-│       ├── Dockerfile          -- Dockerfile for the frontend
+│       ├── Dockerfile.frontend -- Dockerfile for the frontend
 │       
 ├── minutes/                    -- Minutes of the meetings
 ├── presentations/              -- Materials used in the presentations 
@@ -32,7 +32,7 @@ MediSync is a multi-layered service that helps with hospital management by integ
 ```
 
 # Architecture
-![Architecture](reports/images/architecture_current.png)
+![Architecture](reports/images/architecture.png)
 
 # Bookmarks
 - [Project Backlog](https://github.com/orgs/detiuaveiro/projects/36)
