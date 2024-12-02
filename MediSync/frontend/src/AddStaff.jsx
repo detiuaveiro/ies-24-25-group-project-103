@@ -22,33 +22,73 @@ export default function AddStaff({ showModal, setShowModal }) {
     fetchData("/hospital/rooms", setRooms, "Failed to fetch rooms");
   }, []);
 
-  const fetchData = (endpoint, setState, errorMsg) => {
-    fetch(baseUrl + endpoint, {
-      method: "GET",
-      headers: { Authorization: bearerToken },
-    })
-      .then((response) => {
-        if (!response.ok) throw new Error(errorMsg);
-        return response.json();
-      })
-      .then((data) => {
-        if (endpoint === "/nurses") {
-          setState(data);
-        } else if (endpoint === "/hospital/rooms") {
-          setState(data.map((room) => ({ value: room.id, label: `Room ${room.roomNumber}` })));
-        }
-      })
-      .catch((error) => console.error(error));
+  const fetchData = async (endpoint, setState, errorMsg) => {
+    try {
+      const response = await fetch(baseUrl + endpoint, {
+        method: "GET",
+        headers: { Authorization: bearerToken },
+      });
+
+      if (!response.ok) throw new Error(errorMsg);
+
+      const data = await response.json();
+
+      if (endpoint === "/nurses") {
+        const updatedNurses = await Promise.all(
+          data.map(async (nurse) => {
+            if (nurse.schedule) {
+              const updatedSchedule = await Promise.all(
+                nurse.schedule.map(async (schedule) => {
+                  const updatedRooms = await Promise.all(
+                    schedule.room.map(async (room) => {
+                      if (typeof room === "number") {
+                        const roomResponse = await fetch(
+                          `${baseUrl}/hospital/rooms/${room}`,
+                          {
+                            method: "GET",
+                            headers: { Authorization: bearerToken },
+                          }
+                        );
+                        if (!roomResponse.ok) {
+                          console.error(
+                            `Failed to fetch details for room ID ${room}`
+                          );
+                          return { id: room, roomNumber: `Unknown (${room})` };
+                        }
+                        const roomData = await roomResponse.json();
+                        return {
+                          id: roomData.id,
+                          roomNumber: roomData.roomNumber,
+                        };
+                      }
+                      return room; // Return room as is if already complete
+                    })
+                  );
+                  return { ...schedule, room: updatedRooms };
+                })
+              );
+              return { ...nurse, schedule: updatedSchedule };
+            }
+            return nurse;
+          })
+        );
+
+        setState(updatedNurses);
+      } else if (endpoint === "/hospital/rooms") {
+        setState(data.map((room) => ({ value: room.id, label: `Room ${room.roomNumber}` })));
+      }
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   useEffect(() => {
     if (selectedNurse) {
       const updatedAssignments = {};
 
-      // Check all rooms for conflicts with the selected nurse's schedule
       rooms.forEach((room) => {
-        const conflicts = (selectedNurse.schedule || []).filter(
-          (schedule) =>
+        const conflicts = nurses.flatMap((nurse) =>
+          (nurse.schedule || []).filter((schedule) =>
             schedule.room.some((r) => r.id === room.value) &&
             ((new Date(startDate) >= new Date(schedule.start_time) &&
               new Date(startDate) <= new Date(schedule.end_time)) ||
@@ -56,11 +96,12 @@ export default function AddStaff({ showModal, setShowModal }) {
                 new Date(endDate) <= new Date(schedule.end_time)) ||
               (new Date(startDate) <= new Date(schedule.start_time) &&
                 new Date(endDate) >= new Date(schedule.end_time)))
-        ).map((conflict) => ({
-          ...conflict,
-          nurse: conflict.nurse || { name: selectedNurse.name },
-          isConflict: true, // Mark as a conflict
-        }));
+          ).map((conflict) => ({
+            ...conflict,
+            nurse: { name: nurse.name },
+            isConflict: nurse.id === selectedNurse.id,
+          }))
+        );
 
         if (conflicts.length > 0 || selectedRooms.some((r) => r.value === room.value)) {
           updatedAssignments[room.value] = conflicts;
@@ -69,7 +110,7 @@ export default function AddStaff({ showModal, setShowModal }) {
 
       setRoomAssignments(updatedAssignments);
     }
-  }, [rooms, selectedRooms, startDate, endDate, selectedNurse]);
+  }, [rooms, selectedRooms, startDate, endDate, selectedNurse, nurses]);
 
   const handleSave = () => {
     if (selectedNurse && selectedRooms.length && startDate && endDate) {
@@ -102,6 +143,31 @@ export default function AddStaff({ showModal, setShowModal }) {
   };
 
   const handleClose = () => setShowModal(false);
+
+  const formatDate = (date) => {
+    if (!date) return "";
+    return new Date(date).toLocaleString("en-US", {
+      weekday: "short", // 'Mon'
+      year: "numeric", // '2024'
+      month: "short", // 'Dec'
+      day: "numeric", // '2'
+      hour: "numeric", // '3'
+      minute: "numeric", // '15'
+      hour12: true, // 'PM'
+    });
+  };
+
+  const formatInputDate = (date) => {
+    if (!date) return "";
+    return new Date(date).toLocaleString("en-US", {
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+      hour: "2-digit",
+      minute: "2-digit",
+      hour12: true,
+    });
+  };
 
   return (
     <Modal show={showModal} onHide={handleClose} centered className="add-staff-modal">
@@ -150,6 +216,7 @@ export default function AddStaff({ showModal, setShowModal }) {
                         dateFormat="yyyy-MM-dd'T'HH:mm:ssXXX"
                         placeholderText="Start"
                         className="duration-picker"
+                        customInput={<input value={formatInputDate(startDate)} />}
                       />
                     </div>
                     <div className="until-label">until</div>
@@ -163,6 +230,7 @@ export default function AddStaff({ showModal, setShowModal }) {
                         dateFormat="yyyy-MM-dd'T'HH:mm:ssXXX"
                         placeholderText="End"
                         className="duration-picker"
+                        customInput={<input value={formatInputDate(endDate)} />}
                       />
                     </div>
                   </div>
@@ -172,11 +240,11 @@ export default function AddStaff({ showModal, setShowModal }) {
             <Col xs={12} md={6} className="right-column d-flex flex-column">
               <h5 className="staff-group-title">Room Assignments</h5>
               <ul className="staff-list">
-                {Object.entries(roomAssignments).map(([roomId, conflicts]) => {
-                  const room = rooms.find((r) => r.value === parseInt(roomId));
+                {selectedRooms.map((room) => {
+                  const conflicts = roomAssignments[room.value] || [];
                   return (
-                    <li key={roomId}>
-                      <strong>{room?.label || `Room ${roomId}`}</strong>
+                    <li key={room.value}>
+                      <strong>{room.label}</strong>
                       <ul>
                         {conflicts.length > 0 ? (
                           conflicts.map((conflict, idx) => (
@@ -185,11 +253,12 @@ export default function AddStaff({ showModal, setShowModal }) {
                               className={conflict.isConflict ? "conflict" : ""}
                             >
                               <span>{conflict.nurse.name}</span> (
-                              {conflict.start_time} - {conflict.end_time})
+                              {formatDate(conflict.start_time)} -{" "}
+                              {formatDate(conflict.end_time)})
                             </li>
                           ))
                         ) : (
-                          <li>No conflicts</li>
+                          <li>No Assignment</li>
                         )}
                       </ul>
                     </li>
@@ -204,8 +273,18 @@ export default function AddStaff({ showModal, setShowModal }) {
             <Button variant="secondary" onClick={handleClose}>
               Cancel
             </Button>
-            <Button variant="primary" onClick={handleSave}>
-              Add Staff
+            <Button
+              variant="primary"
+              onClick={handleSave}
+              disabled={Object.values(roomAssignments).some((conflicts) =>
+                conflicts.some((conflict) => conflict.isConflict)
+              )}
+            >
+              {Object.values(roomAssignments).some((conflicts) =>
+                conflicts.some((conflict) => conflict.isConflict)
+              )
+                ? "Solve Schedule Conflict"
+                : "Add Staff"}
             </Button>
           </div>
         </div>
