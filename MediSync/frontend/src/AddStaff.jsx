@@ -117,6 +117,7 @@ export default function AddStaff({ showModal, setShowModal }) {
       const payload = {
         start_time: startDate.toISOString(),
         end_time: endDate.toISOString(),
+        isInterval: false,
         room: selectedRooms.map((room) => ({ id: room.value })),
       };
 
