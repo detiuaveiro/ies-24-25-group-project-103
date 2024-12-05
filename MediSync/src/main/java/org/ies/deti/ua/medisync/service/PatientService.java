@@ -1,5 +1,6 @@
 package org.ies.deti.ua.medisync.service;
 
+import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -395,4 +396,24 @@ public class PatientService {
             influxDBClient.close();
         }
     }
+
+    public List<Medication> getDueMedications(Long patientId) {
+        List<Medication> medicationList = medicationRepository.findMedicationByPatientId(patientId);
+    
+        long currentTimeMillis = System.currentTimeMillis();
+    
+        return medicationList.stream()
+                .filter(medication -> {
+                    try {
+                        int hourInterval = Integer.parseInt(medication.getHourInterval());
+                        long nextDueTime = medication.getLastTaken().toInstant(ZoneOffset.UTC).toEpochMilli() + (hourInterval * 3600000L); 
+                        return currentTimeMillis >= nextDueTime && !medication.isHasTaken();
+                    } catch (NumberFormatException e) {
+                        System.err.println("Invalid hourInterval for medication ID: " + medication.getId());
+                        return false;
+                    }
+                })
+                .collect(Collectors.toList());
+    }
+    
 }

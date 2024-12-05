@@ -3,7 +3,6 @@ package org.ies.deti.ua.medisync.service;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -192,18 +191,15 @@ public class NurseService {
         if (nurseOpt.isPresent()) {
             Nurse nurse = nurseOpt.get();
 
-            // Validate for overlapping schedules
             for (ScheduleEntry existing : nurse.getSchedule()) {
                 boolean hasOverlap = !(newEntry.getEnd_time().isBefore(existing.getEnd_time()) ||
                         newEntry.getEnd_time().isAfter(existing.getEnd_time()));
                 if (hasOverlap) {
-                    // Return null to indicate a conflict
                     return null;
                 }
             }
             newEntry.setNurse(nurse);
 
-            // Associate Rooms
             List<Room> associatedRooms = new ArrayList<>();
             for (Room room : newEntry.getRoom()) {
                 Room existingRoom = roomRepository.findById(room.getId()).orElse(null);
@@ -234,48 +230,42 @@ public class NurseService {
          */
         Optional<Nurse> nurseOptional = nurseRepository.findById(nurseId);
         if (nurseOptional.isEmpty()) {
-            return null; // Nurse not found
+            return null; 
         }
         Nurse nurse = nurseOptional.get();
 
-        // Retrieve the schedule entry to be updated
         Optional<ScheduleEntry> beforeEntryOptional = nurse.getSchedule().stream()
                 .filter(entry -> entry.getId().equals(before_entryId))
                 .findFirst();
         if (beforeEntryOptional.isEmpty()) {
-            return null; // Schedule entry not found
+            return null; 
         }
         ScheduleEntry beforeEntry = beforeEntryOptional.get();
 
-        // Ensure no overlap with existing schedule entries (excluding the one being
-        // updated)
         boolean hasOverlap = nurse.getSchedule().stream()
-                .filter(entry -> !entry.getId().equals(before_entryId)) // Exclude the current entry
+                .filter(entry -> !entry.getId().equals(before_entryId)) 
                 .anyMatch(entry -> updatedEntry.getStart_time().isBefore(entry.getEnd_time()) &&
                         updatedEntry.getEnd_time().isAfter(entry.getStart_time()));
         if (hasOverlap) {
-            return null; // Return null to indicate schedule overlap
+            return null; 
         }
 
-        // Update the existing entry with new values
         beforeEntry.setStart_time(updatedEntry.getStart_time());
         beforeEntry.setEnd_time(updatedEntry.getEnd_time());
         beforeEntry.setInterval(updatedEntry.isInterval());
 
         beforeEntry.setRoom(updatedEntry.getRoom());
 
-        // Save the rooms individually to ensure they are persisted
         for (Room room1 : beforeEntry.getRoom()) {
             Optional<Room> roomOpt = roomRepository.findById(room1.getId());
             Room room = roomOpt.get();
             if (!room.getScheduleEntries().contains(beforeEntry)) {
-                room.getScheduleEntries().add(beforeEntry); // Add the entry to the room's schedule entries
+                room.getScheduleEntries().add(beforeEntry); 
                 roomRepository.save(room);
             }
         }
 
         scheduleEntryRepository.save(beforeEntry);
-        // Save the nurse with the updated schedule
         return nurseRepository.save(nurse);
     }
 
@@ -289,7 +279,7 @@ public class NurseService {
                     .filter(entry -> entry.getId().equals(before_entryId))
                     .findFirst();
             if (beforeEntryOptional.isEmpty()) {
-                return null; // Schedule entry not found
+                return null;
             }
             ScheduleEntry beforeEntry = beforeEntryOptional.get();
 
@@ -324,10 +314,36 @@ public class NurseService {
         nurse.setRole("NURSE");
         return nurseRepository.save(nurse);
     }
+    
     /*
      * public boolean isactive(Long nurseid) {
      * Optional<Nurse> nurse = nurseRepository.findById(nurseid);
      * return nurse.get().isIsactive();
      * }
      */
+
+     public List<Patient> getPatientsByNurseId(Long nurseId) {
+        List<Patient> patients = new ArrayList<>();
+        Optional<Nurse> nurseOptional = nurseRepository.findById(nurseId);
+    
+        if (nurseOptional.isPresent()) {
+            Nurse nurse = nurseOptional.get();
+            LocalDateTime now = LocalDateTime.now(); // Current time
+            
+            for (ScheduleEntry entry : nurse.getSchedule()) {
+                // Check if the schedule is active now
+                if (entry.getStart_time().isBefore(now) && entry.getEnd_time().isAfter(now)) {
+                    for (Room room : entry.getRoom()) {
+                        for (Bed bed : room.getBeds()) {
+                            if (bed.getAssignedPatient() != null) {
+                                patients.add(bed.getAssignedPatient());
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return patients;
+    }
+    
 }

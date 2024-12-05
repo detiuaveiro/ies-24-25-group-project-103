@@ -5,8 +5,6 @@ import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
@@ -18,6 +16,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
 @Entity
@@ -34,9 +33,13 @@ public class Room {
 
     @ManyToMany
     @JoinTable(name = "schedule_rooms", joinColumns = @JoinColumn(name = "room_id"), inverseJoinColumns = @JoinColumn(name = "schedule_id"))
-    @JsonIgnore // Manages serialization of the relationship
+    @JsonIgnore
     private List<ScheduleEntry> scheduleEntries;
 
+
+    @OneToMany(mappedBy = "room")
+    private List<Bed> beds;
+    
     public Room() {
     }
 
@@ -72,6 +75,14 @@ public class Room {
 
     public void setScheduleEntries(List<ScheduleEntry> scheduleEntries) {
         this.scheduleEntries = scheduleEntries;
+    }
+
+    public List<Bed> getBeds() {
+        return beds;
+    }
+
+    public void setBeds(List<Bed> beds) {
+        this.beds = beds;
     }
 
 }
