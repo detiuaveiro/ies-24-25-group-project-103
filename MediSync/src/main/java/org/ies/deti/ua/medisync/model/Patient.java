@@ -60,7 +60,8 @@ public class Patient {
     private Doctor assignedDoctor;
 
     @Column(name = "discharged")
-    private Boolean discharged = false;
+    private String state = "IN_BED";
+
     
 
     public Patient() {}
@@ -158,12 +159,11 @@ public class Patient {
         this.assignedDoctor = assignedDoctor;
     }
 
-    public Boolean isDischarged() {
-        return discharged;
+    public String getState(){
+        return state;
     }
 
-    public void setDischarged(Boolean discharged) {
-        this.discharged = discharged;
+    public void setState(String state){
+        this.state = state;
     }
-
 }
