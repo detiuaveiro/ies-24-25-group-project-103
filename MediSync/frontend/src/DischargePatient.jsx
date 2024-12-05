@@ -7,32 +7,36 @@ import CONFIG from './config';
 export default function DischargePatient({ showModal, setShowModal, patient }) {
     async function handleDischarge() {
         try {
-            const token = localStorage.getItem("token"); // Retrieve token from localStorage
+            const token = localStorage.getItem("token"); 
+            const userRole = localStorage.getItem("role"); 
             const baseUrl = CONFIG.API_URL;
-            
-            if (!token) {
-                alert("Authentication token not found");
+
+            if (!token || !userRole) {
+                alert("Authentication details not found");
                 return;
             }
 
-            const response = await axios.delete(
-                `${baseUrl}/patients/${patient.id}`,
-             // POST body is empty for this request
+            const state = userRole === "HOSPITAL_MANAGER" ? "DISCHARGED" : "TO_BE_DISCHARGED";
+
+            const response = await axios.put(
+                `${baseUrl}/patients/${patient.id}/state`,
+                state, 
                 {
                     headers: {
-                        Authorization: `Bearer ${token}`, // Add the Authorization header
+                        Authorization: `Bearer ${token}`,
+                        'Content-Type': 'text/plain', 
                     },
                 }
             );
 
-            if (response.status === 204) {
-                alert('Patient discharged successfully');
+            if (response.status === 200) {
+                alert('Patient state updated successfully');
                 setShowModal(false);
             } else {
-                alert('Failed to discharge patient');
+                alert('Failed to update patient state');
             }
         } catch (error) {
-            alert('Failed to discharge patient');
+            alert('Failed to update patient state');
             console.error(error);
         }
     }

@@ -7,6 +7,7 @@ import java.util.Optional;
 import org.ies.deti.ua.medisync.model.Medication;
 import org.ies.deti.ua.medisync.model.Notification;
 import org.ies.deti.ua.medisync.model.Nurse;
+import org.ies.deti.ua.medisync.model.Patient;
 import org.ies.deti.ua.medisync.model.PatientWithVitals;
 import org.ies.deti.ua.medisync.model.User;
 import org.ies.deti.ua.medisync.repository.BedRepository;
@@ -64,7 +65,6 @@ public class NotificationService {
     }
 
     public List<Notification> createNotificationsMedicationDue(Long id) {
-
         Optional<Nurse> nurse = nurseService.getNurseById(id);
     
         if (nurse.isEmpty()) {
@@ -102,5 +102,39 @@ public class NotificationService {
     
         return notificationRepository.findByType("MEDICATION_DUE");
     }
+
+
+public List<Notification> createNotificationsDischargePatient(Long hospitalManagerId) {
+
+    Optional<User> hospitalManager = userRepository.findById(hospitalManagerId);
+
+    if (hospitalManager.isEmpty()) {
+        throw new IllegalArgumentException("Hospital Manager with ID " + hospitalManagerId + " not found");
+    }
+
+    List<Patient> patientsToBeDischarged = patientService.getPatientsByState("TO_BE_DISCHARGED");
+
+    for (Patient patient : patientsToBeDischarged) {
+        String expectedDescription = "Patient " + patient.getName() + " is ready to be discharged.";
+
+        boolean notificationExists = notificationRepository.existsByTypeAndDescription(
+            "DISCHARGE",
+            expectedDescription
+        );
+
+        if (!notificationExists) {
+            Notification notification = new Notification();
+            notification.setDate(new Date());
+            notification.setTitle("Patient Discharge Alert");
+            notification.setType("DISCHARGE");
+            notification.setDescription(expectedDescription);
+            notification.setUser(hospitalManager.get());
+            notificationRepository.save(notification);
+        }
+    }
+
+    return notificationRepository.findByType("DISCHARGE");
+}
+
     
 }

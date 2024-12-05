@@ -157,4 +157,21 @@ public class PatientController {
         return ResponseEntity.ok(lastVitals);
     }
 
+    @PutMapping("{id}/state")
+    public ResponseEntity<Patient> updatePatientState(@PathVariable Long id, @RequestBody String state) {
+        if (!state.equals("TO_BE_DISCHARGED")){
+            boolean result = patientService.canBeDischarged(id);
+            if (result == false){
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+            }
+        }
+        else if (state.equals("DISCHARGED")){
+            boolean result = patientService.dischargePatient(id);
+            if (result == false){
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+            }
+        }
+        return ResponseEntity.ok(patientService.getPatientById(id).get());
+    }
+
 }

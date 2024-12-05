@@ -52,6 +52,10 @@ public class NotificationController {
         if (user.getRole().equals("NURSE")) {
             notificationService.createNotificationsMedicationDue(userId);
         }
+
+        if (user.getRole().equals("HOSPITAL_MANAGER")) {
+            notificationService.createNotificationsDischargePatient(userId);
+        }
         List<Notification> notifications = notificationService.getNotificationsByUserId(userId);
         return ResponseEntity.ok(notifications);
     }

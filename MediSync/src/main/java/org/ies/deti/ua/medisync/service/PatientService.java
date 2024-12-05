@@ -162,16 +162,30 @@ public class PatientService {
         return bedRepository.getBedByAssignedPatient(patient);
     }
 
-    public void dischargePatient(Long id) {
-        Patient existingPatient = patientRepository.findById(id).get();
-        existingPatient.setState("DISCHARGE");
-        patientRepository.save(existingPatient);
+    public List<Patient> getPatientsByState(String state) {
+        return patientRepository.findByState(state);
     }
 
-    public void canBeDischarged(Long id) {
+    public boolean dischargePatient(Long id) {
         Patient existingPatient = patientRepository.findById(id).get();
+        if (!existingPatient.getState().equals("TO_BE_DISCHARGED")) {
+            return false;
+        }
+        existingPatient.setState("DISCHARGED");
+        bedRepository.getBedByAssignedPatient(existingPatient).setAssignedPatient(null);
+        bedRepository.getBedByAssignedPatient(existingPatient).setCleaned(false);
+        patientRepository.save(existingPatient);
+        return true;
+    }
+
+    public boolean canBeDischarged(Long id) {
+        Patient existingPatient = patientRepository.findById(id).get();
+        if (!existingPatient.getState().equals("TO_BE_DISCHARGED")) {
+            return false;
+        }
         existingPatient.setState("TO_BE_DISCHARGED");
         patientRepository.save(existingPatient);
+        return true;
     }
 
     public List<Patient> getPatientsFromDoctor(Doctor doctor) {
@@ -358,6 +372,9 @@ public class PatientService {
     public List<Medication> getMedicationsByPatientId(Long patientId) {
         return medicationRepository.findMedicationByPatientId(patientId);
     }
+
+
+    
 
     public Patient addMedication(Long patientId, Medication medication) {
         Optional<Patient> patientOptional = patientRepository.findById(patientId);
