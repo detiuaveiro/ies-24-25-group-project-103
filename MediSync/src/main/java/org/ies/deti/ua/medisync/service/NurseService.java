@@ -333,7 +333,8 @@ public class NurseService {
             for (ScheduleEntry entry : nurse.getSchedule()) {
                 if (entry.getStart_time().isBefore(now) && entry.getEnd_time().isAfter(now)) {
                     for (Room room : entry.getRoom()) {
-                        for (Bed bed : room.getBeds()) {
+                        List<Bed> beds = bedRepository.findBedByRoom(room);
+                        for (Bed bed : beds) {
                             if (bed.getAssignedPatient() != null) {
                                 patients.add(bed.getAssignedPatient());
                             }
