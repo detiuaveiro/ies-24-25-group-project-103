@@ -16,7 +16,6 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
-import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
 @Entity
@@ -37,9 +36,6 @@ public class Room {
     private List<ScheduleEntry> scheduleEntries;
 
 
-    @OneToMany(mappedBy = "room")
-    private List<Bed> beds;
-    
     public Room() {
     }
 
@@ -77,12 +73,5 @@ public class Room {
         this.scheduleEntries = scheduleEntries;
     }
 
-    public List<Bed> getBeds() {
-        return beds;
-    }
-
-    public void setBeds(List<Bed> beds) {
-        this.beds = beds;
-    }
 
 }
