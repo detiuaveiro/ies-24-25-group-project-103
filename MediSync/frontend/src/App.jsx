@@ -39,6 +39,7 @@ function Main() {
   const [o2ModalState, setO2ModalState] = useState([]);
   const [hrModalState, setHrModalState] = useState([]);
   const [tempModalState, setTempModalState] = useState([]);
+  const [scheduledRooms, setScheduledRooms] = useState([]);
 
   const token = localStorage.getItem('token');
   const user = localStorage.getItem('user');
@@ -67,11 +68,22 @@ function Main() {
         });
 
         try {
+          const scheduleResponse = await axiosInstance.get(`/nurses/${nurseId}/schedule`);
           const roomResponse = await axiosInstance.get(`/nurses/${nurseId}/roomswithpatients`);
           const rooms = roomResponse.data;
-          setVitalsData(rooms);
+          const schedules = scheduleResponse.data;
+          const currentDateTime = new Date();
+          const currentSchedule = schedules.find((schedule) => {
+            const startTime = new Date(schedule.start_time);
+            const endTime = new Date(schedule.end_time);
+            return currentDateTime >= startTime && currentDateTime <= endTime;
+          });
+          const assignedRooms = currentSchedule ? currentSchedule.roomsNumbers : [];
+          setScheduledRooms(assignedRooms);
+          const filteredRooms = rooms.filter((room) => assignedRooms.includes(room.roomNumber));
+          setVitalsData(filteredRooms);
 
-          const criticalBpPatients = rooms.flatMap(room =>
+          const criticalBpPatients = filteredRooms.flatMap(room =>
             room.beds
               .filter(bed => bed?.patient?.vitals)
               .map(bed => {
@@ -90,7 +102,7 @@ function Main() {
           );
 
           // Find patients with critical oxygen saturation
-          const criticalO2Patients = rooms.flatMap(room =>
+          const criticalO2Patients = filteredRooms.flatMap(room =>
             room.beds
               .filter(bed => bed?.patient?.vitals)
               .map(bed => {
@@ -109,7 +121,7 @@ function Main() {
           );
 
           // Find patients with critical heart rate
-          const criticalHrPatients = rooms.flatMap(room =>
+          const criticalHrPatients = filteredRooms.flatMap(room =>
             room.beds
               .filter(bed => bed?.patient?.vitals)
               .map(bed => {
@@ -128,7 +140,7 @@ function Main() {
           );
 
           // Find patients with critical temperature
-          const criticalTempPatients = rooms.flatMap(room =>
+          const criticalTempPatients = filteredRooms.flatMap(room =>
             room.beds
               .filter(bed => bed?.patient?.vitals)
               .map(bed => {
