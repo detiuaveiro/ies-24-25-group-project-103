@@ -2,29 +2,34 @@ import { useState, useEffect } from 'react';
 import axios from 'axios';
 import CONFIG from './config';
 
-function NotificationFetcher({ userId, token, interval = 5000 }) {
+function NotificationFetcher({ userId, token, interval = 5000, onUpdateNotificationCount}) {
   const [notifications, setNotifications] = useState([]);
   const [error, setError] = useState(null);
 
 
   useEffect(() => {
-    let isMounted = true; //
+    console.log('userId:', userId, 'token:', token);
+    let isMounted = true;
     const fetchNotifications = async () => {
       if (!userId || !token) return;
-
+      console.log('Fetching notifications...'); 
       const axiosInstance = axios.create({
         baseURL: `${CONFIG.API_URL}`,
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
-
+  
       try {
-        const response = await axiosInstance.get(`/notifications/${userId}`);
+        const response = await axiosInstance.get(`notifications/user/${userId}`);
         if (isMounted) {
           setNotifications(response.data);
           setError(null);
+          console.log('Notifications fetched:', response.data); // Log fetched data
         }
+        if (onUpdateNotificationCount) {
+            onUpdateNotificationCount(response.data.length);
+          }
       } catch (err) {
         if (isMounted) {
           console.error('Error fetching notifications:', err);
@@ -32,29 +37,18 @@ function NotificationFetcher({ userId, token, interval = 5000 }) {
         }
       }
     };
-
+  
     fetchNotifications();
-
-    const intervalId = setInterval(fetchNotifications, 50000);
-
+  
+    const intervalId = setInterval(fetchNotifications, interval);
+  
     return () => {
       isMounted = false;
       clearInterval(intervalId);
     };
   }, [userId, token, interval]);
+  
 
-  return (
-    <div className="notification-fetcher">
-      {error && <p className="error-message">{error}</p>}
-      <ul>
-        {notifications.map((notification, index) => (
-          <li key={index}>
-            <strong>{notification.title}:</strong> {notification.message}
-          </li>
-        ))}
-      </ul>
-    </div>
-  );
 }
 
 export default NotificationFetcher;

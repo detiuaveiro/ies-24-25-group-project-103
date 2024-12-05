@@ -64,6 +64,7 @@ public class NotificationService {
     }
 
     public List<Notification> createNotificationsMedicationDue(Long id) {
+
         Optional<Nurse> nurse = nurseService.getNurseById(id);
     
         if (nurse.isEmpty()) {

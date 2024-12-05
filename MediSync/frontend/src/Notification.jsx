@@ -29,7 +29,7 @@ const Notifications = () => {
       try {
         const response = await axios.get(`${baseUrl}/notifications/user/${userId}`, {
           headers: {
-            Authorization: `Bearer ${token}`, // Attach token to request headers
+            Authorization: `Bearer ${token}`,
           },
         });
         console.log(response.data)
@@ -46,7 +46,6 @@ const Notifications = () => {
     fetchNotifications();
   }, [userId, token, baseUrl]);
 
-  // Delete a single notification by ID
   const deleteNotification = async (id) => {
     try {
       await axios.delete(`http://localhost:8080/api/v1/notifications/${id}`, {
@@ -54,7 +53,6 @@ const Notifications = () => {
           Authorization: `Bearer ${token}`,
         },
       });
-      // Remove the deleted notification from the state
       setNotifications((prev) => prev.filter((notification) => notification.id !== id));
     } catch (err) {
       console.error("Error deleting notification:", err);
@@ -62,7 +60,6 @@ const Notifications = () => {
     }
   };
 
-  // Clear all notifications
   const clearAllNotifications = async () => {
     try {
       const deleteRequests = notifications.map((notification) =>
@@ -72,20 +69,18 @@ const Notifications = () => {
           },
         })
       );
-      await Promise.all(deleteRequests); // Wait for all delete requests to complete
-      setNotifications([]); // Clear the notifications from the state
+      await Promise.all(deleteRequests); 
+      setNotifications([]); 
     } catch (err) {
       console.error("Error clearing notifications:", err);
       setError("Failed to clear notifications.");
     }
   };
 
-  // Loading state
   if (loading) {
     return <div>Loading notifications...</div>;
   }
 
-  // Error state
   if (error) {
     return <div className="error-message">{error}</div>;
   }
@@ -94,7 +89,7 @@ const Notifications = () => {
     <div className="notification-widget-container">
         <h2 className="notification-widget-header">Notifications:</h2>
         {notifications.filter(notification => 
-            ["SCHEDULING", "CLEANPREP", "DISCHARGE"].includes(notification.type)
+            ["MEDICATION_DUE", "CLEANPREP", "DISCHARGE"].includes(notification.type)
         ).length > 0 ? (
             <>
             <div className="notification-widget-button">
@@ -108,7 +103,7 @@ const Notifications = () => {
             <div className="notification-widget-list">
             {notifications
                 .filter(notification => 
-                    ["SCHEDULING", "CLEANPREP", "DISCHARGE"].includes(notification.type)
+                    ["MEDICATION_DUE", "CLEANPREP", "DISCHARGE"].includes(notification.type)
                 )
                 .map(notification => (
                     <div

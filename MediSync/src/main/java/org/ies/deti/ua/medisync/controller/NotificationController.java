@@ -3,7 +3,8 @@ package org.ies.deti.ua.medisync.controller;
 import java.util.List;
 
 import org.ies.deti.ua.medisync.model.Notification;
-import org.ies.deti.ua.medisync.service.NotificationService; // Ensure you have this service created
+import org.ies.deti.ua.medisync.model.User;
+import org.ies.deti.ua.medisync.service.NotificationService; 
 import org.ies.deti.ua.medisync.service.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -44,7 +45,13 @@ public class NotificationController {
 
     @GetMapping("/user/{userId}")
     public ResponseEntity<List<Notification>> getNotificationsByUserId(@PathVariable Long userId) {
-        notificationService.createNotificationsMedicationDue(userId);
+        if (userService.getUserById(userId) == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+        User user = userService.getUserById(userId);
+        if (user.getRole().equals("NURSE")) {
+            notificationService.createNotificationsMedicationDue(userId);
+        }
         List<Notification> notifications = notificationService.getNotificationsByUserId(userId);
         return ResponseEntity.ok(notifications);
     }
