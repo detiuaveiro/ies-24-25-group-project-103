@@ -53,15 +53,12 @@ function Patients() {
         return `Floor ${floor} Room ${room}`;
     };
 
-    // Function to get room number for a patient
     const getPatientRoom = (patientId) => {
         const bed = beds.find(bed => bed.assignedPatient?.id === patientId);
         if (bed) {
-            // Handle both cases where room is an object or just an ID
             if (typeof bed.room === 'object') {
                 return formatRoomNumber(bed.room.roomNumber);
             } else {
-                // Find the first bed with the same room ID that has the full room object
                 const roomBed = beds.find(b => 
                     typeof b.room === 'object' && b.room.id === bed.room
                 );

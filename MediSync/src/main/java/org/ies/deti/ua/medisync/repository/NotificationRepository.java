@@ -11,4 +11,5 @@ import org.springframework.stereotype.Repository;
 public interface NotificationRepository extends JpaRepository<Notification, Long> {
     List<Notification> findByUserId(Long userId);
     List<Notification> findByType(String type);
+    boolean existsByTypeAndDescription(String type, String description);
 }
