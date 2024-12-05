@@ -4,9 +4,7 @@ import java.util.List;
 
 import org.ies.deti.ua.medisync.model.Notification;
 import org.ies.deti.ua.medisync.service.NotificationService; // Ensure you have this service created
-import org.ies.deti.ua.medisync.service.PatientService;
 import org.ies.deti.ua.medisync.service.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -16,6 +14,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
 
 @RestController
 @RequestMapping("/api/v1/notifications")
@@ -45,7 +44,9 @@ public class NotificationController {
 
     @GetMapping("/user/{userId}")
     public ResponseEntity<List<Notification>> getNotificationsByUserId(@PathVariable Long userId) {
+        notificationService.createNotificationsMedicationDue(userId);
         List<Notification> notifications = notificationService.getNotificationsByUserId(userId);
         return ResponseEntity.ok(notifications);
     }
+    
 }

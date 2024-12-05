@@ -331,7 +331,6 @@ public class NurseService {
             LocalDateTime now = LocalDateTime.now(); // Current time
             
             for (ScheduleEntry entry : nurse.getSchedule()) {
-                // Check if the schedule is active now
                 if (entry.getStart_time().isBefore(now) && entry.getEnd_time().isAfter(now)) {
                     for (Room room : entry.getRoom()) {
                         for (Bed bed : room.getBeds()) {

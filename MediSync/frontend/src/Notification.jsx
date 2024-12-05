@@ -14,7 +14,7 @@ const Notifications = () => {
   const userId = user ? user.id : null; // Validate user object
   const token = localStorage.getItem("token"); // Token for Authorization header
   const baseUrl = CONFIG.API_URL;
-
+  console.log(token)
   // Fetch notifications when the component mounts
   useEffect(() => {
     const fetchNotifications = async () => {
@@ -32,6 +32,7 @@ const Notifications = () => {
             Authorization: `Bearer ${token}`, // Attach token to request headers
           },
         });
+        console.log(response.data)
         setNotifications(response.data);
         setError(null);
       } catch (err) {

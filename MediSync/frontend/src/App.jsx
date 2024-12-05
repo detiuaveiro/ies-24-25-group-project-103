@@ -19,6 +19,7 @@ import HeartRateAlert from './HeartRateAlert';
 import TemperatureAlert from './TemperatureAlert';
 import BloodPressureAlert from './BloodPressureAlert';
 import VisitorInstructions from './VisitorInstructions';
+import NotificationFetcher from './NotificationFetcher';
 import CONFIG from './config';
 function App() {
   return (
@@ -223,6 +224,7 @@ return (
 
   {shouldShowHeader ? (
         <div className="app-layout">
+          <NotificationFetcher userId={user.id} token={token} interval={10000} />
           <Header>
             <Routes>
               <Route path="/" element={<Login />} />
