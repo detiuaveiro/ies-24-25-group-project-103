@@ -87,6 +87,7 @@ const Notifications = () => {
           },
         }
       );
+      alert("The bed has been successfully cleaned!");
       deleteNotification(notificationId);
     } catch (err) {
       console.error("Error cleaning bed:", err);
