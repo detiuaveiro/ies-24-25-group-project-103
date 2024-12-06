@@ -11,17 +11,17 @@ export default function DischargePatient({ showModal, setShowModal, patient }) {
             const user = JSON.parse(localStorage.getItem("user"));
             const userRole = user?.role;
             const baseUrl = CONFIG.API_URL;
-
+    
             if (!token || !userRole) {
                 alert("Authentication details not found");
                 return;
             }
-
+    
             const state = userRole === "HOSPITAL_MANAGER" ? "DISCHARGED" : "TO_BE_DISCHARGED";
-
+    
             const response = await axios.put(
                 `${baseUrl}/patients/${patient.id}/state`,
-                state, 
+                { state }, 
                 {
                     headers: {
                         Authorization: `Bearer ${token}`,
@@ -29,7 +29,7 @@ export default function DischargePatient({ showModal, setShowModal, patient }) {
                     },
                 }
             );
-
+    
             if (response.status === 200) {
                 alert('Patient state updated successfully');
                 setShowModal(false);
@@ -41,6 +41,7 @@ export default function DischargePatient({ showModal, setShowModal, patient }) {
             console.error(error);
         }
     }
+    
 
     function handleClose() {
         setShowModal(false);
