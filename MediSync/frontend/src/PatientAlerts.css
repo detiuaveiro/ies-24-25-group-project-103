@@ -14,8 +14,7 @@
   }
   
   .alerts-modal-content {
-    width: 100%;
-    max-width: 1200px;
+    max-width: 1600px;
     background: none;
     border-radius: 8px;
     padding: 20px;

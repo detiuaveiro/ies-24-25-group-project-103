@@ -6,7 +6,6 @@
     width: 90%; /* Adjust width for responsiveness */
     height: 500px;
     max-width: 400px; /* Constrain maximum width */
-    margin: 10px auto; /* Center card with spacing */
     border-radius: 85px;
     box-shadow: 0 4px 15px rgba(0, 188, 212, 0.5); /* Blue shadow */
   }
