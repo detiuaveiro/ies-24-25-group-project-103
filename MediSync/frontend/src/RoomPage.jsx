@@ -72,7 +72,7 @@ const RoomPage = ({ vitalsData }) => {
         return "warning";
 
       case "Temperature":
-        if (value < 36) return "bad";
+        if (value < 35) return "bad";
         if (value <= 37.5) return "good";
         if (value <= 38) return "warning";
         return "bad";
