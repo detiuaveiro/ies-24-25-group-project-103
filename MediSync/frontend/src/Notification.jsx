@@ -14,7 +14,7 @@ const Notifications = () => {
   const userId = user ? user.id : null; // Validate user object
   const token = localStorage.getItem("token"); // Token for Authorization header
   const baseUrl = CONFIG.API_URL;
-  console.log(token)
+
   // Fetch notifications when the component mounts
   useEffect(() => {
     const fetchNotifications = async () => {
@@ -23,8 +23,6 @@ const Notifications = () => {
         setLoading(false);
         return;
       }
-      console.log(userId)
-      console.log(token)
 
       try {
         const response = await axios.get(`${baseUrl}/notifications/user/${userId}`, {
@@ -32,7 +30,6 @@ const Notifications = () => {
             Authorization: `Bearer ${token}`,
           },
         });
-        console.log(response.data)
         setNotifications(response.data);
         setError(null);
       } catch (err) {
@@ -48,7 +45,7 @@ const Notifications = () => {
 
   const deleteNotification = async (id) => {
     try {
-      await axios.delete(`http://localhost:8080/api/v1/notifications/${id}`, {
+      await axios.delete(`${baseUrl}/notifications/${id}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -63,7 +60,7 @@ const Notifications = () => {
   const clearAllNotifications = async () => {
     try {
       const deleteRequests = notifications.map((notification) =>
-        axios.delete(`http://localhost:8080/api/v1/notifications/${notification.id}`, {
+        axios.delete(`${baseUrl}/notifications/${notification.id}`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -75,6 +72,11 @@ const Notifications = () => {
       console.error("Error clearing notifications:", err);
       setError("Failed to clear notifications.");
     }
+  };
+
+  const viewPatient = (patientId) => {
+    // Navigate to the patient details page (you can integrate routing here)
+    window.location.href = `/patients/${patientId}`;
   };
 
   if (loading) {
@@ -116,27 +118,37 @@ const Notifications = () => {
                                     : "info"
                         }`}
                     >
-                        <div className="notification-widget-header-content">
-                            <h3>
-                                <span>
-                                    {notification.type === "CLEANPREP"
-                                        ? "🧹"
-                                        : notification.type === "DISCHARGE"
-                                            ? "🚪"
-                                            : "ℹ️"}
-                                </span>
-                                {notification.title}
-                            </h3>
-                            <button
-                                className="notification-widget-close-btn"
-                                onClick={() => deleteNotification(notification.id)}
-                            >
-                                ✖
-                            </button>
-                        </div>
+                              <div className="notification-widget-header-content">
+                                  <h3>
+                                      <span>
+                                          {notification.type === "CLEANPREP"
+                                              ? "🧹"
+                                              : notification.type === "DISCHARGE"
+                                                  ? "🚪"
+                                                  : "ℹ️"}
+                                      </span>
+                                      {notification.title}
+                                  </h3>
+                                  <button
+                                      className="notification-widget-close-btn" style={{width: "20px", height: "20px"}}
+                                      onClick={() => deleteNotification(notification.id)}
+                                  >
+                                      ✖
+                                  </button>
+                              </div>
+
                         <p className="notification-widget-card-description">
                             {notification.description}
                         </p>
+                        {notification.patientId && (
+                                      <button
+                                          className="notification-widget-view-patient-btn"
+                                          onClick={() => viewPatient(notification.patientId)}
+                                          style={{width: "300px", height: "50px", alignContent: "right", justifyContent: "right", alignItems: "right"}}
+                                      >
+                                          View Patient
+                                      </button>
+                                  )}
                     </div>
                 ))}
             </div>

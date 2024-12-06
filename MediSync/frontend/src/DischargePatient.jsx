@@ -8,7 +8,8 @@ export default function DischargePatient({ showModal, setShowModal, patient }) {
     async function handleDischarge() {
         try {
             const token = localStorage.getItem("token"); 
-            const userRole = localStorage.getItem("role"); 
+            const user = JSON.parse(localStorage.getItem("user"));
+            const userRole = user?.role;
             const baseUrl = CONFIG.API_URL;
 
             if (!token || !userRole) {
@@ -24,7 +25,7 @@ export default function DischargePatient({ showModal, setShowModal, patient }) {
                 {
                     headers: {
                         Authorization: `Bearer ${token}`,
-                        'Content-Type': 'text/plain', 
+                        'Content-Type': 'application/json',
                     },
                 }
             );

@@ -59,7 +59,7 @@ public class Patient {
     @JoinColumn(name = "doctor_id")
     private Doctor assignedDoctor;
 
-    @Column(name = "discharged")
+    @Column(name = "state")
     private String state = "IN_BED";
 
     

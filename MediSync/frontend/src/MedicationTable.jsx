@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import axios from "axios";
-
+import CONFIG from "./config";
 import styles from "./MedicationTable.module.css"; 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import UpdateMedication from "./UpdateMedication";

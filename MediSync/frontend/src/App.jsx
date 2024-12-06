@@ -231,7 +231,7 @@ return (
           <NotificationFetcher
             userId={userId}
             token={token}
-            interval={1000}
+            interval={30000}
             onUpdateNotificationCount={setNotificationCount}
           />
             <Header numNotifications={notificationCount}>

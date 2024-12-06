@@ -158,20 +158,34 @@ public class PatientController {
     }
 
     @PutMapping("{id}/state")
-    public ResponseEntity<Patient> updatePatientState(@PathVariable Long id, @RequestBody String state) {
-        if (!state.equals("TO_BE_DISCHARGED")){
-            boolean result = patientService.canBeDischarged(id);
-            if (result == false){
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
-            }
+    public ResponseEntity<Patient> updatePatientState(@PathVariable Long id, @RequestBody Map<String, String> request) {
+        String state = request.get("state");
+        if (state == null) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
         }
-        else if (state.equals("DISCHARGED")){
-            boolean result = patientService.dischargePatient(id);
-            if (result == false){
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
-            }
+    
+        boolean result = false;
+    
+        if ("TO_BE_DISCHARGED".equals(state)) {
+            result = patientService.canBeDischarged(id);
+        } else if ("DISCHARGED".equals(state)) {
+            result = patientService.dischargePatient(id);
+        } else {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
-        return ResponseEntity.ok(patientService.getPatientById(id).get());
+    
+        if (!result) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }
+    
+        // Return the updated patient object
+        Optional<Patient> updatedPatient = patientService.getPatientById(id);
+        if (updatedPatient.isPresent()) {
+            return ResponseEntity.ok(updatedPatient.get());
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
     }
+    
 
 }

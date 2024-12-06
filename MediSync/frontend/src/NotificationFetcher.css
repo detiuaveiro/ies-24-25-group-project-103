@@ -1,0 +1,33 @@
+.notification-popup {
+    position: fixed;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #4caf50; 
+    color: white; 
+    padding: 10px 20px;
+    border-radius: 5px;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    font-size: 16px;
+    z-index: 1000;
+    animation: slide-down 0.3s ease-out, fade-out 0.3s ease-out 4.7s;
+  }
+  
+  @keyframes slide-down {
+    from {
+      top: -50px;
+    }
+    to {
+      top: 0;
+    }
+  }
+  
+  @keyframes fade-out {
+    from {
+      opacity: 1;
+    }
+    to {
+      opacity: 0;
+    }
+  }
+  

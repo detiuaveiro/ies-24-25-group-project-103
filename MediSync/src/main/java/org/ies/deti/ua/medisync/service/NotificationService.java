@@ -95,6 +95,7 @@ public class NotificationService {
                     notification.setUser(user.get());
                     notification.setType("MEDICATION_DUE");
                     notification.setDescription(expectedDescription);
+                    notification.setPatientId(patient.getPatient().getId());
                     notificationRepository.save(notification);
                 }
             }
@@ -129,6 +130,7 @@ public List<Notification> createNotificationsDischargePatient(Long hospitalManag
             notification.setType("DISCHARGE");
             notification.setDescription(expectedDescription);
             notification.setUser(hospitalManager.get());
+            notification.setPatientId(patient.getId());
             notificationRepository.save(notification);
         }
     }

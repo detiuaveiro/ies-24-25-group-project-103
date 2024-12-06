@@ -34,6 +34,7 @@ import com.influxdb.query.FluxRecord;
 import com.influxdb.query.FluxTable;
 
 import jakarta.annotation.PostConstruct;
+import jakarta.transaction.Transactional;
 
 @Service
 public class PatientService {
@@ -166,27 +167,51 @@ public class PatientService {
         return patientRepository.findByState(state);
     }
 
+    @Transactional
     public boolean dischargePatient(Long id) {
-        Patient existingPatient = patientRepository.findById(id).get();
-        if (!existingPatient.getState().equals("TO_BE_DISCHARGED")) {
-            return false;
+        // Fetch patient safely using Optional
+        Optional<Patient> optionalPatient = patientRepository.findById(id);
+        if (optionalPatient.isEmpty()) {
+            return false; // Patient does not exist
         }
-        existingPatient.setState("DISCHARGED");
-        bedRepository.getBedByAssignedPatient(existingPatient).setAssignedPatient(null);
-        bedRepository.getBedByAssignedPatient(existingPatient).setCleaned(false);
-        patientRepository.save(existingPatient);
-        return true;
+    
+        Patient existingPatient = optionalPatient.get();
+    
+        if ("TO_BE_DISCHARGED".equals(existingPatient.getState())) {
+            existingPatient.setState("DISCHARGED");
+    
+            Bed bed = bedRepository.getBedByAssignedPatient(existingPatient);
+            if (bed != null) {
+                bed.setAssignedPatient(null);
+                bed.setCleaned(false); 
+                bedRepository.save(bed);
+            }
+    
+            patientRepository.saveAndFlush(existingPatient);
+            return true;
+        }
+    
+        return false; 
     }
-
+    
+    @Transactional
     public boolean canBeDischarged(Long id) {
-        Patient existingPatient = patientRepository.findById(id).get();
-        if (!existingPatient.getState().equals("TO_BE_DISCHARGED")) {
-            return false;
+        Optional<Patient> optionalPatient = patientRepository.findById(id);
+        if (optionalPatient.isEmpty()) {
+            return false; 
         }
-        existingPatient.setState("TO_BE_DISCHARGED");
-        patientRepository.save(existingPatient);
-        return true;
+    
+        Patient existingPatient = optionalPatient.get();
+    
+        if ("IN_BED".equals(existingPatient.getState())) {
+            existingPatient.setState("TO_BE_DISCHARGED");
+            patientRepository.saveAndFlush(existingPatient); 
+            return true;
+        }
+    
+        return false; 
     }
+    
 
     public List<Patient> getPatientsFromDoctor(Doctor doctor) {
         return patientRepository.findByAssignedDoctor(doctor);
