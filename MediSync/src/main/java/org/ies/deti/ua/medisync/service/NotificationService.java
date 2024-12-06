@@ -1,14 +1,17 @@
 package org.ies.deti.ua.medisync.service;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
+import org.ies.deti.ua.medisync.model.Bed;
 import org.ies.deti.ua.medisync.model.Medication;
 import org.ies.deti.ua.medisync.model.Notification;
 import org.ies.deti.ua.medisync.model.Nurse;
 import org.ies.deti.ua.medisync.model.Patient;
 import org.ies.deti.ua.medisync.model.PatientWithVitals;
+import org.ies.deti.ua.medisync.model.Room;
 import org.ies.deti.ua.medisync.model.User;
 import org.ies.deti.ua.medisync.repository.BedRepository;
 import org.ies.deti.ua.medisync.repository.NotificationRepository;
@@ -137,6 +140,63 @@ public List<Notification> createNotificationsDischargePatient(Long hospitalManag
 
     return notificationRepository.findByType("DISCHARGE");
 }
+public List<Notification> createNotificationsForUncleanBeds(Long nurseId) {
+    Optional<Nurse> nurseOpt = nurseService.getNurseById(nurseId);
+    if (nurseOpt.isEmpty()) {
+        throw new IllegalArgumentException("Nurse with ID " + nurseId + " not found");
+    }
+    Nurse nurse = nurseOpt.get();
 
-    
+    List<Room> scheduledRooms = nurseService.getRoomsByNurseId(nurse);
+
+    if (scheduledRooms.isEmpty()) {
+        return notificationRepository.findByType("CLEANPREP"); 
+    }
+
+    List<Bed> uncleanBeds = new ArrayList<>();
+    for (Room room : scheduledRooms) {
+        List<Bed> beds = bedRepository.findBedByRoomAndCleaned(room, false);
+        uncleanBeds.addAll(beds);
+    }
+
+    if (uncleanBeds.isEmpty()) {
+        return notificationRepository.findByType("CLEANPREP");
+    }
+
+    for (Bed bed : uncleanBeds) {
+        String bedNumber = bed.getBedNumber();
+        char floor = bedNumber.charAt(0);
+        char roomNumber = bedNumber.charAt(1);
+        char bedInRoom = bedNumber.charAt(2);
+        String expectedDescription = String.format(
+            "Clean and prepare bed %s in room %s on floor %s",
+            bedInRoom,
+            roomNumber,
+            floor
+        );
+
+        boolean notificationExists = notificationRepository.existsByTypeAndDescription(
+            "CLEANPREP",
+            expectedDescription
+        );
+
+        if (!notificationExists) {
+            Notification notification = new Notification();
+            notification.setDate(new Date());
+            notification.setTitle("Clean and Prepare Bed!");
+            Optional<User> userOpt = userRepository.findById(nurse.getId());
+            if (userOpt.isEmpty()) {
+                throw new IllegalArgumentException("User associated with Nurse ID " + nurseId + " not found");
+            }
+            notification.setUser(userOpt.get());
+            notification.setType("CLEANPREP");
+            notification.setDescription(expectedDescription);
+            notification.setBedId(bed.getId());
+            notificationRepository.save(notification);
+        }
+    }
+
+    return notificationRepository.findByType("CLEANPREP");
+    }
+
 }

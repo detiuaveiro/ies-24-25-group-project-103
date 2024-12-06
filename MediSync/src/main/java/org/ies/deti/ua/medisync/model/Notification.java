@@ -47,6 +47,9 @@ public class Notification {
     @Column(name = "patient_id", nullable = true)
     private Long patientId;
 
+    @Column(name = "bed_id", nullable = true)
+    private Long bedId;
+
     public Notification() {}
 
     public Notification(String title, String description, Date date, User user, String type) {
@@ -111,6 +114,14 @@ public class Notification {
 
     public void setPatientId(Long patientId) {
         this.patientId = patientId;
+    }
+
+    public Long getBedId() {
+        return bedId;
+    }
+
+    public void setBedId(Long bedId) {
+        this.bedId = bedId;
     }
 
     @Override

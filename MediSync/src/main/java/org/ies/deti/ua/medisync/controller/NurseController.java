@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.ies.deti.ua.medisync.dto.RoomWithPatientsDTO;
+import org.ies.deti.ua.medisync.model.Bed;
 import org.ies.deti.ua.medisync.model.Nurse;
 import org.ies.deti.ua.medisync.model.PatientWithVitals;
 import org.ies.deti.ua.medisync.model.Room;
@@ -160,5 +161,11 @@ public class NurseController {
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
+    }
+
+    @PutMapping("/clean/{bedId}") 
+    public ResponseEntity<Bed> cleanBed(@PathVariable Long bedId) {
+        Optional<Bed> bed = nurseService.cleanBed(bedId);
+        return bed.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 }

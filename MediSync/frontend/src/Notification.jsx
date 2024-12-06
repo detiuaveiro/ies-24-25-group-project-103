@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import "./Notification.css"; // Ensure you have the corresponding CSS file for styling.
+import "./Notification.css"; 
 
 import CONFIG from './config';
 
@@ -9,13 +9,11 @@ const Notifications = () => {
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // Retrieve user and token from localStorage
   const user = JSON.parse(localStorage.getItem("user")); 
-  const userId = user ? user.id : null; // Validate user object
-  const token = localStorage.getItem("token"); // Token for Authorization header
+  const userId = user ? user.id : null; 
+  const token = localStorage.getItem("token"); 
   const baseUrl = CONFIG.API_URL;
 
-  // Fetch notifications when the component mounts
   useEffect(() => {
     const fetchNotifications = async () => {
       if (!userId) {
@@ -75,9 +73,25 @@ const Notifications = () => {
   };
 
   const viewPatient = (patientId) => {
-    // Navigate to the patient details page (you can integrate routing here)
     window.location.href = `/patients/${patientId}`;
   };
+
+  const cleanBed = async (notificationId, bedId) => {
+    try {
+      await axios.put(
+        `${baseUrl}/nurses/clean/${bedId}`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      deleteNotification(notificationId);
+    } catch (err) {
+      console.error("Error cleaning bed:", err);
+    }
+  }
 
   if (loading) {
     return <div>Loading notifications...</div>;
@@ -149,6 +163,15 @@ const Notifications = () => {
                                           View Patient
                                       </button>
                                   )}
+                        {notification.bedId && (                                     
+                            <button
+                            className="notification-widget-view-patient-btn"
+                            onClick={() => cleanBed(notification.id, notification.bedId)}
+                            style={{width: "300px", height: "50px", alignContent: "right", justifyContent: "right", alignItems: "right", color: "white", backgroundColor: "#4CAF50"}}
+                        >
+                            I've cleaned this bed
+                        </button>
+                        )}
                     </div>
                 ))}
             </div>

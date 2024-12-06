@@ -51,6 +51,7 @@ public class NotificationController {
         User user = userService.getUserById(userId);
         if (user.getRole().equals("NURSE")) {
             notificationService.createNotificationsMedicationDue(userId);
+            notificationService.createNotificationsForUncleanBeds(userId);
         }
 
         if (user.getRole().equals("HOSPITAL_MANAGER")) {

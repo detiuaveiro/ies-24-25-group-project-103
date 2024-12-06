@@ -345,5 +345,15 @@ public class NurseService {
         }
         return patients;
     }
-    
+
+    public Optional<Bed> cleanBed(Long bedId) {
+        Optional<Bed> bedOptional = bedRepository.findById(bedId);
+        if (bedOptional.isPresent()) {
+            Bed bed = bedOptional.get();
+            bed.setAssignedPatient(null);
+            bed.setCleaned(true);
+            bedRepository.save(bed);
+        }
+        return bedOptional;
+    }   
 }
