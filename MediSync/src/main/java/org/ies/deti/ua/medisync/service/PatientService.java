@@ -1,5 +1,6 @@
 package org.ies.deti.ua.medisync.service;
 
+import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -33,6 +34,7 @@ import com.influxdb.query.FluxRecord;
 import com.influxdb.query.FluxTable;
 
 import jakarta.annotation.PostConstruct;
+import jakarta.transaction.Transactional;
 
 @Service
 public class PatientService {
@@ -152,7 +154,7 @@ public class PatientService {
             existingPatient.setConditions(updatedPatient.getConditions());
             existingPatient.setObservations(updatedPatient.getObservations());
             existingPatient.setAssignedDoctor(updatedPatient.getAssignedDoctor());
-            existingPatient.setDischarged(updatedPatient.isDischarged());
+            existingPatient.setState(updatedPatient.getState());
             return patientRepository.save(existingPatient);
         }).orElseThrow(() -> new RuntimeException("Patient not found with id: " + id));
     }
@@ -161,11 +163,55 @@ public class PatientService {
         return bedRepository.getBedByAssignedPatient(patient);
     }
 
-    public void dischargePatient(Long id) {
-        Patient existingPatient = patientRepository.findById(id).get();
-        existingPatient.setDischarged(true);
-        patientRepository.save(existingPatient);
+    public List<Patient> getPatientsByState(String state) {
+        return patientRepository.findByState(state);
     }
+
+    @Transactional
+    public boolean dischargePatient(Long id) {
+        // Fetch patient safely using Optional
+        Optional<Patient> optionalPatient = patientRepository.findById(id);
+        if (optionalPatient.isEmpty()) {
+            return false; // Patient does not exist
+        }
+    
+        Patient existingPatient = optionalPatient.get();
+    
+        if ("TO_BE_DISCHARGED".equals(existingPatient.getState())) {
+            existingPatient.setState("DISCHARGED");
+    
+            Bed bed = bedRepository.getBedByAssignedPatient(existingPatient);
+            if (bed != null) {
+                bed.setAssignedPatient(null);
+                bed.setCleaned(false); 
+                bedRepository.save(bed);
+            }
+    
+            patientRepository.saveAndFlush(existingPatient);
+            return true;
+        }
+    
+        return false; 
+    }
+    
+    @Transactional
+    public boolean canBeDischarged(Long id) {
+        Optional<Patient> optionalPatient = patientRepository.findById(id);
+        if (optionalPatient.isEmpty()) {
+            return false; 
+        }
+    
+        Patient existingPatient = optionalPatient.get();
+    
+        if ("IN_BED".equals(existingPatient.getState())) {
+            existingPatient.setState("TO_BE_DISCHARGED");
+            patientRepository.saveAndFlush(existingPatient); 
+            return true;
+        }
+    
+        return false; 
+    }
+    
 
     public List<Patient> getPatientsFromDoctor(Doctor doctor) {
         return patientRepository.findByAssignedDoctor(doctor);
@@ -352,6 +398,9 @@ public class PatientService {
         return medicationRepository.findMedicationByPatientId(patientId);
     }
 
+
+    
+
     public Patient addMedication(Long patientId, Medication medication) {
         Optional<Patient> patientOptional = patientRepository.findById(patientId);
         if (patientOptional.isPresent()) {
@@ -395,4 +444,24 @@ public class PatientService {
             influxDBClient.close();
         }
     }
+
+    public List<Medication> getDueMedications(Long patientId) {
+        List<Medication> medicationList = medicationRepository.findMedicationByPatientId(patientId);
+    
+        long currentTimeMillis = System.currentTimeMillis();
+    
+        return medicationList.stream()
+                .filter(medication -> {
+                    try {
+                        int hourInterval = Integer.parseInt(medication.getHourInterval());
+                        long nextDueTime = medication.getLastTaken().toInstant(ZoneOffset.UTC).toEpochMilli() + (hourInterval * 3600000L); 
+                        return currentTimeMillis >= nextDueTime && !medication.isHasTaken();
+                    } catch (NumberFormatException e) {
+                        System.err.println("Invalid hourInterval for medication ID: " + medication.getId());
+                        return false;
+                    }
+                })
+                .collect(Collectors.toList());
+    }
+    
 }

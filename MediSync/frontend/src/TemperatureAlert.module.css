@@ -1,0 +1,76 @@
+.temperatureCard {
+    background-color: #fffbcc; /* Brighter yellow background */
+    color: #000; /* Black text for contrast */
+    text-align: center;
+    padding: 30px;
+    width: 100%;
+    max-width: 400px;
+    height: 550px;
+    border-radius: 85px;
+    box-shadow: 0 4px 15px rgba(255, 200, 50, 0.6); /* Stronger yellow glow */
+  }
+  
+  .alertText {
+    color: #ffc107; /* Brighter yellow text */
+    text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
+    font-family: 'Karantina', cursive;
+    font-size: 10rem;
+    line-height: 1.2;
+    margin-top: -40px;
+  }
+  
+  .alertText .celsius {
+    font-family: 'Karantina', cursive;
+    font-size: 0.6em;
+    color: #ffb400; 
+  }
+  
+  .temperatureIcon {
+    color: #e8cc5f !important;
+    margin-top: 10px;
+    width: 150px;
+    height: 180px;
+    margin-bottom: 10px;
+  }
+  
+  .patientInfo {
+    font-size: 1.2rem;
+    color: #4a4a4a; /* Neutral gray for contrast */
+    text-transform: uppercase;
+    text-align: center;
+  }
+  
+  .patientStatus {
+    font-family: 'Kanit', sans-serif;
+    font-size: 1.2rem;
+    color: #ffa000; /* Deeper yellow for emphasis */
+    margin-bottom: 0.5rem;
+  }
+  
+  .patientName {
+    font-family: 'Kanit', sans-serif;
+    font-size: 1.4rem;
+    color: #ff8c00; /* Vibrant orange-yellow for visibility */
+    margin-bottom: 0.5rem;
+  }
+  
+  .patientRoom {
+    font-family: 'Kanit', sans-serif;
+    font-size: 1.2rem;
+    color: #ff8c00;
+    font-weight: bold;
+  }
+  
+  /* Responsive styling */
+  @media (max-width: 576px) {
+    .temperatureCard {
+      padding: 20px;
+    }
+    .alertText {
+      font-size: 3rem;
+    }
+    .patientInfo {
+      font-size: 1rem;
+    }
+  }
+  

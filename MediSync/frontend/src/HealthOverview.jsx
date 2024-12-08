@@ -88,11 +88,20 @@ function HealthOverview() {
                         <div className={styles.leftColumn}>
                             <div className={styles.patientInfo}>
                                 <PatientInfo patient={patient} />
-                            </div>
+                                </div>
                             <div className={styles.heightAndBMIRow}>
                                 <HeightBox patient={patient} />
                                 <BMI patient={patient} />
+
                             </div>
+                            <div onClick={handleDischargeClick}>
+                            <DischargePatientButton />
+                            </div>
+                            <DischargePatient 
+                                showModal={showDischargeModal} 
+                                setShowModal={setShowDischargeModal} 
+                                patient={patient} 
+                            /> 
                         </div>
 
                         <div className={styles.rightColumn}>

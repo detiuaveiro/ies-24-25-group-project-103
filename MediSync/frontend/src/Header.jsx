@@ -7,7 +7,7 @@ import axios from 'axios';
 import EventNoteIcon from '@mui/icons-material/EventNote';
 import CONFIG from './config';
 
-function Header({ children }) {
+function Header({ children, numNotifications }) {
     const [profileImage, setProfileImage] = useState(null);
     const [isMenuOpen, setIsMenuOpen] = useState(false); // State to manage mobile menu
     const role = localStorage.getItem('userRole');
@@ -118,7 +118,7 @@ function Header({ children }) {
                         <div className={styles.alertButton}>
                             <FontAwesomeIcon icon={faComment} size="2x" />
                             <span className={styles.btnText}> Alerts</span>
-                            <span className={styles.notificationBadge}>2</span>
+                            <span className={styles.notificationBadge}>{numNotifications}</span>
                         </div>
                     </Link>
                     ) : null}

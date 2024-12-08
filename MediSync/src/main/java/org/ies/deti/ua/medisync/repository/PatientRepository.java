@@ -12,4 +12,5 @@ public interface PatientRepository extends JpaRepository<Patient, Long> {
     // Additional query methods can be defined here if needed
     List<Patient> findByAssignedDoctor(Doctor doctor);
     Patient findPatientById(Long id);
+    List<Patient> findByState(String state);
 }

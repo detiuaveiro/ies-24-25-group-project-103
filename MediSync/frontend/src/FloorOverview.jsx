@@ -14,6 +14,8 @@ function FloorOverview() {
     const [showPatientsModal, setShowPatientsModal] = useState(false);
     const [showStaffModal, setShowStaffModal] = useState(false);
     const baseUrl = CONFIG.API_URL;
+    const [isLoading, setIsLoading] = useState(true);
+    const [error, setError] = useState(null);
 
     useEffect(() => {
         const fetchBeds = async () => {
