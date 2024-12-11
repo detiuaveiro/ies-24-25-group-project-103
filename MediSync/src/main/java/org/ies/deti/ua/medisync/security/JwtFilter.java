@@ -32,7 +32,7 @@ public class JwtFilter extends OncePerRequestFilter {
 
         boolean shouldNotFilter = path.startsWith("/api/v1/visitors") || 
         path.equals("/api/v1/auth/login") || 
-        (path.equals("/api/v1/users") && method.equals("POST")) || 
+        (path.equals("/api/v1/hospital") && method.equals("POST")) ||
         method.equals("OPTIONS");
         System.out.println("Request URI: " + path);
         System.out.println("Method: " + method);
