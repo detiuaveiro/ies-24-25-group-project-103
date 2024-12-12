@@ -9,14 +9,13 @@ import CONFIG from './config';
 
 function Header({ children, numNotifications }) {
     const [profileImage, setProfileImage] = useState(null);
-    const [isMenuOpen, setIsMenuOpen] = useState(false); // State to manage mobile menu
+    const [isMenuOpen, setIsMenuOpen] = useState(false); 
     const role = localStorage.getItem('userRole');
     const name = JSON.parse(localStorage.getItem('user')).name || 'Visitor';
     const userStr = localStorage.getItem('user');
     const user = userStr ? JSON.parse(userStr) : null;
     const imageUrl = user?.profilePictureUrl;
-    const baseUrl = CONFIG.API_URL;
-    const fullImageUrl = imageUrl ? `${baseUrl}/uploads/${imageUrl}` : null;
+    const fullImageUrl = imageUrl?.startsWith('http') ? imageUrl : `${baseUrl}/uploads/${imageUrl}`;    
     const token = localStorage.getItem('token');
 
     useEffect(() => {
@@ -29,14 +28,22 @@ function Header({ children, numNotifications }) {
                     },
                 });
                 const blob = response.data;
-                setProfileImage(URL.createObjectURL(blob)); // Convert the Blob to a local URL
+                setProfileImage(URL.createObjectURL(blob)); 
             } catch (error) {
                 console.error('Error fetching profile image:', error.response ? error.response.data : error.message);
+                if (role === 'DOCTOR') {
+                    setProfileImage('/media/doctor.png');
+                } else if (role === 'NURSE') {
+                    setProfileImage('/media/nurse.png');
+                } else if (role === 'HOSPITAL_MANAGER') {
+                    setProfileImage('/media/manager.jpg');
+                }
             }
         };
 
         fetchProfileImage();
-    }, [fullImageUrl, token]);
+    }, [fullImageUrl, token, role]);
+
 
     const toggleMenu = () => {
         console.log('Menu toggle clicked, current state:', isMenuOpen);

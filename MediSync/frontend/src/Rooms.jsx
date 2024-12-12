@@ -106,7 +106,12 @@ function Rooms() {
                                 <td>{`${room.currentPatients}/4`}</td>
                                 <td>{`${room.currentStaff}/8`}</td>
                                 <td>
-                                    <button className={styles.moreInfoButton}>
+                                    <button className={styles.moreInfoButton}
+                                        onClick={() => 
+                                            navigate('/patients', {
+                                                state: { info: `Floor ${getFloor(room.roomNumber)} Room ${getRoomNumber(room.roomNumber)}` }
+                                            })
+                                        }>
                                         More Information <FontAwesomeIcon icon={faBed} />
                                     </button>
                                 </td>
