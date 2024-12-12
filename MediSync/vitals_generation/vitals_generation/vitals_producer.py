@@ -40,7 +40,8 @@ for i in range(1, nBeds + 1):
         "oxygen_saturation": {"in_distress": False, "duration": 0},
         "blood_pressure_systolic": {"in_distress": False, "duration": 0},
         "blood_pressure_diastolic": {"in_distress": False, "duration": 0},
-        "temperature": {"in_distress": False, "duration": 0}
+        "temperature": {"in_distress": False, "duration": 0},
+        "dying": False  # Added field to track if the patient is dying
     }
 
 
@@ -62,57 +63,52 @@ def enforce_hard_limits(value, hard_min, hard_max):
 
 while True:
     for i in range(1, nBeds + 1):
-        for vital, ranges in NORMAL_RANGES.items():
-            vital_state = distressState[i][vital]
-
-            if vital_state["in_distress"]:
-                vital_state["duration"] += 1
-
-                if vital == "heart_rate":
-                    curVitals[i]["heart_rate"] += random.randint(-15, 15)
-                    curVitals[i]["heart_rate"] = enforce_hard_limits(
-                        curVitals[i]["heart_rate"], HARD_LIMITS["heart_rate"][0], HARD_LIMITS["heart_rate"][1])
-
-                elif vital == "oxygen_saturation":
-                    curVitals[i]["oxygen_saturation"] += random.randint(-3, 0)
-                    curVitals[i]["oxygen_saturation"] = enforce_hard_limits(
-                        curVitals[i]["oxygen_saturation"], HARD_LIMITS["oxygen_saturation"][0], HARD_LIMITS["oxygen_saturation"][1])
-
-                elif vital == "blood_pressure_systolic":
-                    curVitals[i]["blood_pressure"][0] += random.randint(-20, 20)
-                    curVitals[i]["blood_pressure"][0] = enforce_hard_limits(
-                        curVitals[i]["blood_pressure"][0], HARD_LIMITS["blood_pressure_systolic"][0], HARD_LIMITS["blood_pressure_systolic"][1])
-
-                elif vital == "blood_pressure_diastolic":
-                    curVitals[i]["blood_pressure"][1] += random.randint(-10, 10)
-                    curVitals[i]["blood_pressure"][1] = enforce_hard_limits(
-                        curVitals[i]["blood_pressure"][1], HARD_LIMITS["blood_pressure_diastolic"][0], HARD_LIMITS["blood_pressure_diastolic"][1])
-
-                elif vital == "temperature":
-                    curVitals[i]["temperature"] += random.uniform(-1.0, 1.0)
-                    curVitals[i]["temperature"] = enforce_hard_limits(
-                        curVitals[i]["temperature"], HARD_LIMITS["temperature"][0], HARD_LIMITS["temperature"][1])
-
-                if vital_state["duration"] > random.randint(10, 30):
-                    vital_state["in_distress"] = False
-                    vital_state["duration"] = 0
-
-            else:
-                if random.random() < 0.005: 
-                    vital_state["in_distress"] = True
-
+        patient_state = distressState[i]
+        
+        if patient_state["dying"]:
+            # Rapid deterioration of vitals
+            curVitals[i]["heart_rate"] = max(HARD_LIMITS["heart_rate"][0] - 1, curVitals[i]["heart_rate"] - random.randint(5, 15))
+            curVitals[i]["oxygen_saturation"] = max(HARD_LIMITS["oxygen_saturation"][0] - 1, curVitals[i]["oxygen_saturation"] - random.randint(1, 5))
+            curVitals[i]["blood_pressure"][0] = max(HARD_LIMITS["blood_pressure_systolic"][0] - 1, curVitals[i]["blood_pressure"][0] - random.randint(5, 10))
+            curVitals[i]["blood_pressure"][1] = max(HARD_LIMITS["blood_pressure_diastolic"][0] - 1, curVitals[i]["blood_pressure"][1] - random.randint(5, 10))
+            curVitals[i]["temperature"] = max(HARD_LIMITS["temperature"][0] - 0.1, curVitals[i]["temperature"] - random.uniform(0.5, 1.0))
+            
+            if (curVitals[i]["heart_rate"] <= HARD_LIMITS["heart_rate"][0] or
+                curVitals[i]["oxygen_saturation"] <= HARD_LIMITS["oxygen_saturation"][0] or
+                curVitals[i]["blood_pressure"][0] <= HARD_LIMITS["blood_pressure_systolic"][0] or
+                curVitals[i]["blood_pressure"][1] <= HARD_LIMITS["blood_pressure_diastolic"][0] or
+                curVitals[i]["temperature"] <= HARD_LIMITS["temperature"][0]):
+                print(f"Patient in bed {i} has died.")
+                continue  # Skip sending data for a dead patient
+        
+        else:
+            for vital, ranges in NORMAL_RANGES.items():
+                vital_state = patient_state[vital]
+                
+                if vital_state["in_distress"]:
+                    vital_state["duration"] += 1
+                    if vital_state["duration"] > random.randint(10, 30):
+                        vital_state["in_distress"] = False
+                        vital_state["duration"] = 0
+                else:
+                    if random.random() < 0.000001:  # 0.0001% chance the patient enters a dying state
+                        patient_state["dying"] = True
+                    if random.random() < 0.005: 
+                        vital_state["in_distress"] = True
+                    
+                # Update vitals normally
                 if vital == "heart_rate":
                     curVitals[i]["heart_rate"] = bounded_random_walk(
-                        curVitals[i]["heart_rate"], ranges[0], ranges[1])
+                        curVitals[i]["heart_rate"], ranges[0], ranges[1], max_variation=1)
                 elif vital == "oxygen_saturation":
                     curVitals[i]["oxygen_saturation"] = bounded_random_walk(
                         curVitals[i]["oxygen_saturation"], ranges[0], ranges[1], max_variation=1)
                 elif vital == "blood_pressure_systolic":
                     curVitals[i]["blood_pressure"][0] = bounded_random_walk(
-                        curVitals[i]["blood_pressure"][0], NORMAL_RANGES["blood_pressure_systolic"][0], NORMAL_RANGES["blood_pressure_systolic"][1])
+                        curVitals[i]["blood_pressure"][0], NORMAL_RANGES["blood_pressure_systolic"][0], NORMAL_RANGES["blood_pressure_systolic"][1], max_variation=2)
                 elif vital == "blood_pressure_diastolic":
                     curVitals[i]["blood_pressure"][1] = bounded_random_walk(
-                        curVitals[i]["blood_pressure"][1], NORMAL_RANGES["blood_pressure_diastolic"][0], NORMAL_RANGES["blood_pressure_diastolic"][1])
+                        curVitals[i]["blood_pressure"][1], NORMAL_RANGES["blood_pressure_diastolic"][0], NORMAL_RANGES["blood_pressure_diastolic"][1], max_variation=2)
                 elif vital == "temperature":
                     curVitals[i]["temperature"] = bounded_random_walk(
                         curVitals[i]["temperature"], ranges[0], ranges[1], max_variation=0.2)
