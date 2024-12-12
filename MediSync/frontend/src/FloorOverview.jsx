@@ -1,10 +1,13 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom'; // Import useNavigate
 import axios from 'axios';
 import styles from './FloorOverview.module.css';
 import AddIcon from '@mui/icons-material/Add';
 import CreatePatient from './CreatePatient';
 import CONFIG from './config';
 import AddStaff from './AddStaff';
+import FormatListBulletedIcon from '@mui/icons-material/FormatListBulleted';
+import { Button } from '@mui/material';
 
 function FloorOverview() {
     const [beds, setBeds] = useState([]);
@@ -16,6 +19,7 @@ function FloorOverview() {
     const baseUrl = CONFIG.API_URL;
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
+    const navigate = useNavigate();
 
     useEffect(() => {
         const fetchBeds = async () => {
@@ -61,9 +65,7 @@ function FloorOverview() {
         setShowStaffModal(true);
     };
 
-
     const getRoomsForFloor = () => {
-        // Filter beds for selected floor and organize by room
         const floorRooms = beds.reduce((rooms, bed) => {
             const floor = bed.bedNumber.charAt(0);
             const roomNumber = bed.bedNumber.substring(0, 2);
@@ -77,7 +79,6 @@ function FloorOverview() {
             return rooms;
         }, {});
 
-        // Sort rooms by room number
         return Object.entries(floorRooms).sort((a, b) => a[0].localeCompare(b[0]));
     };
 
@@ -87,13 +88,31 @@ function FloorOverview() {
         return 'available';
     };
 
+    const handleBedClick = (bed) => {
+        if (bed.assignedPatient) {
+            navigate(`/patients/${bed.assignedPatient.id}`);
+        }
+    };
+
     return (
         <div className={styles.container}>
-            <h1 className={styles.title}>Floor Overview</h1>
-            
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                <h1 className={styles.title}>Floor Overview</h1>
+                <Button 
+                    variant="contained" 
+                    startIcon={<FormatListBulletedIcon className={styles.buttonIcon} />}
+                    onClick={() => navigate('/rooms')}
+                    className={styles.overviewButton}
+                    style={{ marginBottom: "10px" }}
+                >
+                    Room Overview
+                </Button>
+            </div>
+
             <div className={styles.controlsRow}>
                 <div className={styles.leftControls}>
                     <div className={styles.floorControl}>
+                        
                         <select 
                             value={selectedFloor} 
                             onChange={(e) => setSelectedFloor(e.target.value)}
@@ -106,7 +125,6 @@ function FloorOverview() {
                             ))}
                         </select>
                     </div>
-
                     <div className={styles.legend}>
                         <div className={styles.legendItem}>
                             <div className={`${styles.bed} ${styles.occupied}`}></div>
@@ -132,7 +150,6 @@ function FloorOverview() {
                     </button>
                 </div>
             </div>
-
             <div className={styles.floorPlan}>
                 {getRoomsForFloor().map(([roomNumber, roomBeds]) => (
                     <div key={roomNumber} className={styles.room}>
@@ -145,6 +162,7 @@ function FloorOverview() {
                                         key={bed.id} 
                                         className={`${styles.bed} ${styles[getBedStatus(bed)]}`}
                                         title={`Bed ${bed.bedNumber.charAt(2)}`}
+                                        onClick={() => handleBedClick(bed)} // Add click handler
                                     >
                                         {bed.bedNumber.charAt(2)}
                                     </div>
