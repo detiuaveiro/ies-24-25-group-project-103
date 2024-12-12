@@ -13,6 +13,7 @@ function Header({ children, numNotifications }) {
     const role = localStorage.getItem('userRole');
     const name = JSON.parse(localStorage.getItem('user')).name || 'Visitor';
     const userStr = localStorage.getItem('user');
+    const baseUrl = CONFIG.API_URL;
     const user = userStr ? JSON.parse(userStr) : null;
     const imageUrl = user?.profilePictureUrl;
     const fullImageUrl = imageUrl?.startsWith('http') ? imageUrl : `${baseUrl}/uploads/${imageUrl}`;    
