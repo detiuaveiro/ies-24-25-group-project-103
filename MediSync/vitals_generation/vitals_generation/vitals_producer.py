@@ -2,12 +2,14 @@ from kafka import KafkaProducer
 import json
 import random
 import time
+import math
 
-producer = KafkaProducer(bootstrap_servers=['kafka:9092'], value_serializer=lambda m: json.dumps(m).encode('ascii'))
+# Initialize Kafka producer
+producer = KafkaProducer(bootstrap_servers=['kafka:9092'], value_serializer=lambda m: json.dumps(m).encode('ascii'), api_version=(0, 10, 1))
 
 nBeds = 96
 curVitals = {}
-distressState = {} 
+distressState = {}
 
 NORMAL_RANGES = {
     "heart_rate": (60, 100),
@@ -23,6 +25,14 @@ HARD_LIMITS = {
     "blood_pressure_systolic": (70, 200),
     "blood_pressure_diastolic": (40, 120),
     "temperature": (34.0, 42.0),
+}
+
+# Patient profiles for more realistic baseline adjustments
+patient_profiles = {
+    i: {
+        "age": random.randint(18, 90),
+        "has_hypertension": random.choice([True, False]),
+    } for i in range(1, nBeds + 1)
 }
 
 for i in range(1, nBeds + 1):
@@ -41,9 +51,12 @@ for i in range(1, nBeds + 1):
         "blood_pressure_systolic": {"in_distress": False, "duration": 0},
         "blood_pressure_diastolic": {"in_distress": False, "duration": 0},
         "temperature": {"in_distress": False, "duration": 0},
-        "dying": False  # Added field to track if the patient is dying
+        "dying": False
     }
 
+def circadian_adjustment(base_value, amplitude, time_of_day):
+    """Adjusts a base value using a sinusoidal function for circadian rhythm."""
+    return base_value + amplitude * math.sin(2 * math.pi * time_of_day / 24)
 
 def bounded_random_walk(value, normal_min, normal_max, max_variation=5, drift_towards_normal=True):
     """Simulates bounded random walk for a vital."""
@@ -55,63 +68,137 @@ def bounded_random_walk(value, normal_min, normal_max, max_variation=5, drift_to
     value += random.uniform(-max_variation, max_variation)
     return round(value, 1)
 
-
 def enforce_hard_limits(value, hard_min, hard_max):
     """Ensures the value remains within hard limits."""
     return max(hard_min, min(value, hard_max))
 
+def add_sensor_noise(value, noise_level=0.005):
+    """Adds random noise to simulate sensor inaccuracy."""
+    noise = random.uniform(-noise_level * value, noise_level * value)
+    return value + noise
+
+def maintain_realistic_bp(systolic, diastolic):
+    """Ensure the systolic and diastolic values maintain a physiological gap."""
+    # Ensure a realistic range difference
+    while systolic - diastolic < 30:
+        diastolic -= 1
+    while systolic - diastolic > 40:
+        diastolic += 1
+    return diastolic
 
 while True:
+    time_of_day = (time.time() % 86400) / 3600  # Time of day in hours (0-23)
+
     for i in range(1, nBeds + 1):
+        profile = patient_profiles[i]
         patient_state = distressState[i]
-        
+
         if patient_state["dying"]:
             # Rapid deterioration of vitals
-            curVitals[i]["heart_rate"] = max(HARD_LIMITS["heart_rate"][0] - 1, curVitals[i]["heart_rate"] - random.randint(5, 15))
-            curVitals[i]["oxygen_saturation"] = max(HARD_LIMITS["oxygen_saturation"][0] - 1, curVitals[i]["oxygen_saturation"] - random.randint(1, 5))
-            curVitals[i]["blood_pressure"][0] = max(HARD_LIMITS["blood_pressure_systolic"][0] - 1, curVitals[i]["blood_pressure"][0] - random.randint(5, 10))
-            curVitals[i]["blood_pressure"][1] = max(HARD_LIMITS["blood_pressure_diastolic"][0] - 1, curVitals[i]["blood_pressure"][1] - random.randint(5, 10))
-            curVitals[i]["temperature"] = max(HARD_LIMITS["temperature"][0] - 0.1, curVitals[i]["temperature"] - random.uniform(0.5, 1.0))
-            
+            curVitals[i]["heart_rate"] = max(HARD_LIMITS["heart_rate"][0] - 1, curVitals[i]["heart_rate"] - random.randint(3, 7))
+            curVitals[i]["oxygen_saturation"] = max(HARD_LIMITS["oxygen_saturation"][0] - 1, curVitals[i]["oxygen_saturation"] - random.randint(1, 3))
+            curVitals[i]["blood_pressure"][0] = max(HARD_LIMITS["blood_pressure_systolic"][0] - 1, curVitals[i]["blood_pressure"][0] - random.uniform(0.25, 0.5))
+            curVitals[i]["blood_pressure"][1] = max(HARD_LIMITS["blood_pressure_diastolic"][0] - 1, curVitals[i]["blood_pressure"][1] - random.uniform(0.125, 0.25))
+            curVitals[i]["temperature"] = max(HARD_LIMITS["temperature"][0] - 0.1, curVitals[i]["temperature"] - random.uniform(0.01, 0.025))
+
             if (curVitals[i]["heart_rate"] <= HARD_LIMITS["heart_rate"][0] or
                 curVitals[i]["oxygen_saturation"] <= HARD_LIMITS["oxygen_saturation"][0] or
                 curVitals[i]["blood_pressure"][0] <= HARD_LIMITS["blood_pressure_systolic"][0] or
                 curVitals[i]["blood_pressure"][1] <= HARD_LIMITS["blood_pressure_diastolic"][0] or
                 curVitals[i]["temperature"] <= HARD_LIMITS["temperature"][0]):
                 print(f"Patient in bed {i} has died.")
-                continue  # Skip sending data for a dead patient
-        
+                continue
+
         else:
             for vital, ranges in NORMAL_RANGES.items():
                 vital_state = patient_state[vital]
-                
+
                 if vital_state["in_distress"]:
                     vital_state["duration"] += 1
+                    if vital == "blood_pressure_systolic":
+                        curVitals[i]["blood_pressure"][0] = max(
+                            HARD_LIMITS["blood_pressure_systolic"][0] - 1,
+                            curVitals[i]["blood_pressure"][0] - random.uniform(2, 5)
+                        )
+                        # Adjust diastolic proportionally
+                        curVitals[i]["blood_pressure"][1] = max(
+                            HARD_LIMITS["blood_pressure_diastolic"][0] - 1,
+                            curVitals[i]["blood_pressure"][1] - random.uniform(1, 2.5)
+                        )
+                    if vital == "heart_rate":
+                        curVitals[i]["heart_rate"] = max(
+                            HARD_LIMITS["heart_rate"][0] - 1,
+                            curVitals[i]["heart_rate"] - random.randint(3, 7)
+                        )
+                    if vital == "oxygen_saturation":
+                        curVitals[i]["oxygen_saturation"] = max(
+                            HARD_LIMITS["oxygen_saturation"][0] - 1,
+                            curVitals[i]["oxygen_saturation"] - random.uniform(0.5, 1.5)
+                        )
+                    if vital == "temperature":
+                        curVitals[i]["temperature"] = max(
+                            HARD_LIMITS["temperature"][0] - 0.1,
+                            curVitals[i]["temperature"] - random.uniform(0.05, 0.1)
+                        )
+
                     if vital_state["duration"] > random.randint(10, 30):
                         vital_state["in_distress"] = False
                         vital_state["duration"] = 0
+
                 else:
-                    if random.random() < 0.000001:  # 0.0001% chance the patient enters a dying state
+                    if random.random() < 0.000001:
                         patient_state["dying"] = True
-                    if random.random() < 0.005: 
+                    if random.random() < 0.0002:
                         vital_state["in_distress"] = True
-                    
-                # Update vitals normally
+
                 if vital == "heart_rate":
-                    curVitals[i]["heart_rate"] = bounded_random_walk(
-                        curVitals[i]["heart_rate"], ranges[0], ranges[1], max_variation=1)
+                    curVitals[i]["heart_rate"] = enforce_hard_limits(
+                        circadian_adjustment(
+                            bounded_random_walk(
+                                curVitals[i]["heart_rate"], ranges[0], ranges[1], max_variation=2),
+                            amplitude=5, time_of_day=time_of_day
+                        ), HARD_LIMITS["heart_rate"][0], HARD_LIMITS["heart_rate"][1]
+                    )
                 elif vital == "oxygen_saturation":
-                    curVitals[i]["oxygen_saturation"] = bounded_random_walk(
-                        curVitals[i]["oxygen_saturation"], ranges[0], ranges[1], max_variation=1)
+                    curVitals[i]["oxygen_saturation"] = enforce_hard_limits(
+                        bounded_random_walk(
+                            curVitals[i]["oxygen_saturation"], ranges[0], ranges[1], max_variation=0.15),
+                        HARD_LIMITS["oxygen_saturation"][0], HARD_LIMITS["oxygen_saturation"][1]
+                    )
                 elif vital == "blood_pressure_systolic":
-                    curVitals[i]["blood_pressure"][0] = bounded_random_walk(
-                        curVitals[i]["blood_pressure"][0], NORMAL_RANGES["blood_pressure_systolic"][0], NORMAL_RANGES["blood_pressure_systolic"][1], max_variation=2)
+                    curVitals[i]["blood_pressure"][0] = enforce_hard_limits(
+                        circadian_adjustment(
+                            bounded_random_walk(
+                                curVitals[i]["blood_pressure"][0], ranges[0], ranges[1], max_variation=0.9),
+                            amplitude=3, time_of_day=time_of_day
+                        ), HARD_LIMITS["blood_pressure_systolic"][0], HARD_LIMITS["blood_pressure_systolic"][1]
+                    )
                 elif vital == "blood_pressure_diastolic":
-                    curVitals[i]["blood_pressure"][1] = bounded_random_walk(
-                        curVitals[i]["blood_pressure"][1], NORMAL_RANGES["blood_pressure_diastolic"][0], NORMAL_RANGES["blood_pressure_diastolic"][1], max_variation=2)
+                    curVitals[i]["blood_pressure"][1] = enforce_hard_limits(
+                        bounded_random_walk(
+                            curVitals[i]["blood_pressure"][1], 
+                            NORMAL_RANGES["blood_pressure_diastolic"][0], 
+                            NORMAL_RANGES["blood_pressure_diastolic"][1], 
+                            max_variation=0.6
+                        ), HARD_LIMITS["blood_pressure_diastolic"][0], HARD_LIMITS["blood_pressure_diastolic"][1]
+                    )
                 elif vital == "temperature":
-                    curVitals[i]["temperature"] = bounded_random_walk(
-                        curVitals[i]["temperature"], ranges[0], ranges[1], max_variation=0.2)
+                    curVitals[i]["temperature"] = enforce_hard_limits(
+                        bounded_random_walk(
+                            curVitals[i]["temperature"], ranges[0], ranges[1], max_variation=0.05
+                        ), HARD_LIMITS["temperature"][0], HARD_LIMITS["temperature"][1]
+                    )
+
+                # Adjust diastolic to maintain a realistic gap if changes are made
+                new_diastolic = maintain_realistic_bp(curVitals[i]["blood_pressure"][0], curVitals[i]["blood_pressure"][1])
+                curVitals[i]["blood_pressure"][1] = new_diastolic
+
+        # Add sensor noise to simulate inaccuracies
+        curVitals[i]["heart_rate"] = add_sensor_noise(curVitals[i]["heart_rate"])
+        curVitals[i]["oxygen_saturation"] = add_sensor_noise(curVitals[i]["oxygen_saturation"])
+        curVitals[i]["blood_pressure"][0] = add_sensor_noise(curVitals[i]["blood_pressure"][0])
+        curVitals[i]["blood_pressure"][1] = add_sensor_noise(curVitals[i]["blood_pressure"][1])
+        curVitals[i]["temperature"] = add_sensor_noise(curVitals[i]["temperature"])
 
         vitals = {
             "bed_id": str(i),
@@ -124,7 +211,7 @@ while True:
             "temperature": f"{curVitals[i]['temperature']:.1f}"
         }
         producer.send('vitals', vitals)
-        if i == 1:
-            print(vitals)
+        print(vitals)
 
     time.sleep(3)
+
