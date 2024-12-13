@@ -27,13 +27,7 @@ HARD_LIMITS = {
     "temperature": (34.0, 42.0),
 }
 
-# Patient profiles for more realistic baseline adjustments
-patient_profiles = {
-    i: {
-        "age": random.randint(18, 90),
-        "has_hypertension": random.choice([True, False]),
-    } for i in range(1, nBeds + 1)
-}
+
 
 for i in range(1, nBeds + 1):
     curVitals[i] = {
@@ -90,7 +84,6 @@ while True:
     time_of_day = (time.time() % 86400) / 3600  # Time of day in hours (0-23)
 
     for i in range(1, nBeds + 1):
-        profile = patient_profiles[i]
         patient_state = distressState[i]
 
         if patient_state["dying"]:
