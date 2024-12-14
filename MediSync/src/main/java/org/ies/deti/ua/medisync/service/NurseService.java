@@ -191,9 +191,16 @@ public class NurseService {
         if (nurseOpt.isPresent()) {
             Nurse nurse = nurseOpt.get();
 
+            if (newEntry.getStart_time().isAfter(newEntry.getStart_time())) {
+                return null;
+            }
+
             for (ScheduleEntry existing : nurse.getSchedule()) {
-                boolean hasOverlap = !(newEntry.getEnd_time().isBefore(existing.getEnd_time()) ||
-                        newEntry.getEnd_time().isAfter(existing.getEnd_time()));
+                boolean hasOverlap = !(newEntry.getEnd_time().isBefore(existing.getStart_time()) || // newEntry ends
+                                                                                                    // before existing
+                                                                                                    // starts
+                        newEntry.getStart_time().isAfter(existing.getEnd_time()) // newEntry starts after existing ends
+                );
                 if (hasOverlap) {
                     return null;
                 }
@@ -230,7 +237,7 @@ public class NurseService {
          */
         Optional<Nurse> nurseOptional = nurseRepository.findById(nurseId);
         if (nurseOptional.isEmpty()) {
-            return null; 
+            return null;
         }
         Nurse nurse = nurseOptional.get();
 
@@ -238,16 +245,16 @@ public class NurseService {
                 .filter(entry -> entry.getId().equals(before_entryId))
                 .findFirst();
         if (beforeEntryOptional.isEmpty()) {
-            return null; 
+            return null;
         }
         ScheduleEntry beforeEntry = beforeEntryOptional.get();
 
         boolean hasOverlap = nurse.getSchedule().stream()
-                .filter(entry -> !entry.getId().equals(before_entryId)) 
+                .filter(entry -> !entry.getId().equals(before_entryId))
                 .anyMatch(entry -> updatedEntry.getStart_time().isBefore(entry.getEnd_time()) &&
                         updatedEntry.getEnd_time().isAfter(entry.getStart_time()));
         if (hasOverlap) {
-            return null; 
+            return null;
         }
 
         beforeEntry.setStart_time(updatedEntry.getStart_time());
@@ -260,7 +267,7 @@ public class NurseService {
             Optional<Room> roomOpt = roomRepository.findById(room1.getId());
             Room room = roomOpt.get();
             if (!room.getScheduleEntries().contains(beforeEntry)) {
-                room.getScheduleEntries().add(beforeEntry); 
+                room.getScheduleEntries().add(beforeEntry);
                 roomRepository.save(room);
             }
         }
@@ -314,7 +321,7 @@ public class NurseService {
         nurse.setRole("NURSE");
         return nurseRepository.save(nurse);
     }
-    
+
     /*
      * public boolean isactive(Long nurseid) {
      * Optional<Nurse> nurse = nurseRepository.findById(nurseid);
@@ -322,14 +329,14 @@ public class NurseService {
      * }
      */
 
-     public List<Patient> getPatientsByNurseId(Long nurseId) {
+    public List<Patient> getPatientsByNurseId(Long nurseId) {
         List<Patient> patients = new ArrayList<>();
         Optional<Nurse> nurseOptional = nurseRepository.findById(nurseId);
-    
+
         if (nurseOptional.isPresent()) {
             Nurse nurse = nurseOptional.get();
             LocalDateTime now = LocalDateTime.now(); // Current time
-            
+
             for (ScheduleEntry entry : nurse.getSchedule()) {
                 if (entry.getStart_time().isBefore(now) && entry.getEnd_time().isAfter(now)) {
                     for (Room room : entry.getRoom()) {
@@ -355,5 +362,5 @@ public class NurseService {
             bedRepository.save(bed);
         }
         return bedOptional;
-    }   
+    }
 }
