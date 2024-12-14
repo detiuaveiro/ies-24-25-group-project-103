@@ -55,7 +55,7 @@ def generate_patients():
     "Bruno Lage", "Carlos Mozer", "Hugo Almeida", "Pedro Pauleta", "Tiago Mendes",
     "Nuno Valente", "José Fonte", "Ricardo Carvalho", "Hélder Postiga", "Deco",
     "Pedro Ponte", "Afonso Ferreira", "João Neto", "Ricardo Antunes", "João Almeida",
-    "Eduardo Lopes", "Rodrigo Abreu", "Tomás Brás", "Hugo Ribeiro", "Cole Palmer"
+    "Eduardo Lopes", "Rodrigo Abreu", "Tomás Brás", "Hugo Ribeiro", "Cole Palmer", "Daniel Ferreira"
     ]
     
     conditions = [
@@ -90,7 +90,7 @@ def generate_patients():
                 "height": random.randint(150, 195),  # Height in centimeters
                 "conditions": random.sample(conditions, random.randint(1, 3)),
                 "observations": random.sample(observations, random.randint(1, 3)),
-                "discharged": False
+                "state": "IN_BED"
             }
             file.write(json.dumps(data) + "\n")
     
@@ -137,9 +137,37 @@ def generate_nurses():
     
     print("Nurses data written to nurses.txt")
 
+def generate_medications():
+    """
+    Generate 100 medications and save them to a txt file
+    """
+    medication_names = [
+        "Acetaminophen", "Ibuprofen", "Amoxicillin", "Lisinopril", "Metformin",
+        "Omeprazole", "Levothyroxine", "Amlodipine", "Metoprolol", "Gabapentin",
+        "Sertraline", "Fluoxetine", "Escitalopram", "Alprazolam", "Lorazepam",
+        "Zolpidem", "Hydrochlorothiazide", "Losartan", "Atorvastatin", "Simvastatin"
+    ]
+    
+    dosage_units = ["mg", "mcg", "g", "mL"]
+    common_dosages = ["100", "200", "250", "400", "500", "600", "750", "1000"]
+    hour_intervals = ["4", "6", "8", "12", "24"]
+    
+    with open("medications.txt", "w") as file:
+        for _ in range(100):
+            medication = {
+                "name": random.choice(medication_names),
+                "hourInterval": random.choice(hour_intervals),
+                "dosage": f"{random.choice(common_dosages)}{random.choice(dosage_units)}",
+                "hasTaken": False,
+                "lastTaken": "2024-01-14T08:00:00"
+            }
+            file.write(json.dumps(medication) + "\n")
+    
+    print("Medications data written to medications.txt")
 
 if __name__ == "__main__":
     #generate_doctors()
     #generate_patients()
     #generate_nurses()
+    #generate_medications()
     pass
