@@ -136,11 +136,7 @@ public class NurseService {
 
     public List<RoomWithPatientsDTO> getRoomWithBedsAndPatientsDTO(Nurse nurse) {
         // Fetch all rooms the nurse is assigned to
-        List<Room> nurseRooms = nurse.getSchedule().stream()
-                .flatMap(scheduleEntry -> scheduleEntry.getRoom().stream())
-                .distinct()
-                .toList();
-
+        List<Room> nurseRooms = getRoomsByNurseId(nurse);
         // Fetch all beds and their patients
         Map<Bed, Patient> bedPatientMap = getAssignedBedsAndPatientsForNurse(nurse);
         Map<Room, List<BedWithPatientDTO>> roomToBedsMap = new HashMap<>();

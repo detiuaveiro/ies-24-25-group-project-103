@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+
 @RestController
 @RequestMapping("/api/v1/nurses")
 public class NurseController {
@@ -168,4 +169,6 @@ public class NurseController {
         Optional<Bed> bed = nurseService.cleanBed(bedId);
         return bed.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
+
+
 }
