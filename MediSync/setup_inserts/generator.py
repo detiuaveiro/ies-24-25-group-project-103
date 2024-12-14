@@ -166,8 +166,8 @@ def generate_medications():
     print("Medications data written to medications.txt")
 
 if __name__ == "__main__":
-    #generate_doctors()
-    #generate_patients()
-    #generate_nurses()
-    #generate_medications()
+    generate_doctors()
+    generate_patients()
+    generate_nurses()
+    generate_medications()
     pass

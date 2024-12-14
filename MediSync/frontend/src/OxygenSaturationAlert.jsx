@@ -3,7 +3,7 @@ import styles from './OxygenSaturationAlert.module.css';
 import { FaLungs } from 'react-icons/fa';
 export default function OxygenSaturationAlert({ showModal, setShowModal, patient, value }) {
   useEffect(() => {
-    if (value <= 95) {
+    if (value <= 90) {
       setShowModal(true);
     } else {
       setShowModal(false);
