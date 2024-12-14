@@ -239,8 +239,8 @@ def create_schedules():
         for nurse in nurses:
             print(f"\nCreating schedules for nurse {nurse['name']}...")
 
-            # Randomly select 8 room IDs from 1-96
-            room_ids = random.sample(range(1, 97), 8)
+            # Randomly select 8 room IDs from 1-25
+            room_ids = random.sample(range(1, 25), 8)
             rooms = [{"id": room_id} for room_id in room_ids]
 
             # Create 10 schedule entries
