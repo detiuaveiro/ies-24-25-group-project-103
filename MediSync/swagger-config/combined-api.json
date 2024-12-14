@@ -693,10 +693,13 @@
           "content": {
             "application/json": {
               "schema": {
-                "id":{
+                "type":"object",
+                "properties":{
+                  "id":{
                     "type":"integer",
                     "description":"Unique ID of the wanted bed",
                     "example":9
+                  }
                 }
               }
             }
@@ -745,9 +748,14 @@
           "content": {
             "application/json": {
               "schema": {
-                "type":"integer",
-                "description":"Id of the medic",
-                "example":6
+                "type":"object",
+                "properties":{
+                  "id":{
+                    "type":"integer",
+                    "description":"Unique ID of the wanted doctor",
+                    "example":9
+                  }
+                }
               }
             }
           }

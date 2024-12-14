@@ -3,8 +3,7 @@
   color: #000; /* Black text for contrast */
   text-align: center;
   padding: 30px;
-  width: 90%;
-  max-width: 400px;
+  max-width:500px;
   height: 500px;
   border-radius: 85px;
   box-shadow: 0 4px 15px rgba(250, 176, 96, 0.5);
@@ -26,6 +25,7 @@
 
 .o2Image {
   color: #ff8500;
+  margin-top: 0px;
 }
 
 .patientInfo {
