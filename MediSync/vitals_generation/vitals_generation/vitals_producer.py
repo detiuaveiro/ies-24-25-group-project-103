@@ -12,19 +12,19 @@ curVitals = {}
 distressState = {}
 
 NORMAL_RANGES = {
-    "heart_rate": (60, 100),
-    "oxygen_saturation": (94, 100),
-    "blood_pressure_systolic": (90, 120),
-    "blood_pressure_diastolic": (60, 80),
-    "temperature": (36.0, 37.5),
+    "heart_rate": (40, 130),
+    "oxygen_saturation": (90, 100),
+    "blood_pressure_systolic": (70, 140),
+    "blood_pressure_diastolic": (40, 90),
+    "temperature": (34.0, 37.5),
 }
 
 HARD_LIMITS = {
-    "heart_rate": (40, 180),
-    "oxygen_saturation": (85, 100),
-    "blood_pressure_systolic": (70, 200),
-    "blood_pressure_diastolic": (40, 120),
-    "temperature": (34.0, 42.0),
+    "heart_rate": (20, 180),
+    "oxygen_saturation": (70, 100),
+    "blood_pressure_systolic": (50, 200),
+    "blood_pressure_diastolic": (20, 150),
+    "temperature": (30.0, 45.0),
 }
 
 
@@ -50,7 +50,7 @@ for i in range(1, nBeds + 1):
 
 def circadian_adjustment(base_value, amplitude, time_of_day):
     """Adjusts a base value using a sinusoidal function for circadian rhythm."""
-    return base_value + amplitude * math.sin(2 * math.pi * time_of_day / 24)
+    return base_value + 0.05 * amplitude * math.sin(2 * math.pi * time_of_day / 24)
 
 def bounded_random_walk(value, normal_min, normal_max, max_variation=5, drift_towards_normal=True):
     """Simulates bounded random walk for a vital."""
@@ -149,7 +149,7 @@ while True:
                         circadian_adjustment(
                             bounded_random_walk(
                                 curVitals[i]["heart_rate"], ranges[0], ranges[1], max_variation=2),
-                            amplitude=5, time_of_day=time_of_day
+                            amplitude=1, time_of_day=time_of_day
                         ), HARD_LIMITS["heart_rate"][0], HARD_LIMITS["heart_rate"][1]
                     )
                 elif vital == "oxygen_saturation":
@@ -163,7 +163,7 @@ while True:
                         circadian_adjustment(
                             bounded_random_walk(
                                 curVitals[i]["blood_pressure"][0], ranges[0], ranges[1], max_variation=0.9),
-                            amplitude=3, time_of_day=time_of_day
+                            amplitude=1, time_of_day=time_of_day
                         ), HARD_LIMITS["blood_pressure_systolic"][0], HARD_LIMITS["blood_pressure_systolic"][1]
                     )
                 elif vital == "blood_pressure_diastolic":
