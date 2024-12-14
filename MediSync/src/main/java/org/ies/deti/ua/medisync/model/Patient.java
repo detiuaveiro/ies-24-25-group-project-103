@@ -62,6 +62,9 @@ public class Patient {
     @Column(name = "state")
     private String state = "IN_BED";
 
+    @Column(name = "admission_date")
+    private Date admissionDate;
+
     
 
     public Patient() {}
@@ -76,6 +79,7 @@ public class Patient {
         this.conditions = conditions;
         this.observations = observations;
         this.assignedDoctor = assignedDoctor;
+        this.admissionDate = new Date();
     }
 
     // Getters and Setters
@@ -165,5 +169,13 @@ public class Patient {
 
     public void setState(String state){
         this.state = state;
+    }
+
+    public Date getAdmissionDate(){
+        return admissionDate;
+    }
+
+    public void setAdmissionDate(Date admissionDate){
+        this.admissionDate = admissionDate;
     }
 }
