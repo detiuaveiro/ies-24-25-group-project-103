@@ -26,7 +26,17 @@ public class HospitalManagerController {
         return ResponseEntity.ok(createdHospitalManager);
     }
 
-    // End point das salas
+    @DeleteMapping
+    public ResponseEntity<String> deleteHospitalManager() {
+        try {
+            hospitalManagerService.deleteHospitalManager();
+            return ResponseEntity.ok("Hospital Manager successfully removed\n");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error removing hospital manager: " + e.getMessage());
+        }
+    }
+
+    // End points das salas
 
     @PostMapping("/rooms")
     public ResponseEntity<String> addRooms() {
