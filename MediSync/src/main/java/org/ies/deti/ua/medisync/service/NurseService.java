@@ -191,7 +191,7 @@ public class NurseService {
         if (nurseOpt.isPresent()) {
             Nurse nurse = nurseOpt.get();
 
-            if (newEntry.getStart_time().isAfter(newEntry.getStart_time())) {
+            if (newEntry.getStart_time().isAfter(newEntry.getEnd_time())) {
                 return null;
             }
 
