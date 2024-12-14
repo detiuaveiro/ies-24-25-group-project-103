@@ -463,5 +463,15 @@ public class PatientService {
                 })
                 .collect(Collectors.toList());
     }
+
+    public Patient updateDischargeDate(Long patientId, String dischargeDate) {
+        Optional<Patient> patientOptional = patientRepository.findById(patientId);
+        if (patientOptional.isPresent()) {
+            Patient patient = patientOptional.get();
+            patient.setEstimatedDischargeDate(java.sql.Date.valueOf(dischargeDate));
+            return patientRepository.save(patient);
+        }
+        return null;
+    }
     
 }

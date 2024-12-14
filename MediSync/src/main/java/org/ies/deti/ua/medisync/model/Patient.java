@@ -2,6 +2,7 @@ package org.ies.deti.ua.medisync.model;
 
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
@@ -79,7 +80,7 @@ public class Patient {
         this.conditions = conditions;
         this.observations = observations;
         this.assignedDoctor = assignedDoctor;
-        this.admissionDate = new Date();
+        this.admissionDate = new Date(TimeUnit.MILLISECONDS.convert(System.currentTimeMillis(), TimeUnit.MILLISECONDS));
     }
 
     // Getters and Setters
