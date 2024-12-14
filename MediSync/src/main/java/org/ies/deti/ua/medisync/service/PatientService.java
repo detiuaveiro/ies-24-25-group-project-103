@@ -169,10 +169,9 @@ public class PatientService {
 
     @Transactional
     public boolean dischargePatient(Long id) {
-        // Fetch patient safely using Optional
         Optional<Patient> optionalPatient = patientRepository.findById(id);
         if (optionalPatient.isEmpty()) {
-            return false; // Patient does not exist
+            return false; 
         }
     
         Patient existingPatient = optionalPatient.get();
