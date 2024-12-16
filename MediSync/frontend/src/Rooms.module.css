@@ -5,9 +5,9 @@
     gap: 16px; 
     width: 100%;
 }
-
 .headerContainer {
     display: flex;
+    flex-wrap: wrap; 
     justify-content: space-between;
     align-items: center;
     margin-bottom: 30px;
@@ -16,7 +16,6 @@
     background: transparent;
     box-shadow: none;
 }
-
 .title {
     color: #271E4A;
     font-size: 48px;
