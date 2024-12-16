@@ -65,7 +65,6 @@ export default function CreatePatient({ showModal, setShowModal, availableBeds=[
     
         let createdPatient;
     
-        // First create the patient
         fetch(`${baseUrl}/patients`, {
             method: 'POST',
             headers: {
