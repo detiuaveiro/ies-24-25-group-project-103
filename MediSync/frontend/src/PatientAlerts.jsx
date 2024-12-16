@@ -96,13 +96,7 @@ const PatientAlerts = ({ vitalsData }) => {
     setCurrentAlertIndex(0);
   }, [vitalsData]);
 
-  if (!Array.isArray(vitalsData) || vitalsData.length === 0) {
-    return <div>No patient data available.</div>;
-  }
-  
-  const currentAlert = alertQueue[currentAlertIndex];
-  
-  // Ensure there are valid alerts before rendering the modal
+  const currentAlert = alertQueue[currentAlertIndex];  
   const hasValidAlerts = currentAlert?.alerts?.length > 0;
   
   return (

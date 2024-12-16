@@ -80,6 +80,7 @@ public class NotificationService {
             List<Medication> medications = patientService.getDueMedications(patient.getPatient().getId());
     
             for (Medication medication : medications) {
+    
                 String expectedDescription = "Medication " + medication.getName() + " is due for patient " + patient.getPatient().getName();
     
                 boolean notificationExists = notificationRepository.existsByTypeAndDescription(
@@ -87,7 +88,7 @@ public class NotificationService {
                     expectedDescription
                 );
     
-                if (!notificationExists) {
+                if (!notificationExists && !medication.isHasTaken()) {
                     Notification notification = new Notification();
                     notification.setDate(new Date());
                     notification.setTitle("Medication is Due!");
