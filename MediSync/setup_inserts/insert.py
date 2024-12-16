@@ -273,7 +273,7 @@ def create_schedules():
 
 def start_application():
     # do this just to be sure
-    delete_admin()
+    #delete_admin()
     create_admin()
     if not login_admin():
         print("Exiting...\n")
