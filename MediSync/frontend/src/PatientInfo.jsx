@@ -15,7 +15,7 @@ function PatientInfo({ patient: initialPatient }) {
   const handleDischargeDateChange = async (date) => {
     const updatedDate = date.toISOString().split('T')[0]; // Format date as yyyy-MM-dd
     setPatient({ ...patient, estimatedDischargeDate: updatedDate });
-
+    
     if (role === 'DOCTOR') {
       try {
         setIsUpdating(true);
@@ -74,10 +74,15 @@ function PatientInfo({ patient: initialPatient }) {
       <div>
         <label>
           Admission Date
-          <input type="date" value={patient.admissionDate || ''} readOnly />
+          <input 
+            type="text" 
+            value={patient.admissionDate ? new Date(patient.admissionDate).toLocaleDateString('en-GB') : 'N/A'} 
+            readOnly 
+          />
         </label>
       </div>
       <div className={styles.datePickerContainer}>
+
         <label>
           Discharge Date (Estimated)
           <div className={styles.inputWithIcon}>

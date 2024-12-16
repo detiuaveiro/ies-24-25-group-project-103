@@ -15,6 +15,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
@@ -80,7 +81,14 @@ public class Patient {
         this.conditions = conditions;
         this.observations = observations;
         this.assignedDoctor = assignedDoctor;
-        this.admissionDate = new Date(TimeUnit.MILLISECONDS.convert(System.currentTimeMillis(), TimeUnit.MILLISECONDS));
+        this.admissionDate = new Date();
+    }
+
+    @PrePersist
+    protected void onCreate() {
+        if (this.admissionDate == null) {
+            this.admissionDate = new Date();
+        }
     }
 
     // Getters and Setters
