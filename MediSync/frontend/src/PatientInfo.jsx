@@ -37,7 +37,11 @@ function PatientInfo({ patient: initialPatient }) {
         <div>
           <label>
             Admission Date
-            <input type="date" value={patient.admissionDate || ''} readOnly />
+            <input 
+              type="text" 
+              value={patient.admissionDate ? new Date(patient.admissionDate).toLocaleDateString('en-GB') : 'N/A'} 
+              readOnly 
+            />
           </label>
         </div>
         <div className={styles.datePickerContainer}>
