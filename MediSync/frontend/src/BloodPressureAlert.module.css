@@ -1,0 +1,72 @@
+.bloodPressureCard {
+    background-color: #e0f7fa; /* Soft blue background */
+    color: #000; /* Black text for better contrast */
+    text-align: center; /* Center the content */
+    padding: 30px; /* Add padding for spacing */
+    width: 90%; /* Adjust width for responsiveness */
+    height: 500px;
+    max-width: 400px; /* Constrain maximum width */
+    border-radius: 85px;
+    box-shadow: 0 4px 15px rgba(0, 188, 212, 0.5); /* Blue shadow */
+  }
+  
+  .alertText {
+    color: #00796b; /* Deep teal for text */
+    text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2); /* Subtle shadow */
+    font-family: 'Karantina', cursive;
+    font-size: 6rem;
+    line-height: 1.2;
+  }
+  
+  .alertText .diastolic {
+    font-family: 'Karantina', cursive;
+    font-size: 0.9em;
+  }
+  
+  .bloodIcon {
+    margin-top: 10px;
+    width: 200px;
+    height: 200px;
+  }
+  
+  .patientInfo {
+    font-size: 1.2rem; /* Slightly larger text */
+    color: #004d40; /* Dark teal for contrast */
+    text-transform: uppercase;
+    text-align: center;
+  }
+  
+  .patientStatus {
+    font-family: 'Kanit', sans-serif;
+    font-size: 1.2rem;
+    color: #00796b; /* Deep teal for emphasis */
+    margin-bottom: 0.5rem;
+  }
+  
+  .patientName {
+    font-family: 'Kanit', sans-serif;
+    font-size: 1.4rem;
+    color: #004d40; /* Dark teal for emphasis */
+    margin-bottom: 0.5rem;
+  }
+  
+  .patientRoom {
+    font-family: 'Kanit', sans-serif;
+    font-size: 1.2rem;
+    color: #004d40; /* Match patient name color */
+    font-weight: bold;
+  }
+  
+  /* Responsive styling */
+  @media (max-width: 576px) {
+    .bloodPressureCard {
+      padding: 20px;
+    }
+    .alertText {
+      font-size: 3rem;
+    }
+    .patientInfo {
+      font-size: 1rem;
+    }
+  }
+  

@@ -5,8 +5,6 @@ import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
@@ -34,8 +32,9 @@ public class Room {
 
     @ManyToMany
     @JoinTable(name = "schedule_rooms", joinColumns = @JoinColumn(name = "room_id"), inverseJoinColumns = @JoinColumn(name = "schedule_id"))
-    @JsonIgnore // Manages serialization of the relationship
+    @JsonIgnore
     private List<ScheduleEntry> scheduleEntries;
+
 
     public Room() {
     }
@@ -73,5 +72,6 @@ public class Room {
     public void setScheduleEntries(List<ScheduleEntry> scheduleEntries) {
         this.scheduleEntries = scheduleEntries;
     }
+
 
 }

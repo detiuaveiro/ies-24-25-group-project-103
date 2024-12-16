@@ -1,43 +1,32 @@
-import { useEffect, useState } from 'react';
-import { Modal } from 'react-bootstrap';
-import 'bootstrap/dist/css/bootstrap.min.css';
-import './OxygenSaturationAlert.css';
-
-export default function OxygenSaturationAlert({showModal, setShowModal, patient, value}) {
-
-    useEffect(() => {
-        if (value <= 94) {
-            setShowModal(true);
-        } else {
-            setShowModal(false);
-        }
-    }, [value]);
-
-    function handleClose() {
-        setShowModal(false);
+import React, { useEffect } from 'react';
+import styles from './OxygenSaturationAlert.module.css';
+import { FaLungs } from 'react-icons/fa';
+export default function OxygenSaturationAlert({ showModal, setShowModal, patient, value }) {
+  useEffect(() => {
+    if (value <= 90) {
+      setShowModal(true);
+    } else {
+      setShowModal(false);
     }
+  }, [value, setShowModal]);
 
-    if (!showModal) {
-        return null; 
-    }
-    
-    return (
-        <>
-            <Modal show={showModal} onHide={handleClose} className="oxygen-saturation" centered>
-            <button className="close-button" onClick={handleClose}>&times;</button>
-                <Modal.Body className="custom-modal-body">
-                    <div className="alert-text">
-                        <span className="o2">{value}</span><span className="percent">%</span>
-                    </div>
-                    <img src="/oxygen.png" className="o2-image"/>
-                    <div className="patient-info">
-                        <span className="patient-status">SATURATION IS VERY LOW</span> <br/>
-                        <span className="patient-name">{patient?.name}</span>
-                        <br />
-                        <span className="patient-room">{patient?.roomNumber}</span>
-                    </div>
-                </Modal.Body>
-            </Modal>
-        </>
-    );
+  if (!showModal) {
+    return null;
+  }
+
+  return (
+    <div className={styles.oxygenSaturationCard}>
+      <div className={styles.alertText}>
+        <span className={styles.o2}>{value}</span>
+        <span className={styles.percent}>%</span>
+      </div>
+      <FaLungs style={{ fontSize: '10rem', color: '#ff8500', marginBottom: '1rem' }} />
+      <div className={styles.patientInfo}>
+        <span className={styles.patientStatus}>SATURATION IS VERY LOW</span> <br />
+        <span className={styles.patientName}>Patient {patient?.name}</span>
+        <br />
+        <span className={styles.patientRoom}>Located in room {patient?.roomNumber}</span>
+      </div>
+    </div>
+  );
 }

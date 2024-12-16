@@ -1,0 +1,70 @@
+.heartRateCard {
+  background-color: #f8d7da; 
+  color: #000;
+  text-align: center;
+  padding: 30px;
+  max-width: 500px;
+  height: 500px;
+  border-radius: 85px;
+  box-shadow: 0 4px 15px rgba(220, 53, 69, 0.5);
+}
+
+.alertText {
+  color: #dc3545; 
+  text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2); 
+  font-family: 'Karantina', cursive;
+  font-size: 9rem;
+  line-height: 1.2;
+  margin-top: -40px;
+}
+
+.alertText .bpm {
+  font-family: 'Karantina', cursive;
+  font-size: 0.5em;
+}
+
+.heartIcon {
+  margin-top: -10px;
+  width: 200px;
+  height: 200px;
+}
+
+.patientInfo {
+  font-size: 1.2rem;
+  color: #4a4a4a; 
+  text-transform: uppercase;
+  text-align: center;
+}
+
+.patientStatus {
+  font-family: 'Kanit', sans-serif;
+  font-size: 1.7rem;
+  color: #ff0000; 
+  margin-bottom: 0.5rem;
+}
+
+.patientName {
+  font-family: 'Kanit', sans-serif;
+  font-size: 1.4rem;
+  color: #c82333; 
+  margin-bottom: 0.5rem;
+}
+
+.patientRoom {
+  font-family: 'Kanit', sans-serif;
+  font-size: 1.2rem;
+  color: #c82333;
+  font-weight: bold;
+}
+
+@media (max-width: 576px) {
+  .heartRateCard {
+    padding: 20px;
+  }
+  .alertText {
+    font-size: 3rem;
+  }
+  .patientInfo {
+    font-size: 1rem;
+  }
+}

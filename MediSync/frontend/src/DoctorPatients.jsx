@@ -21,7 +21,6 @@ function DoctorPatients() {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                // Fetch patients
                 const patientsResponse = await axios.get(
                     `${baseUrl}/doctors/${user.id}/patients`,
                     {
@@ -31,7 +30,6 @@ function DoctorPatients() {
                     }
                 );
 
-                // Fetch beds
                 const bedsResponse = await axios.get(
                     `${baseUrl}/hospital/beds`,
                     {

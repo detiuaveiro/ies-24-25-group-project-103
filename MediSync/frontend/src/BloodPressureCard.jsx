@@ -153,11 +153,11 @@ const BloodPressureCard = ({ systolic, diastolic }) => {
             justifyContent: "center",
             paddingX: 1.5,
             marginTop: 2,
-            animation: status !== "Normal" ? "zoomGlowBlood 1.5s infinite" : "none", // Glow animation for non-normal status
+            animation: status !== "Normal" ? "zoomGlowBlood 1.5s infinite" : "none",
             "@keyframes zoomGlowBlood": {
               "0%": {
                 transform: "scale(1)",
-                boxShadow: "0 0 5px 0 rgba(100, 149, 237, 0.6)", // Light blue glow
+                boxShadow: "0 0 5px 0 rgba(100, 149, 237, 0.6)", 
               },
               "50%": {
                 transform: "scale(1.1)",

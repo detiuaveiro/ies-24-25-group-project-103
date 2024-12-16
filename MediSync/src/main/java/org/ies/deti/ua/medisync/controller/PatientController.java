@@ -157,4 +157,49 @@ public class PatientController {
         return ResponseEntity.ok(lastVitals);
     }
 
+    @PutMapping("{id}/state")
+    public ResponseEntity<Patient> updatePatientState(@PathVariable Long id, @RequestBody Map<String, String> request) {
+        String state = request.get("state");
+        if (state == null) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+        }
+    
+        boolean result = false;
+    
+        if ("TO_BE_DISCHARGED".equals(state)) {
+            result = patientService.canBeDischarged(id);
+        } else if ("DISCHARGED".equals(state)) {
+            result = patientService.dischargePatient(id);
+        } else {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }
+    
+        if (!result) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }
+    
+        // Return the updated patient object
+        Optional<Patient> updatedPatient = patientService.getPatientById(id);
+        if (updatedPatient.isPresent()) {
+            return ResponseEntity.ok(updatedPatient.get());
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+    }
+    
+    @PutMapping("discharge-date/{id}")
+    public ResponseEntity<Patient> updateDischargeDate(@PathVariable Long id, @RequestBody Map<String, String> request) {
+        String dischargeDate = request.get("dischargeDate");
+        if (dischargeDate == null) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+        }
+    
+        Patient updatedPatient = patientService.updateDischargeDate(id, dischargeDate);
+        if (updatedPatient != null) {
+            return ResponseEntity.ok(updatedPatient);
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+    }
+
 }

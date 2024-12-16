@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import jakarta.servlet.http.HttpServletRequest; // Import HttpServletRequest
+import jakarta.servlet.http.HttpServletRequest;
 
 @RestController
 @RequestMapping("/api/v1/users")
@@ -65,34 +65,37 @@ public class UserController {
     }
      */
 
-    @PostMapping("/{id}/profile-picture")
-    public ResponseEntity<String> uploadProfilePicture(@PathVariable Long id, 
-                                                      @RequestParam("file") MultipartFile file,
-                                                      HttpServletRequest request) { // Add request parameter
-        String uploadDir = "/tmp/tomcat/uploads/"; 
-
-        try {
-            File directory = new File(uploadDir);
-            if (!directory.exists()) {
-                boolean created = directory.mkdirs();
-                if (!created) {
-                    throw new IOException("Failed to create upload directory: " + uploadDir);
-                }
-            }
-            String filename = id + "_" + file.getOriginalFilename();
-            File destinationFile = new File(directory, filename);
-            file.transferTo(destinationFile);
-
-            String baseUrl = request.getRequestURL().toString(); 
-            baseUrl = baseUrl.substring(0, baseUrl.length() - request.getRequestURI().length());
-
-            String imageUrl = baseUrl + "/uploads/" + destinationFile.getName(); 
-            return ResponseEntity.ok(imageUrl);
-
-        } catch (IOException e) {
-            e.printStackTrace();
-            return ResponseEntity.status(HttpStatus.SC_INTERNAL_SERVER_ERROR)
-                                 .body("Failed to upload file: " + e.getMessage());
-        }
-    }
+     @PostMapping("/{id}/profile-picture")
+     public ResponseEntity<String> uploadProfilePicture(@PathVariable Long id, 
+                                                        @RequestParam("file") MultipartFile file,
+                                                        HttpServletRequest request) {
+         String uploadDir = "/tmp/tomcat/uploads/";
+         try {
+             File directory = new File(uploadDir);
+             if (!directory.exists()) {
+                 boolean created = directory.mkdirs();
+                 if (!created) {
+                     throw new IOException("Failed to create upload directory: " + uploadDir);
+                 }
+             }
+     
+             String filename = "user_" + id + "_" + file.getOriginalFilename();
+             File destinationFile = new File(directory, filename);
+             file.transferTo(destinationFile);
+     
+             String baseUrl = request.getScheme() + "://" + request.getServerName() + 
+                              (request.getServerPort() != 80 && request.getServerPort() != 443 
+                               ? ":" + request.getServerPort() : "");
+             String imageUrl = baseUrl + "/uploads/" + destinationFile.getName();
+     
+             userService.updateProfilePicture(id, imageUrl);
+             return ResponseEntity.ok(imageUrl);
+     
+         } catch (IOException e) {
+             e.printStackTrace();
+             return ResponseEntity.status(HttpStatus.SC_INTERNAL_SERVER_ERROR)
+                                  .body("Failed to upload file: " + e.getMessage());
+         }
+     }
+        
 }

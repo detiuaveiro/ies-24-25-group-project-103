@@ -148,3 +148,34 @@
     font-family: 'Montserrat', sans-serif;
     font-weight: 500; /* Medium weight for error messages */
 }
+
+
+.notification-widget-card {
+    display: flex;
+    flex-direction: column;
+    padding: 1rem;
+    margin: 0.5rem 0;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: #f9f9f9;
+    position: relative;
+  }
+  
+  .notification-widget-card-description {
+    margin: 0.5rem 0;
+  }
+  
+  .notification-widget-view-patient-btn {
+    margin-top: -2rem;
+    align-self: flex-end; /* Aligns the button to the right */
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+  }
+  
+  .notification-widget-view-patient-btn:hover {
+    background-color: #0056b3;
+  }
+  

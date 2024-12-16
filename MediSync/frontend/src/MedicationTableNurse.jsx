@@ -60,7 +60,7 @@ const MedicationTableNurse = () => {
       name: medication.name,
       dosage: medication.dosage,
       hourInterval: medication.hourInterval,
-      hasTaken: !medication.hasTaken,
+      hasTaken: true,
       lastTaken: !medication.hasTaken ? now.toISOString() : medication.lastTaken,
     };
   

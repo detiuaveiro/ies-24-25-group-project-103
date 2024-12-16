@@ -34,8 +34,8 @@ function CodeVerification() {
   const checkCode = async (code) => {
     try {
       const payload = { 
-        code: code.toString(), // ensure code is string
-        phoneNumber: phoneNumber.trim() // remove any whitespace
+        code: code.toString(), 
+        phoneNumber: phoneNumber.trim()
       };
       console.log('Sending payload:', payload);
       
