@@ -158,7 +158,6 @@
 /* Reduce font size and padding for smaller screens */
 .patientsTable th, .patientsTable td {
     font-size: 18px;
-    padding: 16px;
 }
 
 @media (max-width: 768px) {
