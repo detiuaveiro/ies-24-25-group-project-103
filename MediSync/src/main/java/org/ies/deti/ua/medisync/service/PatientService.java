@@ -169,10 +169,9 @@ public class PatientService {
 
     @Transactional
     public boolean dischargePatient(Long id) {
-        // Fetch patient safely using Optional
         Optional<Patient> optionalPatient = patientRepository.findById(id);
         if (optionalPatient.isEmpty()) {
-            return false; // Patient does not exist
+            return false; 
         }
     
         Patient existingPatient = optionalPatient.get();
@@ -462,6 +461,16 @@ public class PatientService {
                     }
                 })
                 .collect(Collectors.toList());
+    }
+
+    public Patient updateDischargeDate(Long patientId, String dischargeDate) {
+        Optional<Patient> patientOptional = patientRepository.findById(patientId);
+        if (patientOptional.isPresent()) {
+            Patient patient = patientOptional.get();
+            patient.setEstimatedDischargeDate(java.sql.Date.valueOf(dischargeDate));
+            return patientRepository.save(patient);
+        }
+        return null;
     }
     
 }

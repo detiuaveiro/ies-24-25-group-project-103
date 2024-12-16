@@ -1,0 +1,15 @@
+{"username": "doc_smith", "name": "Dr. Smith", "email": "doctor.smith@medisync.com", "password": "doc_smith123", "role": "DOCTOR", "profilePictureUrl": null, "enabled": true}
+{"username": "doc_johnson", "name": "Dr. Johnson", "email": "doctor.johnson@medisync.com", "password": "doc_johnson123", "role": "DOCTOR", "profilePictureUrl": null, "enabled": true}
+{"username": "doc_williams", "name": "Dr. Williams", "email": "doctor.williams@medisync.com", "password": "doc_williams123", "role": "DOCTOR", "profilePictureUrl": null, "enabled": true}
+{"username": "doc_brown", "name": "Dr. Brown", "email": "doctor.brown@medisync.com", "password": "doc_brown123", "role": "DOCTOR", "profilePictureUrl": null, "enabled": true}
+{"username": "doc_jones", "name": "Dr. Jones", "email": "doctor.jones@medisync.com", "password": "doc_jones123", "role": "DOCTOR", "profilePictureUrl": null, "enabled": true}
+{"username": "doc_garcia", "name": "Dr. Garcia", "email": "doctor.garcia@medisync.com", "password": "doc_garcia123", "role": "DOCTOR", "profilePictureUrl": null, "enabled": true}
+{"username": "doc_miller", "name": "Dr. Miller", "email": "doctor.miller@medisync.com", "password": "doc_miller123", "role": "DOCTOR", "profilePictureUrl": null, "enabled": true}
+{"username": "doc_davis", "name": "Dr. Davis", "email": "doctor.davis@medisync.com", "password": "doc_davis123", "role": "DOCTOR", "profilePictureUrl": null, "enabled": true}
+{"username": "doc_rodriguez", "name": "Dr. Rodriguez", "email": "doctor.rodriguez@medisync.com", "password": "doc_rodriguez123", "role": "DOCTOR", "profilePictureUrl": null, "enabled": true}
+{"username": "doc_martinez", "name": "Dr. Martinez", "email": "doctor.martinez@medisync.com", "password": "doc_martinez123", "role": "DOCTOR", "profilePictureUrl": null, "enabled": true}
+{"username": "doc_hernandez", "name": "Dr. Hernandez", "email": "doctor.hernandez@medisync.com", "password": "doc_hernandez123", "role": "DOCTOR", "profilePictureUrl": null, "enabled": true}
+{"username": "doc_lopez", "name": "Dr. Lopez", "email": "doctor.lopez@medisync.com", "password": "doc_lopez123", "role": "DOCTOR", "profilePictureUrl": null, "enabled": true}
+{"username": "doc_gonzalez", "name": "Dr. Gonzalez", "email": "doctor.gonzalez@medisync.com", "password": "doc_gonzalez123", "role": "DOCTOR", "profilePictureUrl": null, "enabled": true}
+{"username": "doc_wilson", "name": "Dr. Wilson", "email": "doctor.wilson@medisync.com", "password": "doc_wilson123", "role": "DOCTOR", "profilePictureUrl": null, "enabled": true}
+{"username": "doc_anderson", "name": "Dr. Anderson", "email": "doctor.anderson@medisync.com", "password": "doc_anderson123", "role": "DOCTOR", "profilePictureUrl": null, "enabled": true}

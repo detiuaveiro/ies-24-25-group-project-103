@@ -187,5 +187,19 @@ public class PatientController {
         }
     }
     
+    @PutMapping("discharge-date/{id}")
+    public ResponseEntity<Patient> updateDischargeDate(@PathVariable Long id, @RequestBody Map<String, String> request) {
+        String dischargeDate = request.get("dischargeDate");
+        if (dischargeDate == null) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+        }
+    
+        Patient updatedPatient = patientService.updateDischargeDate(id, dischargeDate);
+        if (updatedPatient != null) {
+            return ResponseEntity.ok(updatedPatient);
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+    }
 
 }
