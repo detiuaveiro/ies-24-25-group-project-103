@@ -67,11 +67,13 @@ public class Patient {
     @Column(name = "admission_date")
     private Date admissionDate;
 
+    @Column(name = "contagious")
+    private Boolean contagious = false;
     
 
     public Patient() {}
 
-    public Patient(String name, String gender, Date birthDate, Date estimatedDischargeDate, Float weight, Float height, List<String> conditions, List<String> observations, Doctor assignedDoctor) {
+    public Patient(String name, String gender, Date birthDate, Date estimatedDischargeDate, Float weight, Float height, List<String> conditions, List<String> observations, Doctor assignedDoctor, Boolean contagious) {
         this.name = name;
         this.gender = gender;
         this.birthDate = birthDate;
@@ -81,6 +83,7 @@ public class Patient {
         this.conditions = conditions;
         this.observations = observations;
         this.assignedDoctor = assignedDoctor;
+        this.contagious = contagious;
         this.admissionDate = new Date();
     }
 
@@ -186,5 +189,13 @@ public class Patient {
 
     public void setAdmissionDate(Date admissionDate){
         this.admissionDate = admissionDate;
+    }
+
+    public Boolean getContagious(){
+        return contagious;
+    }
+
+    public void setContagious(Boolean contagious){
+        this.contagious = contagious;
     }
 }
