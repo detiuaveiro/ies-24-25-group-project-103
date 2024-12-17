@@ -296,11 +296,12 @@ export default function CreatePatient({ showModal, setShowModal, availableBeds=[
                             </Form.Group>
                         </Col>
                         <Col md={6}>
-                            <Form.Group>
-                                <Form.Label>Contagious</Form.Label>
+                            <Form.Group className="contagious-group">
+                                <Form.Label></Form.Label>
+                                <div className="contagious-checkbox">
                                 <Form.Check
                                     type="checkbox"
-                                    label="Patient is contagious"
+                                    id="contagious-checkbox"
                                     name="contagious"
                                     checked={formData.contagious}
                                     onChange={(e) => handleChange({
@@ -309,7 +310,10 @@ export default function CreatePatient({ showModal, setShowModal, availableBeds=[
                                             value: e.target.checked
                                         }
                                     })}
+                                    label="Patient is contagious"
+                                    className="form-check-sm"
                                 />
+                                </div>
                             </Form.Group>
                         </Col>
                     </Row>
