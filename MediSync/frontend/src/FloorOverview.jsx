@@ -175,10 +175,12 @@ function FloorOverview() {
             <CreatePatient 
                 showModal={showPatientsModal} 
                 setShowModal={setShowPatientsModal} 
-                availableBeds={beds.filter(bed => getBedStatus(bed) === "available").map(bed => ({
-                    id: bed.id,
-                    name: `Floor ${bed.bedNumber.charAt(0)} / Room ${bed.bedNumber.charAt(1)} / Bed ${bed.bedNumber.charAt(2)}`
-                }))} 
+                availableBeds={beds
+                    .filter(bed => getBedStatus(bed) === "available")
+                    .map(bed => ({
+                        id: bed.id,
+                        name: `Floor ${bed.bedNumber.charAt(0)} / Room ${bed.bedNumber.charAt(1)} / Bed ${bed.bedNumber.charAt(2)}`
+                    }))} 
                 availableDoctors={doctors.map(doctor => ({
                     id: doctor.id,
                     name: doctor.name

@@ -15,7 +15,8 @@ export default function CreatePatient({ showModal, setShowModal, availableBeds=[
         observations: '',
         conditions: '',
         bed: '',
-        doctor: ''
+        doctor: '',
+        contagious: false
     });
 
     const token = localStorage.getItem('token');
@@ -32,17 +33,27 @@ export default function CreatePatient({ showModal, setShowModal, availableBeds=[
             observations: '',
             conditions: '',
             bed: '',
-            doctor: ''
+            doctor: '',
+            contagious: false
         });
         setShowModal(false);
     }
 
     const handleChange = (e) => {
         const { name, value } = e.target;
-        setFormData(prev => ({
-            ...prev,
-            [name]: value
-        }));
+        setFormData(prev => {
+            const updates = {
+                ...prev,
+                [name]: value
+            };
+            
+            // reset bed selection when contagious status changes
+            if (name === 'contagious') {
+                updates.bed = '';
+            }
+            
+            return updates;
+        });
     };
 
     const handleSave = () => {
@@ -61,6 +72,7 @@ export default function CreatePatient({ showModal, setShowModal, availableBeds=[
             height: Number(formData.height),
             observations: formData.observations.split('\n'),
             conditions: formData.conditions.split('\n'),
+            contagious: formData.contagious
         };
     
         let createdPatient;
@@ -131,9 +143,21 @@ export default function CreatePatient({ showModal, setShowModal, availableBeds=[
         });
     };
 
-    const availableBedsOptions = availableBeds.map(bed => (
-        <option key={bed.id} value={bed.id}>{bed.name}</option>
-    ));
+    const availableBedsOptions = availableBeds
+        .filter(bed => {
+            const floorNumber = bed.name.split(' / ')[0].split(' ')[1];
+            const roomNumber = bed.name.split(' / ')[1].split(' ')[1];
+            
+            if (formData.contagious) {
+                // Only allow floor 3, rooms 7 and 8 for contagious patients
+                return floorNumber === '3' && (roomNumber === '7' || roomNumber === '8');
+            }
+            // For non-contagious patients, exclude floor 3, rooms 7 and 8
+            return !(floorNumber === '3' && (roomNumber === '7' || roomNumber === '8'));
+        })
+        .map(bed => (
+            <option key={bed.id} value={bed.id}>{bed.name}</option>
+        ));
 
     const availableDoctorsOptions = availableDoctors.map(doctor => (
         <option key={doctor.id} value={doctor.id}>{doctor.name}</option>
@@ -269,6 +293,23 @@ export default function CreatePatient({ showModal, setShowModal, availableBeds=[
                                     <option value="">Select a bed</option>
                                     {availableBedsOptions}
                                 </Form.Select>
+                            </Form.Group>
+                        </Col>
+                        <Col md={6}>
+                            <Form.Group>
+                                <Form.Label>Contagious</Form.Label>
+                                <Form.Check
+                                    type="checkbox"
+                                    label="Patient is contagious"
+                                    name="contagious"
+                                    checked={formData.contagious}
+                                    onChange={(e) => handleChange({
+                                        target: {
+                                            name: 'contagious',
+                                            value: e.target.checked
+                                        }
+                                    })}
+                                />
                             </Form.Group>
                         </Col>
                     </Row>
