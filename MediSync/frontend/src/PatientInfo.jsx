@@ -13,7 +13,7 @@ function PatientInfo({ patient: initialPatient }) {
   const baseUrl = CONFIG.API_URL;
 
   const handleDischargeDateChange = async (date) => {
-    const updatedDate = date.toISOString().split('T')[0]; // Format date as yyyy-MM-dd
+    const updatedDate = date.toISOString().split('T')[0];
     setPatient({ ...patient, estimatedDischargeDate: updatedDate });
     
     if (role === 'DOCTOR') {
@@ -39,7 +39,7 @@ function PatientInfo({ patient: initialPatient }) {
         }
 
         const updatedPatient = await response.json();
-        setPatient(updatedPatient); // Update local state with the new patient data
+        setPatient(updatedPatient);
         console.log('Successfully updated discharge date:', updatedDate);
       } catch (error) {
         console.error('Error updating discharge date:', error);
@@ -47,8 +47,7 @@ function PatientInfo({ patient: initialPatient }) {
         setIsUpdating(false);
       }
     }
-};
-
+  };
 
   return (
     <div className={styles.formContainer}>
@@ -82,7 +81,6 @@ function PatientInfo({ patient: initialPatient }) {
         </label>
       </div>
       <div className={styles.datePickerContainer}>
-
         <label>
           Discharge Date (Estimated)
           <div className={styles.inputWithIcon}>
@@ -111,6 +109,17 @@ function PatientInfo({ patient: initialPatient }) {
         <label>
           Conditions
           <input type="text" value={patient.conditions?.join(', ') || 'None'} readOnly />
+        </label>
+      </div>
+      <div className={styles.contagiousContainer}>
+        <label>
+          Contagious
+          <input 
+            type="text" 
+            value={patient.contagious ? 'Yes' : 'No'} 
+            readOnly 
+            className={patient.contagious ? styles.contagiousYes : styles.contagiousNo}
+          />
         </label>
       </div>
     </div>

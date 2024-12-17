@@ -171,3 +171,39 @@
 .buttonIcon {
     font-size: 32px !important;
 }
+
+.isolationRow {
+    background-color: #FFF3E0 !important;
+    position: relative;
+}
+
+.isolationRow td {
+    border-color: #FF9800;
+    position: relative;
+}
+
+.isolationRow td:last-child {
+    display: flex;
+    justify-content: center; /* Center the content */
+    align-items: center;
+    gap: 20px; /* Space between button and label */
+    padding: 20px;
+}
+
+.isolationRow .moreInfoButton {
+    background-color: #FF9800;
+    color: white;
+    margin: 0;
+    width: auto; /* Allow button to take natural width */
+}
+
+.isolationRow .moreInfoButton:hover {
+    background-color: #F57C00;
+}
+
+/* Style for the isolation label */
+.isolationLabel {
+    color: #FF9800;
+    font-size: 14px;
+    font-weight: bold;
+}
