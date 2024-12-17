@@ -108,7 +108,7 @@ const RoomPage = ({ vitalsData }) => {
       {filteredRooms.length > 0 ? (
         <div className="room-grid">
           {filteredRooms.map((room) => (
-            <div key={room.roomId} className="room-card">
+            <div key={room.roomId} className={`room-card ${room.roomNumber === '37' || room.roomNumber === '38' ? 'contagious-room' : ''}`} >
               <h2>Room {room.roomNumber}</h2>
               <div className="beds-grid">
                 {[...Array(4)].map((_, index) => {
