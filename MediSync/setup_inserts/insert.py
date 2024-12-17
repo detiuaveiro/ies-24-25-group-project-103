@@ -77,7 +77,8 @@ def create_nurses():
 
 def create_patients():
     """
-    Create patients and assign them to random doctors and beds
+    Create patients and assign them to random doctors and beds.
+    Contagious patients are only assigned to isolation rooms (floor 3, rooms 7 and 8).
     """
     try:
         doctors_response = requests.get(f"{BASE_URL}/doctors", headers=HEADERS)
@@ -87,12 +88,35 @@ def create_patients():
         doctors = doctors_response.json()
         doctor_ids = [doctor["id"] for doctor in doctors]
         
+        rooms_response = requests.get(f"{BASE_URL}/hospital/rooms", headers=HEADERS)
+        if rooms_response.status_code != 200:
+            print("Failed to get rooms list")
+            return
+        rooms = rooms_response.json()
+        room_map = {room["id"]: room["roomNumber"] for room in rooms}
+        
         beds_response = requests.get(f"{BASE_URL}/hospital/beds", headers=HEADERS)
         if beds_response.status_code != 200:
             print("Failed to get beds list")
             return
         beds = beds_response.json()
-        available_bed_ids = set(bed["id"] for bed in beds)
+        
+        # separate isolation beds from regular beds
+        isolation_bed_ids = set()
+        regular_bed_ids = set()
+        
+        for bed in beds:
+            room_info = bed.get("room", {})
+            if isinstance(room_info, dict):
+                room_number = room_info.get("roomNumber", "")
+            else:
+                room_number = room_map.get(room_info, "")
+            
+            if room_number.startswith("3") and (room_number.endswith("7") or room_number.endswith("8")):
+                isolation_bed_ids.add(bed["id"])
+            else:
+                regular_bed_ids.add(bed["id"])
+        
         used_bed_ids = set()
 
         with open("patients.txt", "r") as file:
@@ -118,8 +142,20 @@ def create_patients():
                         else:
                             print(f"Failed to assign doctor to patient {patient_data['name']}")
                     
-                    # Assign random bed
-                    available_beds = available_bed_ids - used_bed_ids
+                    is_contagious = patient_data.get("contagious", False)
+                    available_beds = set()
+                    
+                    if is_contagious:
+                        available_beds = isolation_bed_ids - used_bed_ids
+                        if not available_beds:
+                            print(f"No isolation beds available for contagious patient {patient_data['name']}")
+                            continue
+                    else:
+                        available_beds = regular_bed_ids - used_bed_ids
+                        if not available_beds:
+                            print(f"No regular beds available for patient {patient_data['name']}")
+                            continue
+                    
                     if available_beds:
                         random_bed_id = random.choice(list(available_beds))
                         bed_data = {"id": random_bed_id}
@@ -130,11 +166,15 @@ def create_patients():
                         )
                         if bed_response.status_code == 201:
                             used_bed_ids.add(random_bed_id)
-                            print(f"Assigned bed {random_bed_id} to patient {patient_data['name']}")
+                            bed_type = "isolation" if is_contagious else "regular"
+                            
+                            bed_info = next((b for b in beds if b["id"] == random_bed_id), None)
+                            room_info = bed_info.get("room", {}) if bed_info else {}
+                            room_number = room_info.get("roomNumber", "") if isinstance(room_info, dict) else room_map.get(room_info, "unknown")
+                            
+                            print(f"Assigned {bed_type} bed {random_bed_id} (Room {room_number}) to patient {patient_data['name']}")
                         else:
                             print(f"Failed to assign bed to patient {patient_data['name']}")
-                    else:
-                        print("No more beds available")
                 else:
                     print(f"Failed to create patient {patient_data['name']}: {response.text}")        
                     
@@ -273,7 +313,7 @@ def create_schedules():
 
 def start_application():
     # do this just to be sure
-    #delete_admin()
+    delete_admin()
     create_admin()
     if not login_admin():
         print("Exiting...\n")
