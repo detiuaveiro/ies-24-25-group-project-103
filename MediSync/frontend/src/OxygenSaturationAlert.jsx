@@ -20,12 +20,12 @@ export default function OxygenSaturationAlert({ showModal, setShowModal, patient
         <span className={styles.o2}>{value}</span>
         <span className={styles.percent}>%</span>
       </div>
-      <FaLungs style={{ fontSize: '10rem', color: '#ff8500', marginBottom: '1rem' }} />
+      <FaLungs style={{ fontSize: '12rem', color: '#ff8500', marginTop:"-20px"}} />
       <div className={styles.patientInfo}>
-        <span className={styles.patientStatus}>SATURATION IS VERY LOW</span> <br />
-        <span className={styles.patientName}>Patient {patient?.name}</span>
+        <span className={styles.patientStatus}>SATURATION IS LOW</span> <br />
+        <span className={styles.patientName}>{patient?.name}</span>
         <br />
-        <span className={styles.patientRoom}>Located in room {patient?.roomNumber}</span>
+        <span className={styles.patientRoom}>Room {patient?.roomNumber}</span>
       </div>
     </div>
   );
