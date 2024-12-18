@@ -19,6 +19,7 @@ export default function AddStaff({ showModal, setShowModal }) {
 
   useEffect(() => {
     fetchData("/nurses", setNurses, "Failed to fetch nurses");
+    console.log(nurses);
     fetchData("/hospital/rooms", setRooms, "Failed to fetch rooms");
   }, []);
 
@@ -34,6 +35,8 @@ export default function AddStaff({ showModal, setShowModal }) {
       const data = await response.json();
 
       if (endpoint === "/nurses") {
+
+ 
         const updatedNurses = await Promise.all(
           data.map(async (nurse) => {
             if (nurse.schedule) {
