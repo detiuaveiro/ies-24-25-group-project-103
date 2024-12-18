@@ -190,7 +190,7 @@ def create_visitors():
     r = requests.get(BASE_URL + "/patients", headers=HEADERS)
     patients = r.json()
     for patient in patients:
-        if patient['name'] == 'Ricardo Antunes' or patient['name'] == 'João Almeida':
+        if patient['name'] == 'Ricardo Antunes':
             patient_ids.append(patient['id'])
             
     # create a visitor for each patient
