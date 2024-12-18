@@ -2126,6 +2126,31 @@
               }
           }
       },
+      "UserInput": {
+          "type": "object",
+          "properties": {
+              "username": {
+                  "type": "string",
+                  "example": "ieslover"
+              },
+              "name": {
+                  "type": "string",
+                  "example": "ies"
+              },
+              "email": {
+                  "type": "string",
+                  "example": "ieslover"
+              },
+              "password": {
+                  "type": "string",
+                  "example": "ieslover"
+              },
+              "role": {
+                  "type": "string",
+                  "example": "HOSPITAL_MANAGER"
+              }
+          }
+      },
         "User": {
           "type": "object",
           "properties": {
