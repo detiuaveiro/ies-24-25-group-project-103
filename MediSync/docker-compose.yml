@@ -19,6 +19,11 @@ services:
       retries: 10
     networks:
       - medisync-network
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "5"
 
   influxdb:
     image: influxdb:2.7
@@ -27,13 +32,13 @@ services:
     volumes:
       - influxdb_data:/var/lib/influxdb2
     environment:
-      - INFLUXDB_INIT_MODE=setup                        # These variables are defined in .env
-      - INFLUXDB_INIT_USERNAME=${INFLUXDB_USERNAME}     # Admin username
-      - INFLUXDB_INIT_PASSWORD=${INFLUXDB_PASSWORD}     # Admin password
-      - INFLUXDB_INIT_ORG=${INFLUXDB_ORG}               # Organization name
-      - INFLUXDB_INIT_BUCKET=${INFLUXDB_BUCKET}         # Bucket name
-      - INFLUXDB_INIT_RETENTION=0                       # Retention policy (0 = unlimited)
-      - INFLUXDB_INIT_ADMIN_TOKEN=${INFLUXDB_TOKEN}     # Admin token for API access
+      - INFLUXDB_INIT_MODE=setup
+      - INFLUXDB_INIT_USERNAME=${INFLUXDB_USERNAME}
+      - INFLUXDB_INIT_PASSWORD=${INFLUXDB_PASSWORD}
+      - INFLUXDB_INIT_ORG=${INFLUXDB_ORG}
+      - INFLUXDB_INIT_BUCKET=${INFLUXDB_BUCKET}
+      - INFLUXDB_INIT_RETENTION=0
+      - INFLUXDB_INIT_ADMIN_TOKEN=${INFLUXDB_TOKEN}
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8086/health"]
       interval: 10s
@@ -41,6 +46,11 @@ services:
       retries: 10
     networks:
       - medisync-network
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "5"
 
   app:
     depends_on:
@@ -69,27 +79,37 @@ services:
       - ./target:/app/target
     networks:
       - medisync-network
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "5"
 
   frontend:
-      build:
-        context: ./frontend
-        dockerfile: Dockerfile.frontend
-      ports:
-        - "${FRONTEND_PORT_VITE}"
-        - "${FRONTEND_PORT_REACT}"
-      volumes:
-        - ./frontend:/app
-        - /app/node_modules
-      environment:
-        - REACT_APP_API_URL=${API_URL}
-        - VITE_APP_API_URL=${API_URL}
-        - CHOKIDAR_USEPOLLING=${CHOKIDAR_USEPOLLING}
-        - WATCHPACK_POLLING=${WATCHPACK_POLLING}
-        - NODE_ENV=${NODE_ENV}
-      depends_on:
-        - app
-      networks:
-        - medisync-network
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.frontend
+    ports:
+      - "${FRONTEND_PORT_VITE}"
+      - "${FRONTEND_PORT_REACT}"
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    environment:
+      - REACT_APP_API_URL=${API_URL}
+      - VITE_APP_API_URL=${API_URL}
+      - CHOKIDAR_USEPOLLING=${CHOKIDAR_USEPOLLING}
+      - WATCHPACK_POLLING=${WATCHPACK_POLLING}
+      - NODE_ENV=${NODE_ENV}
+    depends_on:
+      - app
+    networks:
+      - medisync-network
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "5"
 
   zookeeper:
     image: confluentinc/cp-zookeeper:7.4.4
@@ -100,6 +120,11 @@ services:
       - "${ZOOKEEPER_PORT}"
     networks:
       - medisync-network
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "5"
 
   kafka:
     image: confluentinc/cp-kafka:7.4.4
@@ -123,6 +148,11 @@ services:
       interval: 10s
       timeout: 5s
       retries: 10
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "5"
 
   kafdrop:
     image: obsidiandynamics/kafdrop:4.0.2
@@ -133,6 +163,11 @@ services:
       SERVER_SERVLET_CONTEXTPATH: "/"
     networks:
       - medisync-network
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "5"
 
   swagger-ui:
     image: swaggerapi/swagger-ui
@@ -143,7 +178,11 @@ services:
       - ./swagger-config:/usr/share/nginx/html/swagger-config
     environment:
       - SWAGGER_JSON=/usr/share/nginx/html/swagger-config/combined-api.json
-
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "5"
 
   vitals-generator:
     image: python:3.10-slim
@@ -159,10 +198,15 @@ services:
       - KAFKA_BROKER= "${GENERATOR_KAFKACONNECT}"
     networks:
       - medisync-network
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "5"
 
 networks:
   medisync-network:
-  
+
 volumes:
   db:
   influxdb_data:

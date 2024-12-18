@@ -114,7 +114,6 @@ const MedicationTableNurse = () => {
             <th>Frequency (hours)</th>
             <th>Last Administered</th>
             <th>Time Until Next</th>
-            <th>Actions</th>
           </tr>
         </thead>
         <tbody>
@@ -137,7 +136,6 @@ const MedicationTableNurse = () => {
                         return;
                       }
 
-                      // Perform the update only if the toggle is valid
                       await handleToggleCheck(medication);
                     }}
                     style={{
@@ -152,10 +150,6 @@ const MedicationTableNurse = () => {
                 <td>{medication.hourInterval}</td>
                 <td>{lastTime}</td>
                 <td>{calculateTimeUntilNext(medication)}</td>
-                <td className={styles.actions}>
-                  <FontAwesomeIcon icon={faEdit} className={styles.icon} />
-                  <FontAwesomeIcon icon={faTrash} className={styles.icon} />
-                </td>
               </tr>
             );
           })}

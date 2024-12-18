@@ -34,6 +34,16 @@
     padding:10px;
 }
 
+.form-check-sm {
+    margin-top: 10px;
+}
+
+.form-check-input {
+    padding: 0px !important;
+    margin-left: 8px !important;
+    margin-top: 2px !important;
+    margin-right: 5px !important;
+}
 
 .create-patient .form-check-label {
     font-weight: 500;
