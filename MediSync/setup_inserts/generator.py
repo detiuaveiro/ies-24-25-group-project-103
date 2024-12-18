@@ -42,6 +42,7 @@ def generate_random_date(start_year, end_year):
 def generate_patients():
     """
     Create a txt file with 50 patients in a json format.
+    Four patients will be marked as contagious.
     """
     patients = [
     "Cristiano Ronaldo", "Óscar Cardozo", "Eusébio", "Rui Costa", "João Félix",
@@ -60,8 +61,10 @@ def generate_patients():
     
     conditions = [
         "Hypertension", "Diabetes", "Asthma", "Arthritis", "Heart Disease",
-        "COPD", "Pneumonia", "Bronchitis", "Flu", "COVID-19"
+        "COPD", "Pneumonia", "Bronchitis", "Anemia", "Obesity"
     ]
+
+    contagious_conditions = ["COVID-19", "Flu", "Pneumonia"]
 
     observations = [
         "Requires wheelchair assistance",
@@ -76,10 +79,24 @@ def generate_patients():
         "Limited mobility"
     ]
 
+    # select 4 patients to be contagious
+    contagious_indices = random.sample(range(len(patients)), 4)
+
     with open("patients.txt", "w") as file:
-        for patient in patients:
+        for index, patient in enumerate(patients):
             birth_date = format_date(generate_random_date(1950, 2004))
             discharge_date = format_date(generate_random_date(2024, 2025))
+            
+            is_contagious = index in contagious_indices
+            
+            # if patient is contagious they have at least one contagious condition
+            if is_contagious:
+                patient_conditions = random.sample(contagious_conditions, 1)
+                additional_conditions = random.sample([c for c in conditions if c not in contagious_conditions], 
+                                                   random.randint(0, 2))
+                patient_conditions.extend(additional_conditions)
+            else:
+                patient_conditions = random.sample(conditions, random.randint(1, 3))
             
             data = {
                 "name": patient,
@@ -88,9 +105,10 @@ def generate_patients():
                 "estimatedDischargeDate": discharge_date,
                 "weight": round(random.uniform(60.0, 95.0), 1),
                 "height": random.randint(150, 195),  # Height in centimeters
-                "conditions": random.sample(conditions, random.randint(1, 3)),
+                "conditions": patient_conditions,
                 "observations": random.sample(observations, random.randint(1, 3)),
-                "state": "IN_BED"
+                "state": "IN_BED",
+                "contagious": is_contagious
             }
             file.write(json.dumps(data) + "\n")
     
@@ -166,8 +184,8 @@ def generate_medications():
     print("Medications data written to medications.txt")
 
 if __name__ == "__main__":
-    generate_doctors()
+    #generate_doctors()
     generate_patients()
-    generate_nurses()
-    generate_medications()
+    #generate_nurses()
+    #generate_medications()
     pass
