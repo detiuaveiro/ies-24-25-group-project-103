@@ -4,8 +4,8 @@ Repository for the IES course project.
 
 | Student         | Roles         | Nmec   | Effort |
 | --------------- | ------------- | ------ | ------ |
-| Pedro Ponte     | DevOps Master | 98059  | 23%    |
-| Afonso Ferreira | Team Manager  | 113480 | 32%    |
+| Pedro Ponte     | DevOps Master | 98059  | 24%    |
+| Afonso Ferreira | Team Manager  | 113480 | 31%    |
 | João Neto       | Product Owner | 113482 | 22%    |
 | Ricardo Antunes | Architect     | 115243 | 23%    |
 
