@@ -104,8 +104,15 @@ public class NurseService {
     public Map<Bed, Patient> getAssignedBedsAndPatientsForNurse(Nurse nurse) {
         Map<Bed, Patient> bedPatientMap = new HashMap<>();
 
-        for (ScheduleEntry entry : nurse.getSchedule()) {
-            List<Room> rooms = entry.getRoom();
+        LocalDateTime now = LocalDateTime.now();
+            List<Room> rooms = nurse.getSchedule().stream()
+            .filter(scheduleEntry -> 
+                    scheduleEntry.getStart_time().isBefore(now) &&
+                    scheduleEntry.getEnd_time().isAfter(now)) 
+            .flatMap(scheduleEntry -> scheduleEntry.getRoom().stream())
+            .distinct()
+            .toList();
+     
 
             for (Room room : rooms) {
                 List<Bed> beds = bedRepository.findBedByRoom(room);
@@ -116,7 +123,7 @@ public class NurseService {
                         bedPatientMap.put(bed, assignedPatient);
                     }
                 }
-            }
+            
         }
 
         return bedPatientMap;
@@ -135,21 +142,31 @@ public class NurseService {
     }
 
     public List<RoomWithPatientsDTO> getRoomWithBedsAndPatientsDTO(Nurse nurse) {
-        // Fetch all rooms the nurse is assigned to
-        List<Room> nurseRooms = nurse.getSchedule().stream()
+        // Fetch the current timestamp
+        LocalDateTime now = LocalDateTime.now();
+    
+        List<Room> currentRooms = nurse.getSchedule().stream()
+                .filter(scheduleEntry -> 
+                        scheduleEntry.getStart_time().isBefore(now) &&
+                        scheduleEntry.getEnd_time().isAfter(now)) 
                 .flatMap(scheduleEntry -> scheduleEntry.getRoom().stream())
                 .distinct()
                 .toList();
-
+    
         // Fetch all beds and their patients
         Map<Bed, Patient> bedPatientMap = getAssignedBedsAndPatientsForNurse(nurse);
         Map<Room, List<BedWithPatientDTO>> roomToBedsMap = new HashMap<>();
-
+    
         for (Map.Entry<Bed, Patient> entry : bedPatientMap.entrySet()) {
             Bed bed = entry.getKey();
             Patient patient = entry.getValue();
             Room room = bed.getRoom(); // Assuming Bed has a reference to Room
-
+    
+            // Only include patients in rooms from the current schedule
+            if (!currentRooms.contains(room)) {
+                continue;
+            }
+    
             Optional<PatientWithVitals> patientWithVitalsOpt = patientService.getPatientWithVitalsById(patient.getId());
             if (patientWithVitalsOpt.isPresent()) {
                 PatientWithVitals patientWithVitals = patientWithVitalsOpt.get();
@@ -157,29 +174,29 @@ public class NurseService {
                         bed.getId(),
                         bed.getBedNumber(), // Assuming Bed has a getName() or similar method
                         patientWithVitals);
-
+    
                 roomToBedsMap
                         .computeIfAbsent(room, r -> new ArrayList<>())
                         .add(bedWithPatientDTO);
             }
         }
-
+    
         roomToBedsMap.forEach((room, beds) -> beds.sort(Comparator.comparing(BedWithPatientDTO::getBedId)));
-
-        // Create the list of DTOs, ensuring every room is included
+    
+        // Create the list of DTOs, ensuring every room in the current schedule is included
         List<RoomWithPatientsDTO> roomWithPatientsDTOList = new ArrayList<>();
-        for (Room room : nurseRooms) {
-            List<BedWithPatientDTO> beds = roomToBedsMap.getOrDefault(room, new ArrayList<>()); // Default to empty list
-                                                                                                // if no beds
+        for (Room room : currentRooms) {
+            List<BedWithPatientDTO> beds = roomToBedsMap.getOrDefault(room, new ArrayList<>()); // Default to empty list if no beds
             RoomWithPatientsDTO dto = new RoomWithPatientsDTO(
                     room.getId(),
                     room.getRoomNumber(),
                     beds);
             roomWithPatientsDTOList.add(dto);
         }
-
+    
         return roomWithPatientsDTOList;
     }
+    
 
     public Nurse addScheduleEntryToNurse(Long nurseId, ScheduleEntry newEntry) {
         /*
@@ -338,7 +355,9 @@ public class NurseService {
             LocalDateTime now = LocalDateTime.now(); // Current time
 
             for (ScheduleEntry entry : nurse.getSchedule()) {
-                if (entry.getStart_time().isBefore(now) && entry.getEnd_time().isAfter(now)) {
+                if ((entry.getStart_time().isBefore(now) && entry.getEnd_time().isAfter(now)) ||
+                    (entry.getStart_time().isBefore(now) && entry.getEnd_time().isBefore(entry.getStart_time()) && now.isBefore(entry.getEnd_time())) ||
+                    (entry.getStart_time().isAfter(entry.getEnd_time()) && now.isAfter(entry.getStart_time()))) {
                     for (Room room : entry.getRoom()) {
                         List<Bed> beds = bedRepository.findBedByRoom(room);
                         for (Bed bed : beds) {
@@ -349,6 +368,7 @@ public class NurseService {
                     }
                 }
             }
+            
         }
         return patients;
     }
@@ -362,5 +382,30 @@ public class NurseService {
             bedRepository.save(bed);
         }
         return bedOptional;
+    }
+
+    public List<Patient> getPatientsByNurseIdAndRoom(Long nurseId) {
+        List<Patient> patients = new ArrayList<>();
+        Optional<Nurse> nurseOptional = nurseRepository.findById(nurseId);
+        LocalDateTime now = LocalDateTime.now(); // Current time
+
+        List<Room> currentRooms = nurseOptional.get().getSchedule().stream()
+                .filter(scheduleEntry -> 
+                        scheduleEntry.getStart_time().isBefore(now) &&
+                        scheduleEntry.getEnd_time().isAfter(now)) 
+                .flatMap(scheduleEntry -> scheduleEntry.getRoom().stream())
+                .distinct()
+                .toList();
+
+        for (Room room : currentRooms) {
+            List<Bed> beds = bedRepository.findBedByRoom(room);
+            for (Bed bed : beds) {
+                if (bed.getAssignedPatient() != null) {
+                    patients.add(bed.getAssignedPatient());
+                }
+            }
+        }
+        return patients;
+    
     }
 }

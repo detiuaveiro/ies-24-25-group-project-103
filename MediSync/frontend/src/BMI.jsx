@@ -2,20 +2,21 @@ import { Box, Chip, Typography } from "@mui/material";
 import React from "react";
 
 const BMI = ({ patient }) => {
-  const bmi = (patient.weight / ((patient.height  / 100) * (patient.height / 100))).toFixed(1); 
+  const bmi = parseFloat((patient.weight / ((patient.height / 100) * (patient.height / 100))).toFixed(1)); // Ensure BMI is a number
   const minBMI = 15;
   const maxBMI = 40;
   const healthyMin = 18.5;
   const healthyMax = 24.9;
-  const gradientWidth = 260; 
+  const gradientWidth = 260; // Width of the gradient bar
 
-  const calculateLeftPosition = (bmi) => {
-    if (bmi < minBMI) return 0; 
-    if (bmi > maxBMI) return gradientWidth;
-    return ((bmi - minBMI) / (maxBMI - minBMI)) * gradientWidth;
+  const calculateLeftPosition = (bmi, minBMI, maxBMI, gradientWidth) => {
+    const clampedBMI = Math.max(minBMI, Math.min(bmi, maxBMI)); // Ensure within range
+    const normalizedPosition = (clampedBMI - minBMI) / (maxBMI - minBMI); // Normalize to 0-1 range
+    return Math.round(normalizedPosition * gradientWidth) +27; // Convert to pixel position
   };
+  
 
-  const circleLeftPosition = calculateLeftPosition(bmi);
+  const circleLeftPosition = calculateLeftPosition(bmi, minBMI, maxBMI, gradientWidth);
 
   let chipLabel = "Healthy";
   let chipColor = { backgroundColor: "#d5ffdd", color: "black" };
@@ -71,7 +72,7 @@ const BMI = ({ patient }) => {
           position: "absolute",
           top: 69,
           left: 169,
-          ...chipColor, 
+          ...chipColor,
           fontFamily: "Mulish, Helvetica",
         }}
       />
@@ -172,13 +173,13 @@ const BMI = ({ patient }) => {
           sx={{
             position: "absolute",
             top: -2,
-            left: circleLeftPosition + 5,
-            width: 9,
-            height: 9,
+            left: `${circleLeftPosition}px`,
+            width: 12,
+            height: 12,
             backgroundColor: "#d16564",
-            borderRadius: 19,
+            borderRadius: "50%",
             border: "1px solid white",
-            transform: "translateX(-50%)", 
+            transform: "translateX(-50%)",
           }}
         />
       </Box>

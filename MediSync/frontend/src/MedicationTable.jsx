@@ -15,8 +15,10 @@ const MedicationTable= ({patient}) => {
   const [error, setError] = useState(null); 
   const [showModal, setShowModal] = useState(false);
   const [editMedication, setEditMedication] = useState(null);
+  const [trigger, setTrigger] = useState(false);
   const { id } = useParams();
   const baseUrl = CONFIG.API_URL;
+
 
 
   useEffect(() => {
@@ -46,8 +48,30 @@ const MedicationTable= ({patient}) => {
     };
 
     fetchMedications();
-  }, [id, baseUrl]);
+  }, [id, baseUrl, trigger]);
 
+
+  const triggerUpdate = (updatedMedication) => {
+    if (updatedMedication) {
+      setMedications((prevMedications) => {
+        // Check if the medication exists in the list
+        const index = prevMedications.findIndex(med => med.id === updatedMedication.id);
+        if (index > -1) {
+          // Update the existing medication
+          const newMedications = [...prevMedications];
+          newMedications[index] = updatedMedication;
+          return newMedications;
+        } else {
+          // Add the new medication
+          return [...prevMedications, updatedMedication];
+        }
+      });
+    } else {
+      // No specific medication, refetch (fallback case)
+      setTrigger(!trigger);
+    }
+  };
+  
   if (loading) {
     return <div>Loading medications...</div>; 
   }
@@ -89,11 +113,13 @@ const MedicationTable= ({patient}) => {
         </tbody>
       </table>
       <UpdateMedication
-      showModal={showModal}
-      setShowModal={setShowModal}
-      patient={patient}
-      medication={editMedication} 
-      />
+  showModal={showModal}
+  setShowModal={setShowModal}
+  patient={patient}
+  medication={editMedication}
+  updateMedication={triggerUpdate}
+/>
+
     </div>
   );
 };

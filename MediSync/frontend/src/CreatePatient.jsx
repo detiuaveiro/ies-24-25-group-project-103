@@ -310,6 +310,7 @@ export default function CreatePatient({ showModal, setShowModal, availableBeds=[
                                             value: e.target.checked
                                         }
                                     })}
+                                    style={{ padding: "0 0 0 0" }}
                                     label="Patient is contagious"
                                     className="form-check-sm"
                                 />
