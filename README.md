@@ -6,8 +6,8 @@ Repository for the IES course project.
 | --------------- | ------------- | ------ | ------ |
 | Pedro Ponte     | DevOps Master | 98059  | 23%    |
 | Afonso Ferreira | Team Manager  | 113480 | 32%    |
-| João Neto       | Product Owner | 113482 | 23%    |
-| Ricardo Antunes | Architect     | 115243 | 22%    |
+| João Neto       | Product Owner | 113482 | 22%    |
+| Ricardo Antunes | Architect     | 115243 | 23%    |
 
 ![MediSync](resources/wide_logo.png)
 
