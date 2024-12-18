@@ -127,10 +127,12 @@ const RoomPage = ({ vitalsData }) => {
                           <>
                             <h3 className="patient-name">{bed.patient.patient.name}</h3>
                             <div className="bed-icon">{vital.icon}</div>
+                            <div style={{ display: "flex", justifyContent: "center" }}>
                             <p className="bed-value">
                               {vital.display}
                               <span>{vital.unit}</span>
                             </p>
+                            </div>
                           </>
                         </Link>
                       ) : (

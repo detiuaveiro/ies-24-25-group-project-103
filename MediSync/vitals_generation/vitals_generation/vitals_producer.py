@@ -134,14 +134,14 @@ while True:
                             curVitals[i]["temperature"] - random.uniform(0.05, 0.1)
                         )
 
-                    if vital_state["duration"] > random.randint(10, 30):
+                    if vital_state["duration"] > random.randint(10, 90):
                         vital_state["in_distress"] = False
                         vital_state["duration"] = 0
 
                 else:
                     if random.random() < 0.000001:
                         patient_state["dying"] = True
-                    if random.random() < 0.0002:
+                    if random.random() < 0.009:
                         vital_state["in_distress"] = True
 
                 if vital == "heart_rate":

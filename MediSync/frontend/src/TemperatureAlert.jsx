@@ -37,7 +37,7 @@ export default function TemperatureAlert({ patient, value = 39 }) {
       </svg>
       <div className={styles.patientInfo}>
         <span className={styles.patientStatus}>TEMPERATURE IS VERY {status}</span> <br />
-        <span className={styles.patientName}>Patient {patient?.name}</span>
+        <span className={styles.patientName}>{patient?.name}</span>
         <br />
         <span className={styles.patientRoom}>Room {patient?.roomNumber}</span>
       </div>

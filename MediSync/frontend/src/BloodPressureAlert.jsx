@@ -34,8 +34,8 @@ export default function BloodPressureAlert({ patient, values = [100, 50] }) {
         />
       </svg>
       <div className={styles.patientInfo}>
-        <span className={styles.patientStatus}>PRESSURES ARE VERY {status}</span> <br />
-        <span className={styles.patientName}>Patient {patient?.name}</span>
+        <span className={styles.patientStatus}>PRESSURES ARE {status}</span> <br />
+        <span className={styles.patientName}>{patient?.name}</span>
         <br />
         <span className={styles.patientRoom}>Room {patient?.roomNumber}</span>
       </div>

@@ -3,9 +3,9 @@
     color: #000; /* Black text for contrast */
     text-align: center;
     padding: 30px;
-    width: 100%;
-    max-width: 400px;
-    height: 550px;
+    width: 500px;
+    width: 400px !important;
+    height: 500px;
     border-radius: 85px;
     box-shadow: 0 4px 15px rgba(255, 200, 50, 0.6); /* Stronger yellow glow */
   }
