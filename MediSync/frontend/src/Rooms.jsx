@@ -47,6 +47,10 @@ function Rooms() {
     
     const getRoomNumber = (roomNumber) => roomNumber.charAt(1);
 
+    const isIsolationRoom = (roomNumber) => {
+        return roomNumber.charAt(0) === '3' && (roomNumber.charAt(1) === '7' || roomNumber.charAt(1) === '8');
+    };
+
     const filteredRooms = rooms.filter(room => {
         const searchLower = searchTerm.toLowerCase();
         const floor = getFloor(room.roomNumber);
@@ -100,15 +104,25 @@ function Rooms() {
                     </thead>
                     <tbody>
                         {filteredRooms.map(room => (
-                            <tr key={room.id}>
+                            <tr key={room.id} className={isIsolationRoom(room.roomNumber) ? styles.isolationRow : ''} >
                                 <td>{getFloor(room.roomNumber)}</td>
                                 <td>{getRoomNumber(room.roomNumber)}</td>
                                 <td>{`${room.currentPatients}/4`}</td>
                                 <td>{`${room.currentStaff}/8`}</td>
                                 <td>
-                                    <button className={styles.moreInfoButton}>
+                                    <button 
+                                        className={`${styles.moreInfoButton} ${isIsolationRoom(room.roomNumber) ? styles.isolationButton : ''}`}
+                                        onClick={() => 
+                                            navigate('/patients', {
+                                                state: { info: `Floor ${getFloor(room.roomNumber)} Room ${getRoomNumber(room.roomNumber)}` }
+                                            })
+                                        }
+                                    >
                                         More Information <FontAwesomeIcon icon={faBed} />
                                     </button>
+                                    {isIsolationRoom(room.roomNumber) && 
+                                        <span className={styles.isolationLabel}>Isolation Room</span>
+                                    }
                                 </td>
                             </tr>
                         ))}

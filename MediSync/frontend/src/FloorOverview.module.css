@@ -28,6 +28,25 @@
     min-width: 200px;
 }
 
+.overviewButton {
+    background-color: #E6EAF5 !important;
+    color: #271E4A !important;
+    padding: 10px 24px !important;
+    font-size: 20px !important;
+    font-weight: bold !important;
+    min-width: 10px !important;
+    text-transform: none !important;
+    width: 30%;
+    height: 50px;
+    align-items: right;
+    justify-content: right;
+    margin-bottom: 30px;
+}
+
+.overviewButton:hover {
+    background-color: #d5d9e4 !important;
+}
+
 .floorSelect {
     padding: 12px 24px;
     font-size: 18px;
@@ -155,4 +174,55 @@
 
 .bed.needs-cleaning {
     background-color: #f44336;
+}
+
+.isolationRoom {
+    background-color: #FFF3E0;
+    border: 2px dashed #FF9800;
+    position: relative;
+}
+
+.isolationLabel {
+    display: block;
+    font-size: 14px;
+    color: #FF9800;
+    font-weight: normal;
+    margin-top: 4px;
+}
+
+.isolationIndicator {
+    width: 20px;
+    height: 20px;
+    border-radius: 4px;
+    background-color: #FFF3E0;
+    border: 2px dashed #FF9800;
+}
+
+.isolationRoom .bedGrid {
+    position: relative;
+}
+
+.isolationRoom .bedGrid::after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    top: 0;
+    bottom: 0;
+    width: 1px;
+    background-color: #271E4A;
+}
+
+.isolationRoom .bedGrid::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background-color: #271E4A;
+}
+
+.isolationRoom .bed {
+    position: relative;
+    z-index: 1;
 }

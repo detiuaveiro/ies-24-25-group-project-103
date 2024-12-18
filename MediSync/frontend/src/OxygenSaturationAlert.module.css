@@ -1,0 +1,72 @@
+.oxygenSaturationCard {
+  background-color: #fad4a0; /* Soft orange background */
+  color: #000; /* Black text for contrast */
+  text-align: center;
+  padding: 30px;
+  width: 400px !important;
+  height: 500px;
+  width: 100%;
+  border-radius: 85px;
+  box-shadow: 0 4px 15px rgba(250, 176, 96, 0.5);
+}
+
+.alertText {
+  color: #ff8500;
+  text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
+  font-family: 'Karantina', cursive;
+  font-size: 10rem;
+  line-height: 1.2;
+  margin-top: -40px;
+}
+
+.alertText .percent {
+  font-family: 'Karantina', cursive;
+  font-size: 0.5em;
+}
+
+.o2Image {
+  color: #ff8500;
+  font-size: 200px;
+  margin-top: 0px;
+}
+
+.patientInfo {
+  font-size: 1.2rem;
+  color: #4a4a4a;
+  text-transform: uppercase;
+  text-align: center;
+}
+
+.patientStatus {
+  font-family: 'Kanit', sans-serif;
+  font-size: 1.5rem;
+  color: #ff5f00;
+  margin-bottom: 0.5rem;
+}
+
+.patientName {
+  font-family: 'Kanit', sans-serif;
+  font-size: 1.4rem;
+  color: #ff4500;
+  margin-bottom: 0.5rem;
+}
+
+.patientRoom {
+  font-family: 'Kanit', sans-serif;
+  font-size: 1.2rem;
+  color: #ff4500;
+  font-weight: bold;
+}
+
+/* Responsive styling */
+@media (max-width: 576px) {
+  .oxygenSaturationCard {
+    padding: 20px;
+  }
+  .alertText {
+    font-size: 6rem;
+  }
+  .patientInfo {
+    font-size: 1rem;
+  }
+}

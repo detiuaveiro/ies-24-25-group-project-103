@@ -1,10 +1,13 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import styles from './FloorOverview.module.css';
 import AddIcon from '@mui/icons-material/Add';
 import CreatePatient from './CreatePatient';
 import CONFIG from './config';
 import AddStaff from './AddStaff';
+import FormatListBulletedIcon from '@mui/icons-material/FormatListBulleted';
+import { Button } from '@mui/material';
 
 function FloorOverview() {
     const [beds, setBeds] = useState([]);
@@ -14,6 +17,9 @@ function FloorOverview() {
     const [showPatientsModal, setShowPatientsModal] = useState(false);
     const [showStaffModal, setShowStaffModal] = useState(false);
     const baseUrl = CONFIG.API_URL;
+    const [isLoading, setIsLoading] = useState(true);
+    const [error, setError] = useState(null);
+    const navigate = useNavigate();
 
     useEffect(() => {
         const fetchBeds = async () => {
@@ -59,9 +65,7 @@ function FloorOverview() {
         setShowStaffModal(true);
     };
 
-
     const getRoomsForFloor = () => {
-        // Filter beds for selected floor and organize by room
         const floorRooms = beds.reduce((rooms, bed) => {
             const floor = bed.bedNumber.charAt(0);
             const roomNumber = bed.bedNumber.substring(0, 2);
@@ -75,7 +79,6 @@ function FloorOverview() {
             return rooms;
         }, {});
 
-        // Sort rooms by room number
         return Object.entries(floorRooms).sort((a, b) => a[0].localeCompare(b[0]));
     };
 
@@ -85,10 +88,31 @@ function FloorOverview() {
         return 'available';
     };
 
+    const handleBedClick = (bed) => {
+        if (bed.assignedPatient) {
+            navigate(`/patients/${bed.assignedPatient.id}`);
+        }
+    };
+
+    const isIsolationRoom = (roomNumber) => {
+        return selectedFloor === '3' && (roomNumber === '37' || roomNumber === '38');
+    };
+
     return (
         <div className={styles.container}>
-            <h1 className={styles.title}>Floor Overview</h1>
-            
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                <h1 className={styles.title}>Floor Overview</h1>
+                <Button 
+                    variant="contained" 
+                    startIcon={<FormatListBulletedIcon className={styles.buttonIcon} />}
+                    onClick={() => navigate('/rooms')}
+                    className={styles.overviewButton}
+                    style={{ marginBottom: "10px" }}
+                >
+                    Room Overview
+                </Button>
+            </div>
+
             <div className={styles.controlsRow}>
                 <div className={styles.leftControls}>
                     <div className={styles.floorControl}>
@@ -104,7 +128,6 @@ function FloorOverview() {
                             ))}
                         </select>
                     </div>
-
                     <div className={styles.legend}>
                         <div className={styles.legendItem}>
                             <div className={`${styles.bed} ${styles.occupied}`}></div>
@@ -118,6 +141,10 @@ function FloorOverview() {
                             <div className={`${styles.bed} ${styles['needs-cleaning']}`}></div>
                             <span>Needs to be Cleaned</span>
                         </div>
+                        <div className={styles.legendItem}>
+                            <div className={`${styles.isolationIndicator}`}></div>
+                            <span>Isolation Room</span>
+                        </div>
                     </div>
                 </div>
 
@@ -130,11 +157,18 @@ function FloorOverview() {
                     </button>
                 </div>
             </div>
-
             <div className={styles.floorPlan}>
                 {getRoomsForFloor().map(([roomNumber, roomBeds]) => (
-                    <div key={roomNumber} className={styles.room}>
-                        <div className={styles.roomHeader}>Room {roomNumber.charAt(1)}</div>
+                    <div 
+                        key={roomNumber} 
+                        className={`${styles.room} ${isIsolationRoom(roomNumber) ? styles.isolationRoom : ''}`}
+                    >
+                        <div className={styles.roomHeader}>
+                            Room {roomNumber.charAt(1)}
+                            {isIsolationRoom(roomNumber) && 
+                                <span className={styles.isolationLabel}>Isolation Room</span>
+                            }
+                        </div>
                         <div className={styles.bedGrid}>
                             {roomBeds
                                 .sort((a, b) => a.bedNumber.localeCompare(b.bedNumber))
@@ -143,6 +177,7 @@ function FloorOverview() {
                                         key={bed.id} 
                                         className={`${styles.bed} ${styles[getBedStatus(bed)]}`}
                                         title={`Bed ${bed.bedNumber.charAt(2)}`}
+                                        onClick={() => handleBedClick(bed)}
                                     >
                                         {bed.bedNumber.charAt(2)}
                                     </div>
@@ -155,10 +190,12 @@ function FloorOverview() {
             <CreatePatient 
                 showModal={showPatientsModal} 
                 setShowModal={setShowPatientsModal} 
-                availableBeds={beds.filter(bed => getBedStatus(bed) === "available").map(bed => ({
-                    id: bed.id,
-                    name: `Floor ${bed.bedNumber.charAt(0)} / Room ${bed.bedNumber.charAt(1)} / Bed ${bed.bedNumber.charAt(2)}`
-                }))} 
+                availableBeds={beds
+                    .filter(bed => getBedStatus(bed) === "available")
+                    .map(bed => ({
+                        id: bed.id,
+                        name: `Floor ${bed.bedNumber.charAt(0)} / Room ${bed.bedNumber.charAt(1)} / Bed ${bed.bedNumber.charAt(2)}`
+                    }))} 
                 availableDoctors={doctors.map(doctor => ({
                     id: doctor.id,
                     name: doctor.name

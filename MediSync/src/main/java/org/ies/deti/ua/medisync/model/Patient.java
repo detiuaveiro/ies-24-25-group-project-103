@@ -2,6 +2,7 @@ package org.ies.deti.ua.medisync.model;
 
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
@@ -14,6 +15,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
@@ -59,13 +61,19 @@ public class Patient {
     @JoinColumn(name = "doctor_id")
     private Doctor assignedDoctor;
 
-    @Column(name = "discharged")
-    private Boolean discharged = false;
+    @Column(name = "state")
+    private String state = "IN_BED";
+
+    @Column(name = "admission_date")
+    private Date admissionDate;
+
+    @Column(name = "contagious")
+    private Boolean contagious = false;
     
 
     public Patient() {}
 
-    public Patient(String name, String gender, Date birthDate, Date estimatedDischargeDate, Float weight, Float height, List<String> conditions, List<String> observations, Doctor assignedDoctor) {
+    public Patient(String name, String gender, Date birthDate, Date estimatedDischargeDate, Float weight, Float height, List<String> conditions, List<String> observations, Doctor assignedDoctor, Boolean contagious) {
         this.name = name;
         this.gender = gender;
         this.birthDate = birthDate;
@@ -75,6 +83,15 @@ public class Patient {
         this.conditions = conditions;
         this.observations = observations;
         this.assignedDoctor = assignedDoctor;
+        this.contagious = contagious;
+        this.admissionDate = new Date();
+    }
+
+    @PrePersist
+    protected void onCreate() {
+        if (this.admissionDate == null) {
+            this.admissionDate = new Date();
+        }
     }
 
     // Getters and Setters
@@ -158,12 +175,27 @@ public class Patient {
         this.assignedDoctor = assignedDoctor;
     }
 
-    public Boolean isDischarged() {
-        return discharged;
+    public String getState(){
+        return state;
     }
 
-    public void setDischarged(Boolean discharged) {
-        this.discharged = discharged;
+    public void setState(String state){
+        this.state = state;
     }
 
+    public Date getAdmissionDate(){
+        return admissionDate;
+    }
+
+    public void setAdmissionDate(Date admissionDate){
+        this.admissionDate = admissionDate;
+    }
+
+    public Boolean getContagious(){
+        return contagious;
+    }
+
+    public void setContagious(Boolean contagious){
+        this.contagious = contagious;
+    }
 }

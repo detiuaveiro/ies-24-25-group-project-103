@@ -21,7 +21,6 @@ function DoctorPatients() {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                // Fetch patients
                 const patientsResponse = await axios.get(
                     `${baseUrl}/doctors/${user.id}/patients`,
                     {
@@ -31,7 +30,6 @@ function DoctorPatients() {
                     }
                 );
 
-                // Fetch beds
                 const bedsResponse = await axios.get(
                     `${baseUrl}/hospital/beds`,
                     {
@@ -108,18 +106,19 @@ function DoctorPatients() {
                     </thead>
                     <tbody>
                         {filteredPatients.map((patient, index) => (
-                            <tr key={patient.id}>
+                            <tr key={patient.id} className={patient.contagious ? styles.contagiousRow : ''}>
                                 <td>{String(index + 1).padStart(2, '0')}</td>
                                 <td>{patient.name}</td>
                                 <td>{getPatientRoom(patient.id)}</td>
                                 <td>{new Date(patient.estimatedDischargeDate).toLocaleDateString('en-GB')}</td>
                                 <td>
                                     <button 
-                                        className={styles.moreInfoButton}
+                                        className={`${styles.moreInfoButton} ${patient.contagious ? styles.contagiousButton : ''}`}
                                         onClick={() => navigate(`/patients/${patient.id}`)}
                                     >
                                         More Information <FontAwesomeIcon icon={faChartLine} />
                                     </button>
+                                    {patient.contagious && <span className={styles.contagiousLabel}>Contagious Patient</span>}
                                 </td>
                             </tr>
                         ))}

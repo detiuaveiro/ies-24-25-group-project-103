@@ -3,15 +3,17 @@ import axios from 'axios';
 import styles from './Patients.module.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSearch, faChartLine } from '@fortawesome/free-solid-svg-icons';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import CONFIG from './config';
 
-function Patients() {
+function Patients({ initialSearchTerm = '' }) {
+    const location = useLocation();
+    const roomInfo = location.state?.info || ''; // Get the "Floor id Room id" string
     const [patients, setPatients] = useState([]);
     const [beds, setBeds] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-    const [searchTerm, setSearchTerm] = useState('');
+    const [searchTerm, setSearchTerm] = useState(initialSearchTerm || roomInfo); // Use the received prop as default
     const token = localStorage.getItem('token');
     const baseUrl = CONFIG.API_URL;
 
@@ -45,7 +47,6 @@ function Patients() {
         }
     }, [token, baseUrl]);
 
-    // Function to format room number (e.g., "13" becomes "Floor 1 Room 3")
     const formatRoomNumber = (roomNumber) => {
         if (!roomNumber) return '-';
         const floor = roomNumber.charAt(0);
@@ -53,15 +54,12 @@ function Patients() {
         return `Floor ${floor} Room ${room}`;
     };
 
-    // Function to get room number for a patient
     const getPatientRoom = (patientId) => {
         const bed = beds.find(bed => bed.assignedPatient?.id === patientId);
         if (bed) {
-            // Handle both cases where room is an object or just an ID
             if (typeof bed.room === 'object') {
                 return formatRoomNumber(bed.room.roomNumber);
             } else {
-                // Find the first bed with the same room ID that has the full room object
                 const roomBed = beds.find(b => 
                     typeof b.room === 'object' && b.room.id === bed.room
                 );
@@ -73,6 +71,15 @@ function Patients() {
 
     if (loading) return <div className={styles.loadingContainer}>Loading patients...</div>;
     if (error) return <div className={styles.errorContainer}>Error: {error}</div>;
+
+    const filteredPatients = patients.filter((patient) => {
+        const patientRoom = getPatientRoom(patient.id).toLowerCase();
+        const searchLower = searchTerm.toLowerCase();
+        return (
+            patient.name.toLowerCase().includes(searchLower) ||
+            patientRoom.includes(searchLower)
+        );
+    });
 
     return (
         <div className={styles.patientsContainer}>
@@ -91,37 +98,37 @@ function Patients() {
             </div>
 
             <div className={styles.tableContainer}>
-            <table className={styles.patientsTable}>
-                <thead>
-                    <tr>
-                        <th className={styles.hideOnMobile}>#</th>
-                        <th>Patient Name</th>
-                        <th>Room</th>
-                        <th className={styles.hideOnMobile}>Estimated Discharge Date</th>
-                        <th></th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {patients.map((patient, index) => (
-                        <tr key={patient.id}>
-                            <td className={styles.hideOnMobile}>{String(index + 1).padStart(2, '0')}</td>
-                            <td>{patient.name}</td>
-                            <td>{getPatientRoom(patient.id)}</td>
-                            <td className={styles.hideOnMobile}>
-                                {new Date(patient.estimatedDischargeDate).toLocaleDateString('en-GB')}
-                            </td>
-                            <td>
-                                <Link to={`/patients/${patient.id}`} style={{ textDecoration: 'none' }}>
-                                    <button className={styles.moreInfoButton}>
-                                        More Information <FontAwesomeIcon icon={faChartLine} />
-                                    </button>
-                                </Link>
-                            </td>
+                <table className={styles.patientsTable}>
+                    <thead>
+                        <tr>
+                            <th className={styles.hideOnMobile}>#</th>
+                            <th>Patient Name</th>
+                            <th>Room</th>
+                            <th className={styles.hideOnMobile}>Estimated Discharge Date</th>
+                            <th></th>
                         </tr>
-                    ))}
-                </tbody>
-            </table>
-
+                    </thead>
+                    <tbody>
+                        {filteredPatients.map((patient, index) => (
+                            <tr key={patient.id} className={patient.contagious ? styles.contagiousRow : ''}>
+                                <td className={styles.hideOnMobile}>{String(index + 1).padStart(2, '0')}</td>
+                                <td>{patient.name}</td>
+                                <td>{getPatientRoom(patient.id)}</td>
+                                <td className={styles.hideOnMobile}>
+                                    {new Date(patient.estimatedDischargeDate).toLocaleDateString('en-GB')}
+                                </td>
+                                <td>
+                                    <Link to={`/patients/${patient.id}`} style={{ textDecoration: 'none' }}>
+                                        <button className={`${styles.moreInfoButton} ${patient.contagious ? styles.contagiousButton : ''}`}>
+                                            More Information <FontAwesomeIcon icon={faChartLine} />
+                                        </button>
+                                    </Link>
+                                    {patient.contagious && <span className={styles.contagiousLabel}>Contagious Patient</span>}
+                                </td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
             </div>
         </div>
     );

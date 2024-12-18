@@ -62,8 +62,8 @@ const RoomPage = ({ vitalsData }) => {
 
     switch (filter) {
       case "HeartRate":
-        if (value < 60) return "bad";
-        if (value <= 100) return "good";
+        if (value < 40) return "bad";
+        if (value <= 130) return "good";
         return "warning";
 
       case "Oxygen":
@@ -72,16 +72,16 @@ const RoomPage = ({ vitalsData }) => {
         return "warning";
 
       case "Temperature":
-        if (value < 36) return "bad";
+        if (value < 34) return "bad";
         if (value <= 37.5) return "good";
         if (value <= 38) return "warning";
         return "bad";
 
       case "BloodPressure":
         const [systolic, diastolic] = value.split("/").map(Number);
-        if (systolic < 90 || diastolic < 60) return "bad";
-        if (systolic <= 120 && diastolic <= 80) return "good";
-        if (systolic <= 140 || diastolic <= 90) return "warning";
+        if (systolic < 70 || diastolic < 40) return "bad";
+        if (systolic <= 140 && diastolic <= 90) return "good";
+        if (systolic <= 200 || diastolic <= 150) return "warning";
         return "bad";
 
       default:
@@ -108,7 +108,7 @@ const RoomPage = ({ vitalsData }) => {
       {filteredRooms.length > 0 ? (
         <div className="room-grid">
           {filteredRooms.map((room) => (
-            <div key={room.roomId} className="room-card">
+            <div key={room.roomId} className={`room-card ${room.roomNumber === '37' || room.roomNumber === '38' ? 'contagious-room' : ''}`} >
               <h2>Room {room.roomNumber}</h2>
               <div className="beds-grid">
                 {[...Array(4)].map((_, index) => {
@@ -127,10 +127,12 @@ const RoomPage = ({ vitalsData }) => {
                           <>
                             <h3 className="patient-name">{bed.patient.patient.name}</h3>
                             <div className="bed-icon">{vital.icon}</div>
+                            <div style={{ display: "flex", justifyContent: "center" }}>
                             <p className="bed-value">
                               {vital.display}
                               <span>{vital.unit}</span>
                             </p>
+                            </div>
                           </>
                         </Link>
                       ) : (

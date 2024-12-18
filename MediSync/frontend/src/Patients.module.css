@@ -158,7 +158,6 @@
 /* Reduce font size and padding for smaller screens */
 .patientsTable th, .patientsTable td {
     font-size: 18px;
-    padding: 16px;
 }
 
 @media (max-width: 768px) {
@@ -200,5 +199,46 @@
 
     .searchContainer {
         width: 100%;
+    }
+}
+
+.contagiousRow {
+    background-color: #FFF3E0 !important;
+    position: relative;
+}
+
+.contagiousRow td {
+    border-color: #FF9800;
+}
+
+.contagiousRow td:last-child {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+}
+
+.contagiousLabel {
+    color: #FF9800;
+    font-size: 14px;
+    font-weight: bold;
+    white-space: nowrap;
+}
+
+.contagiousButton {
+    background-color: #FF9800 !important;
+    color: white !important;
+}
+
+.contagiousButton:hover {
+    background-color: #F57C00 !important;
+}
+
+/* Add media query support for mobile */
+@media (max-width: 768px) {
+    .contagiousRow td:last-child::after {
+        font-size: 12px;
+        right: 10px;
     }
 }

@@ -5,6 +5,7 @@ import java.util.Date;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -42,6 +43,12 @@ public class Notification {
     
     @Column(name = "type", nullable = false)
     private String type;
+
+    @Column(name = "patient_id", nullable = true)
+    private Long patientId;
+
+    @Column(name = "bed_id", nullable = true)
+    private Long bedId;
 
     public Notification() {}
 
@@ -99,6 +106,22 @@ public class Notification {
 
     public void setType(String type) {
         this.type = type;
+    }
+
+    public Long getPatientId() {
+        return patientId;
+    }
+
+    public void setPatientId(Long patientId) {
+        this.patientId = patientId;
+    }
+
+    public Long getBedId() {
+        return bedId;
+    }
+
+    public void setBedId(Long bedId) {
+        this.bedId = bedId;
     }
 
     @Override
