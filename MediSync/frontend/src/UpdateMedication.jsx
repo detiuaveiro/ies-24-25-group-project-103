@@ -1,11 +1,12 @@
 import { useState } from 'react';
 import { Modal, Form, Button } from 'react-bootstrap';
 import { useEffect } from 'react';
+import axios from 'axios';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './UpdateMedication.css';
 import CONFIG from './config';
 
-export default function UpdateMedication({ showModal, setShowModal, patient, medication=null}) {
+export default function UpdateMedication({ showModal, setShowModal, patient, medication=null, updateMedication }) {
     const addMedication = medication === null;
     console.log(addMedication);    
 
@@ -20,7 +21,6 @@ export default function UpdateMedication({ showModal, setShowModal, patient, med
         if (medication) {
             setMedicationName(medication.name || '');
             setHourInterval(medication.hourInterval || '');
-            setNumberTimes(medication.numberTimes || '');
             setDosage(medication.dosage || '');
         }
     }, [medication]);
@@ -29,71 +29,48 @@ export default function UpdateMedication({ showModal, setShowModal, patient, med
         setShowModal(false);
     }
 
-    const handleSave = () => {
-        if (addMedication) {
-            const addMedication = async () => {
-                try {
-                    const response = await axios.post(`${baseURL}/patients/${patient.id}/medications`, {
-                        "name": medicationName,
-                        "hourInterval": hourInterval,
-                        "numberTimes": numberTimes,
-                        "dosage": dosage,
-                    }, {
-                        headers: {
-                            'Authorization': `Bearer ${token}`
-                        }
-                    });
-                    console.log('Medication added:', response.data);
-                    handleClose();
-                } catch (err) {
-                    console.error('Error adding medication:', err);
-                }
-            };
-            if (medicationName != "" && hourInterval != "" && numberTimes != "" && dosage != "") {
-                if (token) {
-                    addMedication();
-                } else {
-                    console.error('Not authenticated');
-                }
-            }
-            else {
-                console.error('Missing medication information');
-            }
+    const handleSave = async () => {
+        try {
+          let response;
+          if (addMedication) {
+            response = await axios.post(
+              `${baseURL}/patients/${patient.id}/medications`,
+              {
+                name: medicationName,
+                hourInterval,
+                dosage,
+              },
+              {
+                headers: {
+                  Authorization: `Bearer ${token}`,
+                },
+              }
+            );
+          } else {
+            response = await axios.put(
+              `${baseURL}/patients/${patient.id}/medications/${medication.id}`,
+              {
+                name: medicationName,
+                hourInterval,
+                numberTimes,
+                dosage,
+              },
+              {
+                headers: {
+                  Authorization: `Bearer ${token}`,
+                },
+              }
+            );
+          }
+      
+          console.log('Medication saved:', response.data);
+          updateMedication(response.data); // Pass the updated/added medication back to the parent
+          handleClose();
+        } catch (err) {
+          console.error('Error saving medication:', err);
         }
-        else {
-            const editMedication = async () => {
-                try {
-                    const response = await axios.put(`${baseUrl}/patients/${patient.id}/medications/${medication.id}`, {
-                        "name": medicationName,
-                        "hourInterval": hourInterval,
-                        "numberTimes": numberTimes,
-                        "dosage": dosage,
-                    }, {
-                        headers: {
-                            'Authorization': `Bearer ${token}`
-                        }
-                    });
-                    console.log('Medication edited:', response.data);
-                    handleClose();
-                } catch (err) {
-                    console.error('Error editing medication:', err);
-                }
-            }
-            setMedicationName(medicationName != "" ? medicationName : medication.name);
-            setHourInterval(hourInterval != "" ? hourInterval : medication.hourInterval);
-            setNumberTimes(numberTimes != "" ? numberTimes : medication.numberTimes);
-            setDosage(dosage != "" ? dosage : medication.dosage);
-            if (token) {
-                editMedication();
-            }
-            else {
-                console.error('Not authenticated');
-            }
-        }
-        // Handle saving the medication information here
-        console.log('Medication:', medicationName, hourInterval, numberTimes, dosage);
       };
-
+      
     return (
         <>
             <Modal show={showModal} onHide={handleClose} className="update-medication" centered>

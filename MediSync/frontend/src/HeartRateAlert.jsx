@@ -32,7 +32,7 @@ export default function HeartRateAlert({ patient, value }) {
         />
       </svg>
       <div className={styles.patientInfo}>
-        <span className={styles.patientStatus}>BPM's ARE VERY {status}</span> <br />
+        <span className={styles.patientStatus} style={{fontSize: "1.3rem"}} >BPM's ARE VERY {status}</span> <br />
         <span className={styles.patientName}>{patient?.name}</span>
         <br />
         <span className={styles.patientRoom}>Room {patient?.roomNumber}</span>

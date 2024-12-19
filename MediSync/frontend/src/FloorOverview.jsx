@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom'; // Import useNavigate
+import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import styles from './FloorOverview.module.css';
 import AddIcon from '@mui/icons-material/Add';
@@ -94,6 +94,10 @@ function FloorOverview() {
         }
     };
 
+    const isIsolationRoom = (roomNumber) => {
+        return selectedFloor === '3' && (roomNumber === '37' || roomNumber === '38');
+    };
+
     return (
         <div className={styles.container}>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
@@ -112,7 +116,6 @@ function FloorOverview() {
             <div className={styles.controlsRow}>
                 <div className={styles.leftControls}>
                     <div className={styles.floorControl}>
-                        
                         <select 
                             value={selectedFloor} 
                             onChange={(e) => setSelectedFloor(e.target.value)}
@@ -138,6 +141,10 @@ function FloorOverview() {
                             <div className={`${styles.bed} ${styles['needs-cleaning']}`}></div>
                             <span>Needs to be Cleaned</span>
                         </div>
+                        <div className={styles.legendItem}>
+                            <div className={`${styles.isolationIndicator}`}></div>
+                            <span>Isolation Room</span>
+                        </div>
                     </div>
                 </div>
 
@@ -152,8 +159,16 @@ function FloorOverview() {
             </div>
             <div className={styles.floorPlan}>
                 {getRoomsForFloor().map(([roomNumber, roomBeds]) => (
-                    <div key={roomNumber} className={styles.room}>
-                        <div className={styles.roomHeader}>Room {roomNumber.charAt(1)}</div>
+                    <div 
+                        key={roomNumber} 
+                        className={`${styles.room} ${isIsolationRoom(roomNumber) ? styles.isolationRoom : ''}`}
+                    >
+                        <div className={styles.roomHeader}>
+                            Room {roomNumber.charAt(1)}
+                            {isIsolationRoom(roomNumber) && 
+                                <span className={styles.isolationLabel}>Isolation Room</span>
+                            }
+                        </div>
                         <div className={styles.bedGrid}>
                             {roomBeds
                                 .sort((a, b) => a.bedNumber.localeCompare(b.bedNumber))
@@ -162,7 +177,7 @@ function FloorOverview() {
                                         key={bed.id} 
                                         className={`${styles.bed} ${styles[getBedStatus(bed)]}`}
                                         title={`Bed ${bed.bedNumber.charAt(2)}`}
-                                        onClick={() => handleBedClick(bed)} // Add click handler
+                                        onClick={() => handleBedClick(bed)}
                                     >
                                         {bed.bedNumber.charAt(2)}
                                     </div>
@@ -175,10 +190,12 @@ function FloorOverview() {
             <CreatePatient 
                 showModal={showPatientsModal} 
                 setShowModal={setShowPatientsModal} 
-                availableBeds={beds.filter(bed => getBedStatus(bed) === "available").map(bed => ({
-                    id: bed.id,
-                    name: `Floor ${bed.bedNumber.charAt(0)} / Room ${bed.bedNumber.charAt(1)} / Bed ${bed.bedNumber.charAt(2)}`
-                }))} 
+                availableBeds={beds
+                    .filter(bed => getBedStatus(bed) === "available")
+                    .map(bed => ({
+                        id: bed.id,
+                        name: `Floor ${bed.bedNumber.charAt(0)} / Room ${bed.bedNumber.charAt(1)} / Bed ${bed.bedNumber.charAt(2)}`
+                    }))} 
                 availableDoctors={doctors.map(doctor => ({
                     id: doctor.id,
                     name: doctor.name

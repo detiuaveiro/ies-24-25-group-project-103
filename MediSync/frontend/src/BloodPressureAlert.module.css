@@ -3,9 +3,9 @@
     color: #000; /* Black text for better contrast */
     text-align: center; /* Center the content */
     padding: 30px; /* Add padding for spacing */
-    width: 90%; /* Adjust width for responsiveness */
+    width: 100%; /* Adjust width for responsiveness */
+    width: 400px !important;
     height: 500px;
-    max-width: 400px; /* Constrain maximum width */
     border-radius: 85px;
     box-shadow: 0 4px 15px rgba(0, 188, 212, 0.5); /* Blue shadow */
   }
@@ -20,7 +20,7 @@
   
   .alertText .diastolic {
     font-family: 'Karantina', cursive;
-    font-size: 0.9em;
+    font-size: 0.6em;
   }
   
   .bloodIcon {

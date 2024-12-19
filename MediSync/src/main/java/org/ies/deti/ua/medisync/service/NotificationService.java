@@ -10,7 +10,6 @@ import org.ies.deti.ua.medisync.model.Medication;
 import org.ies.deti.ua.medisync.model.Notification;
 import org.ies.deti.ua.medisync.model.Nurse;
 import org.ies.deti.ua.medisync.model.Patient;
-import org.ies.deti.ua.medisync.model.PatientWithVitals;
 import org.ies.deti.ua.medisync.model.Room;
 import org.ies.deti.ua.medisync.model.User;
 import org.ies.deti.ua.medisync.repository.BedRepository;
@@ -74,14 +73,14 @@ public class NotificationService {
             throw new IllegalArgumentException("Nurse with ID " + id + " not found");
         }
     
-        List<PatientWithVitals> patients = nurseService.getPatientsWithVitalsForNurse(nurse.get());
+        List<Patient> patients = nurseService.getPatientsByNurseIdAndRoom(id);
     
-        for (PatientWithVitals patient : patients) {
-            List<Medication> medications = patientService.getDueMedications(patient.getPatient().getId());
+        for (Patient patient : patients) {
+            List<Medication> medications = patientService.getDueMedications(patient.getId());
     
             for (Medication medication : medications) {
     
-                String expectedDescription = "Medication " + medication.getName() + " is due for patient " + patient.getPatient().getName();
+                String expectedDescription = "Medication " + medication.getName() + " is due for patient " + patient.getName();
     
                 boolean notificationExists = notificationRepository.existsByTypeAndDescription(
                     "MEDICATION_DUE",
@@ -99,7 +98,7 @@ public class NotificationService {
                     notification.setUser(user.get());
                     notification.setType("MEDICATION_DUE");
                     notification.setDescription(expectedDescription);
-                    notification.setPatientId(patient.getPatient().getId());
+                    notification.setPatientId(patient.getId());
                     notificationRepository.save(notification);
                 }
             }

@@ -110,7 +110,7 @@ function Patients({ initialSearchTerm = '' }) {
                     </thead>
                     <tbody>
                         {filteredPatients.map((patient, index) => (
-                            <tr key={patient.id}>
+                            <tr key={patient.id} className={patient.contagious ? styles.contagiousRow : ''}>
                                 <td className={styles.hideOnMobile}>{String(index + 1).padStart(2, '0')}</td>
                                 <td>{patient.name}</td>
                                 <td>{getPatientRoom(patient.id)}</td>
@@ -119,10 +119,11 @@ function Patients({ initialSearchTerm = '' }) {
                                 </td>
                                 <td>
                                     <Link to={`/patients/${patient.id}`} style={{ textDecoration: 'none' }}>
-                                        <button className={styles.moreInfoButton}>
+                                        <button className={`${styles.moreInfoButton} ${patient.contagious ? styles.contagiousButton : ''}`}>
                                             More Information <FontAwesomeIcon icon={faChartLine} />
                                         </button>
                                     </Link>
+                                    {patient.contagious && <span className={styles.contagiousLabel}>Contagious Patient</span>}
                                 </td>
                             </tr>
                         ))}

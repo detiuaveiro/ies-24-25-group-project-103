@@ -60,10 +60,10 @@ const Schedule = () => {
     });
   };
 
-  const handleMonthChange = (direction) => {
-    setCurrentDate((prev) => {
-      const newDate = new Date(prev);
-      newDate.setMonth(prev.getMonth() + direction);
+  const handleWeekChange = (direction) => {
+    setCurrentDate((prevDate) => {
+      const newDate = new Date(prevDate);
+      newDate.setDate(prevDate.getDate() + 7 * direction); // Go 7 days forward or backward
       return newDate;
     });
   };
@@ -86,18 +86,19 @@ const Schedule = () => {
   return (
     <div className="schedule-container">
       {/* Month Navigation */}
-      <div className="month-navigation">
-        <button onClick={() => handleMonthChange(-1)}>&lt;</button>
-        <span>{currentMonth} {currentYear}</span>
-        <button onClick={() => handleMonthChange(1)}>&gt;</button>
+      <div class="navigation-container">
+        <div class="week-navigation">
+          <button class="nav-button" onClick={() => handleWeekChange(-1)}>← Previous Week</button>
+          <span>
+            Week of {currentDate.toLocaleDateString("default", { month: "long", day: "numeric", year: "numeric" })}
+          </span>
+          <button class="nav-button" onClick={() => handleWeekChange(1)}>Next Week →</button>
+        </div>
+        <div class="day-navigation">
+          <button class="nav-button" onClick={() => handleDayChange(-1)}>Previous Day</button>
+          <button class="nav-button" onClick={() => handleDayChange(1)}>Next Day</button>
+        </div>
       </div>
-
-      {/* Day Navigation (Moved Here) */}
-      <div className="day-navigation">
-        <button onClick={() => handleDayChange(-1)}>Previous Day</button>
-        <button onClick={() => handleDayChange(1)}>Next Day</button>
-      </div>
-
       {/* Schedule Grid */}
       <div className="schedule-grid scrollable">
         {/* Time Column */}

@@ -3,10 +3,11 @@
   color: #000;
   text-align: center;
   padding: 30px;
-  max-width: 500px;
+  max-width: 600px;
   height: 500px;
   border-radius: 85px;
   box-shadow: 0 4px 15px rgba(220, 53, 69, 0.5);
+  width: 400px !important;
 }
 
 .alertText {

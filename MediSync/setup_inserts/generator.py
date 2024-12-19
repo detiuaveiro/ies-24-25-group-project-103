@@ -14,7 +14,7 @@ def generate_doctors():
         for doctor in doctors:
             # Extract last name for username and email
             last_name = doctor.split(". ")[1].lower()
-            
+
             data = {
                 "username": f"doc_{last_name}",
                 "name": doctor,
@@ -42,6 +42,7 @@ def generate_random_date(start_year, end_year):
 def generate_patients():
     """
     Create a txt file with 50 patients in a json format.
+    Four patients will be marked as contagious.
     """
     patients = [
     "Cristiano Ronaldo", "Óscar Cardozo", "Eusébio", "Rui Costa", "João Félix",
@@ -57,11 +58,13 @@ def generate_patients():
     "Pedro Ponte", "Afonso Ferreira", "João Neto", "Ricardo Antunes", "João Almeida",
     "Eduardo Lopes", "Rodrigo Abreu", "Tomás Brás", "Hugo Ribeiro", "Cole Palmer", "Daniel Ferreira"
     ]
-    
+
     conditions = [
         "Hypertension", "Diabetes", "Asthma", "Arthritis", "Heart Disease",
-        "COPD", "Pneumonia", "Bronchitis", "Flu", "COVID-19"
+        "COPD", "Pneumonia", "Bronchitis", "Anemia", "Obesity"
     ]
+
+    contagious_conditions = ["COVID-19", "Flu", "Pneumonia"]
 
     observations = [
         "Requires wheelchair assistance",
@@ -76,11 +79,25 @@ def generate_patients():
         "Limited mobility"
     ]
 
+    # select 4 patients to be contagious
+    contagious_indices = random.sample(range(len(patients)), 4)
+
     with open("patients.txt", "w") as file:
-        for patient in patients:
+        for index, patient in enumerate(patients):
             birth_date = format_date(generate_random_date(1950, 2004))
             discharge_date = format_date(generate_random_date(2024, 2025))
-            
+
+            is_contagious = index in contagious_indices
+
+            # if patient is contagious they have at least one contagious condition
+            if is_contagious:
+                patient_conditions = random.sample(contagious_conditions, 1)
+                additional_conditions = random.sample([c for c in conditions if c not in contagious_conditions], 
+                                                   random.randint(0, 2))
+                patient_conditions.extend(additional_conditions)
+            else:
+                patient_conditions = random.sample(conditions, random.randint(1, 3))
+
             data = {
                 "name": patient,
                 "gender": random.choice(["Male", "Female"]),
@@ -88,12 +105,13 @@ def generate_patients():
                 "estimatedDischargeDate": discharge_date,
                 "weight": round(random.uniform(60.0, 95.0), 1),
                 "height": random.randint(150, 195),  # Height in centimeters
-                "conditions": random.sample(conditions, random.randint(1, 3)),
+                "conditions": patient_conditions,
                 "observations": random.sample(observations, random.randint(1, 3)),
-                "state": "IN_BED"
+                "state": "IN_BED",
+                "contagious": is_contagious
             }
             file.write(json.dumps(data) + "\n")
-    
+
     print("Patients data written to patients.txt")
 
 def generate_nurses():
@@ -109,7 +127,7 @@ def generate_nurses():
         "Smith", "Jones", "Williams", "Brown", "Taylor", "Davies", "Wilson", "Evans", "Thomas", "Johnson",
         "Roberts", "Walker", "Wright", "Thompson", "White", "Hughes", "Edwards", "Green", "Hall", "Wood"
     ]
-    
+
     used_names = set()
     with open("nurses.txt", "w") as file:
         # Generate 20 nurses
@@ -119,11 +137,11 @@ def generate_nurses():
                 first_name = random.choice(first_names)
                 last_name = random.choice(last_names)
                 full_name = f"{first_name} {last_name}"
-                
+
                 if full_name not in used_names:
                     used_names.add(full_name)
                     valid_name = True
-            
+
             data = {
                 "username": f"nurse_{first_name.lower()}{last_name.lower()}",
                 "name": f"Nurse {full_name}",
@@ -134,7 +152,7 @@ def generate_nurses():
                 "enabled": True
             }
             file.write(json.dumps(data) + "\n")
-    
+
     print("Nurses data written to nurses.txt")
 
 def generate_medications():
@@ -147,11 +165,11 @@ def generate_medications():
         "Sertraline", "Fluoxetine", "Escitalopram", "Alprazolam", "Lorazepam",
         "Zolpidem", "Hydrochlorothiazide", "Losartan", "Atorvastatin", "Simvastatin"
     ]
-    
+
     dosage_units = ["mg", "mcg", "g", "mL"]
     common_dosages = ["100", "200", "250", "400", "500", "600", "750", "1000"]
     hour_intervals = ["4", "6", "8", "12", "24"]
-    
+
     with open("medications.txt", "w") as file:
         for _ in range(100):
             medication = {
@@ -162,7 +180,7 @@ def generate_medications():
                 "lastTaken": "2024-01-14T08:00:00"
             }
             file.write(json.dumps(medication) + "\n")
-    
+
     print("Medications data written to medications.txt")
 
 if __name__ == "__main__":

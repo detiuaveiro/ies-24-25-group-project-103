@@ -1,13 +1,21 @@
 package org.ies.deti.ua.medisync.controller;
 
-import org.ies.deti.ua.medisync.model.*;
+import java.util.List;
+
+import org.ies.deti.ua.medisync.model.Bed;
+import org.ies.deti.ua.medisync.model.HospitalManager;
+import org.ies.deti.ua.medisync.model.Room;
+import org.ies.deti.ua.medisync.model.RoomOccupancyDTO;
 import org.ies.deti.ua.medisync.service.HospitalManagerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/v1/hospital")
