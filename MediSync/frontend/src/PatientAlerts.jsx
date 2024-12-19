@@ -80,10 +80,10 @@ const PatientAlerts = ({ vitalsData }) => {
         if (systolic >= 140 || diastolic >= 90 || systolic < 70 || diastolic < 40) {
           alerts.get(patientId).alerts.push({ type: 'BloodPressure', values: [systolic, diastolic] });
         }
-        if (OxygenSaturation <= 95) {
+        if (OxygenSaturation <= 90) {
           alerts.get(patientId).alerts.push({ type: 'OxygenSaturation', value: OxygenSaturation });
         }
-        if (HeartRate >= 100 || HeartRate < 65) {
+        if (HeartRate >= 130 || HeartRate < 40) {
           alerts.get(patientId).alerts.push({ type: 'HeartRate', value: HeartRate });
         }
         if (Temperature >= 37.5 || Temperature < 34) {
