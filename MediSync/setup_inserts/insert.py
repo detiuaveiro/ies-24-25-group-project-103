@@ -288,7 +288,7 @@ def create_schedules():
                 # Select a random shift
                 shift = random.choice(shifts)
 
-                day = random.randint(14, 19)
+                day = random.randint(18, 23)
 
                 schedule_data = {
                     "start_time": f"2024-12-{day:02d}T{shift['start']}Z",

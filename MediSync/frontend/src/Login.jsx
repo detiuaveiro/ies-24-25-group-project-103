@@ -87,7 +87,6 @@ function Login() {
               LOGIN
             </button>
             {error && <p className={styles.errorMessage}>{error}</p>}
-            <p className={styles.forgotPassword}>Forgot password?</p>
           </div>
 
           <div className={styles.divider}></div>
