@@ -24,15 +24,21 @@ export default function AddStaff({ showModal, setShowModal }) {
 
   const fetchData = async (endpoint, setState, errorMsg) => {
     try {
+      console.log(`Fetching data from ${endpoint}...`); // Debug log
       const response = await fetch(baseUrl + endpoint, {
         method: "GET",
         headers: { Authorization: bearerToken },
       });
-
-      if (!response.ok) throw new Error(errorMsg);
-
+  
+      if (!response.ok) {
+        console.error(`${errorMsg}: ${response.statusText}`);
+        throw new Error(`${errorMsg} - Status: ${response.status}`);
+      }
+  
       const data = await response.json();
-
+      console.log(`Data received from ${endpoint}:`, data); // Debug log
+      setState(data); 
+  
       if (endpoint === "/nurses") {
         const updatedNurses = await Promise.all(
           data.map(async (nurse) => {
@@ -49,38 +55,43 @@ export default function AddStaff({ showModal, setShowModal }) {
                             headers: { Authorization: bearerToken },
                           }
                         );
+  
                         if (!roomResponse.ok) {
                           console.error(
                             `Failed to fetch details for room ID ${room}`
                           );
                           return { id: room, roomNumber: `Unknown (${room})` };
                         }
+  
                         const roomData = await roomResponse.json();
                         return {
                           id: roomData.id,
                           roomNumber: roomData.roomNumber,
                         };
                       }
-                      return room; // Return room as is if already complete
+                      return room; // If already an object, return as is
                     })
                   );
                   return { ...schedule, room: updatedRooms };
                 })
               );
+              console.log(nurse)
               return { ...nurse, schedule: updatedSchedule };
             }
             return nurse;
           })
         );
-
-        setState(updatedNurses);
+  
+        console.log("Processed nurses data:", updatedNurses); // Debug log
+        setState(updatedNurses); // Update state with processed data
       } else if (endpoint === "/hospital/rooms") {
         setState(data.map((room) => ({ value: room.id, label: `Room ${room.roomNumber}` })));
       }
     } catch (error) {
-      console.error(error);
+      console.error(`Error in fetchData for ${endpoint}:`, error); // Detailed error log
     }
   };
+  
 
   useEffect(() => {
     if (selectedNurse) {

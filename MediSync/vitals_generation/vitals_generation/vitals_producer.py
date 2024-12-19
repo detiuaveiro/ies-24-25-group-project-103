@@ -141,7 +141,7 @@ while True:
                 else:
                     if random.random() < 0.000001:
                         patient_state["dying"] = True
-                    if random.random() < 0.0005:
+                    if random.random() < 0.009:
                         vital_state["in_distress"] = True
 
                 if vital == "heart_rate":
